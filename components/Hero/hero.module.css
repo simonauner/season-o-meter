@@ -1,0 +1,12 @@
+.base {
+    text-align: center;
+    padding: 4rem 0 2rem 0;
+    margin-bottom: 4rem;
+
+    background-size: cover;
+    background-position: bottom;
+}
+
+.text {
+    /* background-color: rgba(0, 0, 0, 0.45); */
+}
