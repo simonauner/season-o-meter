@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import * as React from 'react';
+import { SearchBox } from '../SearchBox/SearchBox';
 
 import css from './topMenu.module.css';
 
@@ -45,7 +46,7 @@ export const TopMenu = () => {
                     icon={<MenuOutlined />}
                     onClick={() => setIsExpanded(!isExpanded)}
                 />
-                <Input.Search className={css.search} />
+                <SearchBox />
             </div>
         </nav>
     );

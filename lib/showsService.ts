@@ -20,6 +20,9 @@ export const showsApi = createApi({
         getShow: builder.query<tvShowDetails, number>({
             query: (id) => `/${id}`,
         }),
+        search: builder.query<TopRatedSeries, string>({
+            query: (query) => `/search?query=${query}`,
+        }),
     }),
 });
 
@@ -30,4 +33,5 @@ export const {
     useGetTrendingTvShowsQuery,
     useGetShowQuery,
     useGetPopularTvShowsQuery,
+    useSearchQuery,
 } = showsApi;
