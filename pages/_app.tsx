@@ -7,6 +7,7 @@ import { Layout } from 'antd';
 import { Footer } from '../components/Footer';
 
 import { TopMenu } from '../components/TopMenu';
+import { ContentWrapper } from '../components/Layout';
 
 type MyAppProps = {
     Component: React.FunctionComponent;
@@ -21,9 +22,9 @@ const MyApp: React.FunctionComponent<MyAppProps> = ({
         <Provider store={store}>
             <Layout>
                 <TopMenu />
-                <Layout.Content>
+                <ContentWrapper>
                     <Component {...pageProps} />
-                </Layout.Content>
+                </ContentWrapper>
                 <Footer />
             </Layout>
         </Provider>

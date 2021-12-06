@@ -1,5 +1,4 @@
 .base {
-    margin-top: 8rem;
     padding: 4rem;
 }
 
@@ -13,4 +12,10 @@
 
 .listItem {
     padding-bottom: 0.5rem;
+}
+
+@media (min-width: 576px) {
+    .base {
+        margin-top: 4rem;
+    }
 }

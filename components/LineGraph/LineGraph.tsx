@@ -21,7 +21,7 @@ export const LineGraph: FC<LineGraphProps> = ({
             {
                 id: 'serie',
                 data: dataProp?.map((rating) => ({
-                    x: rating.id,
+                    x: rating.season_number,
                     y: rating.rating,
                 })),
             } as Serie,

@@ -8,7 +8,9 @@
 }
 
 .left {
-    /* this is for when the flex wraps */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .left img {
@@ -23,8 +25,27 @@
     max-width: 800px;
 }
 
-@media (min-width: 1024px) {
-    .base {
-        /* flex-direction: row; */
+.meta {
+    padding-left: 2rem;
+    padding-right: 2rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .left {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .meta {
+        padding-left: 2rem;
+        padding-right: 2rem;
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

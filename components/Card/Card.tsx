@@ -17,7 +17,7 @@ type IconTextProps = {
 
 export const Card: FunctionComponent<TvCardProps> = ({ data }) => {
     return (
-        <Link href={`/show/${data.id}`}>
+        <Link href={`/shows/${data.id}`}>
             <div
                 className={classNames(css.base)}
                 style={{
@@ -30,7 +30,7 @@ export const Card: FunctionComponent<TvCardProps> = ({ data }) => {
                     <StarIcon inline />
                     {data.vote_average}
 
-                    <LineGraph size="small" data={data.rating} />
+                    <LineGraph size="small" data={data.seasons} />
                 </div>
             </div>
         </Link>

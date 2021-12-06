@@ -2,7 +2,7 @@ import React from 'react';
 import { Content } from '../components/Layout';
 import { Hero } from '../components/Hero';
 import { ShowList } from '../components/ShowList';
-import { useGetTrendingTvShowsQuery } from '../lib/showsService';
+import { useGetPopularTvShowsQuery } from '../lib/showsService';
 
 export default function Home() {
     return (
@@ -12,7 +12,7 @@ export default function Home() {
                 text="Where did your favorite series peak and from where did it go all down-hill?"
             />
             <Content>
-                <ShowList query={useGetTrendingTvShowsQuery} />
+                <ShowList query={useGetPopularTvShowsQuery} />
             </Content>
         </>
     );

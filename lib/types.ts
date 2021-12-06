@@ -2,6 +2,7 @@
 export type tvShowSummaryResponse = {
     backdrop_path: string;
     first_air_date: string;
+    last_air_date: string;
     // genre_ids: [10764]
     id: number;
     name: string;
@@ -13,10 +14,18 @@ export type tvShowSummaryResponse = {
     poster_path: string;
     vote_average: number;
     vote_count: number;
+    in_production: boolean;
+};
+
+export type SeasonResponse = {
+    air_date: string;
+    episode_count: number;
+    season_number: number;
 };
 
 export type tvShowDetailsResponse = tvShowSummaryResponse & {
     number_of_seasons: number;
+    seasons: SeasonResponse[];
 };
 
 export type tvShowEpisodeDetailsResponse = {
@@ -38,6 +47,7 @@ export type TopRatedSeriesResponse = {
 export type tvShowSummary = {
     backdrop_path: string;
     first_air_date: string;
+    last_air_date: string;
     // genre_ids: [10764]
     id: number;
     name: string;
@@ -49,16 +59,19 @@ export type tvShowSummary = {
     poster_path: string;
     vote_average: number;
     vote_count: number;
+    in_production: boolean;
 };
 
 export type Season = {
-    id: number;
+    air_date: string;
+    episode_count: number;
+    season_number: number;
     rating: number;
 };
 
 export type tvShowDetails = tvShowSummary & {
     number_of_seasons: number;
-    rating: Season[];
+    seasons: Season[];
 };
 
 export type TopRatedSeries = {

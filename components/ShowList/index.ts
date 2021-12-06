@@ -1,1 +1,1 @@
-export { ShowList as SeriesList } from './ShowList';
+export { ShowList } from './ShowList';

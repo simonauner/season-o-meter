@@ -3,10 +3,12 @@ import { Card } from '../Card/Card';
 import { useGetTrendingTvShowsQuery } from '../../lib/showsService';
 import { List } from 'antd';
 
-export const ShowList: FunctionComponent = () => {
-    const { data, isLoading } = useGetTrendingTvShowsQuery();
+type ShowListProps = {
+    query: typeof useGetTrendingTvShowsQuery;
+};
 
-    if (!data) return null;
+export const ShowList: FunctionComponent<ShowListProps> = ({ query }) => {
+    const { data, isLoading } = query();
 
     return (
         <List
@@ -20,7 +22,7 @@ export const ShowList: FunctionComponent = () => {
                 xl: 4,
                 xxl: 6,
             }}
-            dataSource={data.results}
+            dataSource={data?.results}
             renderItem={(item) => (
                 <List.Item>
                     <Card data={item}>Card content</Card>

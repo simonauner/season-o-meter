@@ -1,12 +1,52 @@
 .base {
     text-align: center;
-    padding: 4rem 0 2rem 0;
-    margin-bottom: 4rem;
+    padding: 0rem 0 2rem 0;
 
-    background-size: cover;
-    background-position: bottom;
+    position: relative;
+
+    background: radial-gradient(#222, #000);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.base h1 {
+    font-size: 4rem;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 90%;
+
+    padding-top: 1rem;
+    margin-bottom: 0.25rem;
 }
 
 .text {
-    /* background-color: rgba(0, 0, 0, 0.45); */
+    margin: 0 auto;
+    width: 90%;
+}
+
+@media (min-width: 576px) {
+    .base {
+        padding: 1rem 0 3rem 0;
+        margin-bottom: 4rem;
+    }
+
+    .base h1 {
+        font-size: 4.5rem;
+    }
+
+    .text {
+        width: 80%;
+        max-width: initial;
+        font-size: 1.05rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .base h1 {
+        font-size: 6rem;
+        padding-top: 2rem;
+    }
+
+    .text {
+        font-size: 1.25rem;
+    }
 }

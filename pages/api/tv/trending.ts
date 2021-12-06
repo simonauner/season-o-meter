@@ -5,7 +5,8 @@ import {
     tvShowDetailsResponse,
     tvShowSeasonDetailsResponse,
 } from '../../../lib/types';
-import axios from '../../../server/apiClient';
+import axios from '../../../lib/server/apiClient';
+import { getSeriesWithSeasonRatings } from '../../../lib/server/getSeriesWithSeasonRatings';
 
 export default async function handler(req, res) {
     const { data, status, statusText } =
@@ -17,47 +18,11 @@ export default async function handler(req, res) {
 
     const details = await Promise.all(
         data.results.map(async (tvShow) => {
-            const { data: showDetails } =
-                await axios.get<tvShowDetailsResponse>(`/tv/${tvShow.id}`);
-            return showDetails;
+            return await getSeriesWithSeasonRatings(tvShow.id);
         })
     );
 
     data.results = details.filter((tvShow) => tvShow.number_of_seasons > 1);
-
-    const detailsWithSeasonsScore = await Promise.all(
-        data.results.map(async (tvShow) => {
-            const averageRatingPerSeason = Promise.all(
-                new Array(tvShow.number_of_seasons)
-                    .fill(undefined)
-                    .map(async (s, index) => {
-                        const { data: seasonDetails } =
-                            await axios.get<tvShowSeasonDetailsResponse>(
-                                `/tv/${tvShow.id}/season/${index + 1}`
-                            );
-                        const averageRating = seasonDetails.episodes.reduce(
-                            (prev, curr) => prev + curr.vote_average,
-                            0
-                        );
-                        return {
-                            id: index + 1,
-                            rating: Number(
-                                (
-                                    averageRating /
-                                    seasonDetails.episodes.length
-                                ).toFixed(1)
-                            ),
-                        };
-                    })
-            );
-            return averageRatingPerSeason;
-        })
-    );
-
-    data.results = data.results.map((result, index) => ({
-        ...result,
-        rating: detailsWithSeasonsScore[index],
-    }));
 
     res.status(200).json(data);
 }
