@@ -39,9 +39,15 @@ export default async function handler(req, res) {
                             (prev, curr) => prev + curr.vote_average,
                             0
                         );
-                        return (
-                            averageRating / seasonDetails.episodes.length
-                        ).toFixed(1);
+                        return {
+                            id: index + 1,
+                            rating: Number(
+                                (
+                                    averageRating /
+                                    seasonDetails.episodes.length
+                                ).toFixed(1)
+                            ),
+                        };
                     })
             );
             return averageRatingPerSeason;

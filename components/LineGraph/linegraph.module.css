@@ -1,0 +1,27 @@
+.wrapper {
+    height: 100px;
+    width: 200px;
+}
+
+.large {
+    height: 300px;
+    width: 270px;
+}
+
+@media (min-width: 376px) {
+    .large {
+        width: 300px;
+    }
+}
+
+@media (min-width: 768px) {
+    .large {
+        width: 600px;
+    }
+}
+
+/* @media (min-width: 1024px) {
+    .large {
+        height: 400px;
+    }
+} */

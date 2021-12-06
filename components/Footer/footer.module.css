@@ -2,3 +2,15 @@
     margin-top: 8rem;
     padding: 4rem;
 }
+
+.list {
+    list-style-type: none;
+}
+
+.listHeader {
+    padding-bottom: 1rem;
+}
+
+.listItem {
+    padding-bottom: 0.5rem;
+}

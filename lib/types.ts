@@ -51,7 +51,7 @@ export type tvShowSummary = {
     vote_count: number;
 };
 
-type Season = {
+export type Season = {
     id: number;
     rating: number;
 };

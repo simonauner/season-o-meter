@@ -1,78 +1,94 @@
+import { ResponsiveLine, Serie } from '@nivo/line';
 import classNames from 'classnames';
 import React, { FC } from 'react';
-import {
-    CartesianGrid,
-    Label,
-    Line,
-    LineChart,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from 'recharts';
+import { Season } from '../../lib/types';
+
+import css from './linegraph.module.css';
 
 type LineGraphProps = {
-    data: number[];
+    data: Season[];
     size: 'large' | 'small';
     className?: string;
 };
 
 export const LineGraph: FC<LineGraphProps> = ({
-    data,
+    data: dataProp,
     size = 'small',
     className,
 }) => {
-    // const twoDimensional = data?.map((rating, index) => ({
-    //     season: index + 1,
-    //     rating: Number(rating),
-    // }));
+    const data = React.useMemo(
+        () => [
+            {
+                id: 'serie',
+                data: dataProp?.map((rating) => ({
+                    x: rating.id,
+                    y: rating.rating,
+                })),
+            } as Serie,
+        ],
+        [dataProp]
+    );
 
-    const widths = {
-        small: 150,
-        large: 600,
-    };
+    // const widths = {
+    //     small: 200,
+    //     large: 600,
+    // };
 
-    const heights = {
-        small: 40,
-        large: 400,
-    };
+    // const heights = {
+    //     small: 100,
+    //     large: 400,
+    // };
 
     const isLarge = size === 'large';
 
-    if (!data || !data.length) return null;
+    if (!data || !data.length || !data[0]?.data?.length) return null;
+
+    console.log(data);
 
     return (
-        <div
-            style={{ width: widths[size], height: heights[size] }}
-            className={className}
-        >
-            <LineChart
-                width={widths[size]}
-                height={heights[size]}
+        <div className={classNames(css.wrapper, { [css.large]: isLarge })}>
+            <ResponsiveLine
                 data={data}
-                margin={{ top: 5, right: 5, left: 5, bottom: 15 }}
-            >
-                {isLarge && (
-                    <YAxis
-                        ticks={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-                        dataKey="rating"
-                    />
-                )}
-                {isLarge && (
-                    <XAxis dataKey="id">
-                        <Label value="Season" offset={0} position="bottom" />
-                    </XAxis>
-                )}
-                {isLarge && <CartesianGrid stroke="#f5f5f5" />}
-                {isLarge && (
-                    <Tooltip labelFormatter={(value) => `Season ${value}`} />
-                )}
-                <Line
-                    type="monotone"
-                    dataKey="rating"
-                    stroke="#ff7300"
-                    yAxisId={0}
-                />
-            </LineChart>
+                margin={
+                    isLarge
+                        ? { top: 50, right: 60, bottom: 50, left: 60 }
+                        : { top: 15, right: 15, bottom: 15, left: 15 }
+                }
+                xScale={{ type: 'point' }}
+                yScale={{
+                    type: 'linear',
+                    min: isLarge ? 0 : 'auto',
+                    max: isLarge ? 10 : 'auto',
+                }}
+                axisBottom={
+                    isLarge && {
+                        tickSize: 5,
+                        tickPadding: 5,
+                        tickRotation: 0,
+                        legend: 'Season',
+                        legendOffset: 36,
+                        legendPosition: 'middle',
+                    }
+                }
+                axisLeft={
+                    isLarge && {
+                        tickSize: 5,
+                        tickPadding: 5,
+                        tickRotation: 0,
+                        legend: 'Rating',
+                        legendOffset: -40,
+                        legendPosition: 'middle',
+                    }
+                }
+                pointSize={20}
+                pointColor={{ theme: 'background' }}
+                pointBorderWidth={2}
+                pointBorderColor={{ from: 'serieColor' }}
+                pointLabelYOffset={-12}
+                enableGridX={isLarge}
+                enableGridY={isLarge}
+                lineWidth={4}
+            />
         </div>
     );
 };

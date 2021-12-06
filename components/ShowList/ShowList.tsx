@@ -1,23 +1,32 @@
 import React, { FunctionComponent } from 'react';
 import { Card } from '../Card/Card';
 import { useGetTrendingTvShowsQuery } from '../../lib/showsService';
+import { List } from 'antd';
 
 export const ShowList: FunctionComponent = () => {
-    const { data } = useGetTrendingTvShowsQuery();
-    console.log(data);
+    const { data, isLoading } = useGetTrendingTvShowsQuery();
 
     if (!data) return null;
 
     return (
-        <div className="container">
-            <div className="row gy-3 gx-3">
-                {data?.results.map((tv) => (
-                    <div key={tv.id} className="col-6 col-md-4">
-                        <Card data={tv} />
-                    </div>
-                ))}
-            </div>
-        </div>
+        <List
+            loading={isLoading}
+            grid={{
+                gutter: 16,
+                xs: 1,
+                sm: 2,
+                md: 2,
+                lg: 3,
+                xl: 4,
+                xxl: 6,
+            }}
+            dataSource={data.results}
+            renderItem={(item) => (
+                <List.Item>
+                    <Card data={item}>Card content</Card>
+                </List.Item>
+            )}
+        />
     );
     return;
 };

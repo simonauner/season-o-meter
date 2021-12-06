@@ -1,13 +1,40 @@
 .base {
-    width: 300px;
     height: 400px;
     cursor: pointer;
+    background-size: cover;
+
+    position: relative;
 }
 
-.text {
+.content {
     position: absolute;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.75);
+    top: 0;
     width: 100%;
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    flex-direction: column;
     padding: 1rem;
+
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.content:hover {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.content h2 {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    height: 170px;
+    margin-top: 1rem;
+
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
 }

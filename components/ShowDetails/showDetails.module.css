@@ -1,6 +1,30 @@
 .base {
+    display: flex;
+    flex-direction: column;
+
+    padding-bottom: 2rem;
+    width: 100%;
+    align-items: center;
 }
 
-.graph {
-    margin: 0 auto;
+.left {
+    /* this is for when the flex wraps */
+}
+
+.left img {
+    width: 300px;
+    margin-bottom: 2rem;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+}
+
+@media (min-width: 1024px) {
+    .base {
+        /* flex-direction: row; */
+    }
 }
