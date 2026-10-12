@@ -31,3 +31,19 @@
 .more:hover {
     text-decoration: underline;
 }
+
+.empty {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.status {
+    margin: 40px 0 0;
+    max-width: 60ch;
+    color: var(--text-secondary);
+}
+
+.status a {
+    color: var(--accent);
+    font-weight: 600;
+}

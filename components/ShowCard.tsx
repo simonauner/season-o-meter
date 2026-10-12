@@ -1,32 +1,32 @@
 import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
 import { formatVotes, formatYears } from '@/lib/format';
 import type { Show } from '@/lib/types';
-import { TrendCard } from './TrendCard';
+import { TrendCard, type TrendCardProps } from './TrendCard';
 
-export function ShowCard({ show }: { show: Show }) {
+export function showCardProps(show: Show): TrendCardProps {
     const seasons = ratedSeasons(show.seasons);
     const trend = analyzeSeasons(show);
 
-    return (
-        <TrendCard
-            href={`/shows/${show.id}/`}
-            title={show.title}
-            meta={`${formatYears(show)} · ${seasons.length} seasons · ${formatVotes(show.votes)} votes`}
-            verdict={trend?.verdict}
-            ratings={seasons.map((season) => season.rating)}
-            trend={
-                trend && {
-                    first: {
-                        label: `S${trend.first.seasonNumber}`,
-                        rating: trend.first.rating,
-                    },
-                    last: {
-                        label: `S${trend.last.seasonNumber}`,
-                        rating: trend.last.rating,
-                    },
-                    change: trend.change,
-                }
-            }
-        />
-    );
+    return {
+        href: `/shows/${show.id}/`,
+        title: show.title,
+        meta: `${formatYears(show)} · ${seasons.length} seasons · ${formatVotes(show.votes)} votes`,
+        verdict: trend?.verdict,
+        ratings: seasons.map((season) => season.rating),
+        trend: trend && {
+            first: {
+                label: `S${trend.first.seasonNumber}`,
+                rating: trend.first.rating,
+            },
+            last: {
+                label: `S${trend.last.seasonNumber}`,
+                rating: trend.last.rating,
+            },
+            change: trend.change,
+        },
+    };
+}
+
+export function ShowCard({ show }: { show: Show }) {
+    return <TrendCard {...showCardProps(show)} />;
 }
