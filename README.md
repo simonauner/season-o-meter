@@ -27,7 +27,10 @@ The site is fully static. There are no API calls when someone visits it.
 
 The front-page sections ("Slow starters", "Collapsed like a house of cards",
 …) and the verdict for each series are defined in
-[lib/analysis.ts](lib/analysis.ts).
+[lib/analysis.ts](lib/analysis.ts). A picker at the top of the front page and
+list pages lets visitors require at least two, three or four rated seasons in
+every section (four by default). Every choice is rendered at build time, and
+the visitor's choice is remembered in the browser.
 
 ## Getting started
 
