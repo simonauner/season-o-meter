@@ -1,0 +1,43 @@
+lib/sync.ts
+  s_c03be7faca5502::t_02ff944c620f47 1-217
+.github/workflows/deploy.yml
+  s_c03be7faca5502::t_ea064acbfd2b92 34-35,45-46
+app/mine/LinkField.tsx
+  s_c03be7faca5502::t_abb06da6635e1d 1-60
+app/layout.tsx
+  s_c03be7faca5502::t_0350eee8cc45e2 4,23
+app/shared/SharedList.tsx
+  s_c03be7faca5502::t_ee94e8eef5f5b9 4,7-8,12,16,18-24,39,57-58
+app/mine/mine.module.css
+  s_c03be7faca5502::t_abb06da6635e1d 82-129
+app/mine/SyncPanel.tsx
+  s_c03be7faca5502::t_0350eee8cc45e2 62-66
+  s_c03be7faca5502::t_abb06da6635e1d 1-61,67-137
+app/mine/MyList.tsx
+  s_c03be7faca5502::t_0350eee8cc45e2 10,13,15,20,29-31,34-35,57,59,67-74,77,80-87,92,96,98-100,102-106
+README.md
+  s_c03be7faca5502::t_98754774e8cdfa 52-56,59-64,70-90
+  s_c03be7faca5502::t_c88c8d4905bd59 91
+lib/useHash.ts
+  s_c03be7faca5502::t_ee94e8eef5f5b9 1-23
+components/SyncAgent.tsx
+  s_c03be7faca5502::t_0350eee8cc45e2 1-10
+lib/userStore.ts
+  s_c03be7faca5502::t_f2025626b3c518 10-12,29-35,55,63,66-68,83,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c9048ce1d1c7e2761be77d424ed64ba99ca028f1",
+  "prompts": {},
+  "sessions": {
+    "s_c03be7faca5502": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dca9d4d2-f298-4ea7-a1e7-8b14222a846d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
