@@ -64,7 +64,10 @@
     display: flex;
     flex-direction: column;
     gap: 1px;
+    width: max-content;
     min-width: 140px;
+    /* Keep in step with TOOLTIP_HALF_WIDTH in RatingChart. */
+    max-width: 220px;
     padding: 8px 10px;
     border-radius: 8px;
     background: var(--surface-raised);
@@ -72,7 +75,6 @@
     box-shadow: 0 4px 16px rgb(0 0 0 / 14%);
     color: var(--text-secondary);
     font-size: 0.8125rem;
-    white-space: nowrap;
 }
 
 .tooltipValue {

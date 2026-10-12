@@ -1,3 +1,5 @@
+import { findSections, type SectionDefinition } from './sections';
+import { mean, slope } from './stats';
 import type { RatedSeason, SeasonRating, Show } from './types';
 
 /**
@@ -11,21 +13,7 @@ export const ratedSeasons = (seasons: SeasonRating[]): RatedSeason[] =>
             season.ratedEpisodeCount * 2 >= season.episodeCount
     );
 
-const mean = (values: number[]) =>
-    values.reduce((sum, value) => sum + value, 0) / values.length;
-
-/** Least-squares slope of rating per season. */
-const slope = (ratings: number[]) => {
-    const meanX = (ratings.length - 1) / 2;
-    const meanY = mean(ratings);
-    let covariance = 0;
-    let variance = 0;
-    ratings.forEach((y, x) => {
-        covariance += (x - meanX) * (y - meanY);
-        variance += (x - meanX) ** 2;
-    });
-    return variance === 0 ? 0 : covariance / variance;
-};
+const hasEnded = (show: Show) => show.endYear !== null;
 
 export type SeasonTrend = {
     best: RatedSeason;
@@ -52,7 +40,7 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
     const spread = best.rating - worst.rating;
     // The trend over the whole run, so long shows aren't judged per season.
     const fittedChange = slope(ratings) * (rated.length - 1);
-    const ended = show.endYear !== null;
+    const ended = hasEnded(show);
 
     let verdict: string;
     if (spread < 0.4) {
@@ -82,32 +70,15 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
     };
 }
 
-export type Section = {
-    slug: string;
-    title: string;
-    description: string;
-    shows: Show[];
-};
-
-type SectionDefinition = Omit<Section, 'shows'> & {
-    /** Only consider series with at least this many votes. */
-    minVotes: number;
-    minSeasons: number;
-    maxSeasons?: number;
-    onlyEnded?: boolean;
-    /** How strongly a series matches, or null if it doesn't. Higher first. */
-    score: (ratings: number[], show: Show) => number | null;
-};
-
 const MIN_VOTES = 50_000;
 
-const SECTION_DEFINITIONS: SectionDefinition[] = [
+const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'most-popular',
         title: 'Most popular',
         description: 'The series with the most ratings on IMDb.',
         minVotes: MIN_VOTES,
-        minSeasons: 2,
+        minRatings: 2,
         score: (_, show) => show.votes,
     },
     {
@@ -116,7 +87,7 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
         description:
             'Highest average across all seasons, at least four of them.',
         minVotes: MIN_VOTES,
-        minSeasons: 4,
+        minRatings: 4,
         score: (ratings) => mean(ratings),
     },
     {
@@ -125,7 +96,7 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
         description:
             'Began weak but found their footing. Worth getting through season 1.',
         minVotes: MIN_VOTES,
-        minSeasons: 3,
+        minRatings: 3,
         score: ([first, ...rest]) => {
             const gain = mean(rest) - first;
             return gain >= 0.4 && Math.min(...rest) > first ? gain : null;
@@ -136,9 +107,9 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
         title: 'The mid-run slump',
         description: 'Dipped in the middle, then won the audience back.',
         minVotes: MIN_VOTES,
-        minSeasons: 4,
+        minRatings: 4,
         // Very long runs wobble too much to have a single "middle".
-        maxSeasons: 12,
+        maxRatings: 12,
         score: (ratings) => {
             const middle = ratings.slice(1, -1);
             const low = Math.min(...middle);
@@ -155,8 +126,8 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
         title: 'Collapsed like a house of cards',
         description: 'Ended on a final season far below everything before it.',
         minVotes: MIN_VOTES,
-        minSeasons: 3,
-        onlyEnded: true,
+        minRatings: 3,
+        filter: hasEnded,
         score: (ratings) => {
             const last = ratings[ratings.length - 1];
             const before = ratings.slice(0, -1);
@@ -169,7 +140,7 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
         title: 'Better every season',
         description: 'Every season rated higher than the one before.',
         minVotes: MIN_VOTES,
-        minSeasons: 3,
+        minRatings: 3,
         score: (ratings) =>
             ratings.every((rating, i) => i === 0 || rating > ratings[i - 1])
                 ? ratings[ratings.length - 1] - ratings[0]
@@ -180,7 +151,7 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
         title: 'The long goodbye',
         description: 'Long-running series on a slow, steady decline.',
         minVotes: MIN_VOTES,
-        minSeasons: 7,
+        minRatings: 7,
         score: (ratings) => {
             const decline = -slope(ratings) * (ratings.length - 1);
             // A slow decline, not a single collapse.
@@ -192,36 +163,12 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
     },
 ];
 
-export const SECTION_SLUGS = SECTION_DEFINITIONS.map(({ slug }) => slug);
+export const SHOW_SECTION_SLUGS = SECTION_DEFINITIONS.map(({ slug }) => slug);
 
-export function findSections(shows: Show[], limit: number): Section[] {
-    return SECTION_DEFINITIONS.map(
-        ({
-            minVotes,
-            minSeasons,
-            maxSeasons = Infinity,
-            onlyEnded,
-            score,
-            ...section
-        }) => {
-            const scored = shows.flatMap((show) => {
-                if (show.votes < minVotes) return [];
-                if (onlyEnded && show.endYear === null) return [];
-                const ratings = ratedSeasons(show.seasons).map(
-                    (season) => season.rating
-                );
-                if (ratings.length < minSeasons) return [];
-                if (ratings.length > maxSeasons) return [];
-                const value = score(ratings, show);
-                return value === null ? [] : [{ show, value }];
-            });
-            scored.sort(
-                (a, b) => b.value - a.value || b.show.votes - a.show.votes
-            );
-            return {
-                ...section,
-                shows: scored.slice(0, limit).map(({ show }) => show),
-            };
-        }
+export const findShowSections = (shows: Show[], limit: number) =>
+    findSections(
+        shows,
+        SECTION_DEFINITIONS,
+        (show) => ratedSeasons(show.seasons).map((season) => season.rating),
+        limit
     );
-}

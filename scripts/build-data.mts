@@ -1,9 +1,13 @@
 /**
  * Downloads IMDb's non-commercial datasets and writes per-season ratings for
- * every sufficiently popular TV series to data/shows.json.
+ * every sufficiently popular TV series, and per-movie ratings for every
+ * sufficiently popular film series, to data/shows.json.
  *
  * Run with `npm run data`. Downloads are cached in .imdb/ for 20 hours, since
  * IMDb only refreshes the files once a day.
+ *
+ * IMDb doesn't say which movies belong together, so film series and their
+ * movies come from Wikidata.
  *
  * Datasets: https://developer.imdb.com/non-commercial-datasets/
  */
@@ -14,7 +18,13 @@ import { createInterface } from 'node:readline';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { createGunzip } from 'node:zlib';
-import type { DataFile, SeasonRating, Show } from '../lib/types';
+import type {
+    DataFile,
+    Franchise,
+    Movie,
+    SeasonRating,
+    Show,
+} from '../lib/types';
 
 const DATASETS_URL = 'https://datasets.imdbws.com';
 const CACHE_DIR = '.imdb';
@@ -29,6 +39,32 @@ const MIN_EPISODE_VOTES = 5;
 const MAX_SEASON_NUMBER = 100;
 
 const SERIES_TYPES = new Set(['tvSeries', 'tvMiniSeries']);
+
+const WIKIDATA_URL = 'https://query.wikidata.org/sparql';
+const USER_AGENT =
+    'season-o-meter/2.0 (https://github.com/simonauner/season-o-meter)';
+
+/** Movies with fewer votes than this are left out of their film series. */
+const MIN_MOVIE_VOTES = 1_000;
+/** Film series whose movies have fewer votes than this in total are left out. */
+const MIN_FRANCHISE_VOTES = 20_000;
+/** Studio filmographies, like "DreamWorks Animation feature films", aren't series. */
+const EXCLUDED_FILM_SERIES = /feature films?$/i;
+
+/**
+ * Every movie that is part of a film series, or of anything Wikidata counts
+ * as a kind of film series (trilogies, film franchises, …). Starting from the
+ * series keeps the query fast; starting from the movies times out.
+ */
+const FILM_SERIES_QUERY = `
+SELECT ?series ?label ?mulLabel ?imdb ?ordinal WHERE {
+  ?series wdt:P31/wdt:P279* wd:Q24856.
+  ?film p:P179 ?statement; wdt:P345 ?imdb.
+  ?statement ps:P179 ?series.
+  OPTIONAL { ?statement pq:P1545 ?ordinal }
+  OPTIONAL { ?series rdfs:label ?label FILTER(LANG(?label) = "en") }
+  OPTIONAL { ?series rdfs:label ?mulLabel FILTER(LANG(?mulLabel) = "mul") }
+}`;
 
 const log = (message: string) =>
     console.log(`[${new Date().toISOString().slice(11, 19)}] ${message}`);
@@ -82,13 +118,66 @@ const round = (value: number, decimals = 2) =>
 
 type Rating = { rating: number; votes: number };
 type Episode = { season: number; rating: Rating | null };
+type FilmSeries = {
+    title: string;
+    /** IMDb id of each movie, with its number in the series if Wikidata has one. */
+    movies: Map<string, number | null>;
+};
+
+async function fetchFilmSeries(): Promise<Map<string, FilmSeries>> {
+    type Binding = Record<string, { value: string } | undefined>;
+    let bindings: Binding[] | undefined;
+    for (let attempt = 1; !bindings; attempt++) {
+        log(`Querying Wikidata for film series…`);
+        try {
+            const res = await fetch(WIKIDATA_URL, {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/sparql-results+json',
+                    'User-Agent': USER_AGENT,
+                },
+                body: new URLSearchParams({ query: FILM_SERIES_QUERY }),
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            // A query that times out is cut off mid-response, so this throws.
+            bindings = (await res.json()).results.bindings;
+        } catch (error) {
+            if (attempt === 3) {
+                throw new Error('Querying Wikidata failed', { cause: error });
+            }
+            log(`Wikidata query failed (${error}), retrying…`);
+            await new Promise((resolve) =>
+                setTimeout(resolve, attempt * 10_000)
+            );
+        }
+    }
+
+    const filmSeries = new Map<string, FilmSeries>();
+    for (const { series, label, mulLabel, imdb, ordinal } of bindings) {
+        const title = label?.value ?? mulLabel?.value;
+        if (!series || !imdb || !title || EXCLUDED_FILM_SERIES.test(title)) {
+            continue;
+        }
+        const id = series.value.replace('http://www.wikidata.org/entity/', '');
+        let entry = filmSeries.get(id);
+        if (!entry) {
+            entry = { title, movies: new Map() };
+            filmSeries.set(id, entry);
+        }
+        const number = ordinal ? Number.parseFloat(ordinal.value) : NaN;
+        entry.movies.set(imdb.value, Number.isNaN(number) ? null : number);
+    }
+    return filmSeries;
+}
 
 async function main() {
-    const [ratingsFile, episodesFile, basicsFile] = await Promise.all([
-        download('title.ratings'),
-        download('title.episode'),
-        download('title.basics'),
-    ]);
+    const [ratingsFile, episodesFile, basicsFile, filmSeries] =
+        await Promise.all([
+            download('title.ratings'),
+            download('title.episode'),
+            download('title.basics'),
+            fetchFilmSeries(),
+        ]);
 
     log('Reading ratings…');
     const ratings = new Map<string, Rating>();
@@ -128,8 +217,13 @@ async function main() {
     for (const episodes of episodesBySeries.values()) {
         for (const id of episodes.keys()) episodeIds.add(id);
     }
+    const movieIds = new Set<string>();
+    for (const { movies } of filmSeries.values()) {
+        for (const id of movies.keys()) movieIds.add(id);
+    }
+    const movieInfo = new Map<string, { title: string; year: number | null }>();
     for await (const row of rows(basicsFile)) {
-        const [id, type, title, , , startYear, endYear, , genres] = row;
+        const [id, type, title, , isAdult, startYear, endYear, , genres] = row;
         if (episodeIds.has(id)) {
             const year = toInt(startYear);
             if (year !== null) episodeYears.set(id, year);
@@ -141,6 +235,8 @@ async function main() {
                 endYear: toInt(endYear),
                 genres: nullable(genres)?.split(',') ?? [],
             });
+        } else if (type === 'movie' && isAdult === '0' && movieIds.has(id)) {
+            movieInfo.set(id, { title, year: toInt(startYear) });
         }
     }
 
@@ -193,15 +289,71 @@ async function main() {
 
     shows.sort((a, b) => b.votes - a.votes);
 
+    log('Computing film series…');
+    const franchises: Franchise[] = [];
+    // Wikidata sometimes has two items for the same series, like "James Bond"
+    // and "Eon James Bond series". Keep one of each set of movies.
+    const seenMovieSets = new Set<string>();
+    const filmSeriesByTitleLength = [...filmSeries].sort(
+        ([, a], [, b]) => a.title.length - b.title.length
+    );
+    for (const [id, { title, movies: members }] of filmSeriesByTitleLength) {
+        const movies = [...members].flatMap(([movieId, number]) => {
+            const info = movieInfo.get(movieId);
+            const rating = ratings.get(movieId);
+            if (!info || !rating || rating.votes < MIN_MOVIE_VOTES) return [];
+            return [{ id: movieId, ...info, ...rating, number }];
+        });
+        if (movies.length < 2) continue;
+
+        const votes = movies.reduce((sum, movie) => sum + movie.votes, 0);
+        if (votes < MIN_FRANCHISE_VOTES) continue;
+
+        const movieSet = movies
+            .map((movie) => movie.id)
+            .sort()
+            .join();
+        if (seenMovieSets.has(movieSet)) continue;
+        seenMovieSets.add(movieSet);
+
+        // Release order, using the number in the series for same-year movies.
+        movies.sort(
+            (a, b) =>
+                (a.year ?? Infinity) - (b.year ?? Infinity) ||
+                (a.number ?? Infinity) - (b.number ?? Infinity) ||
+                a.id.localeCompare(b.id)
+        );
+        const years = movies.flatMap((movie) =>
+            movie.year === null ? [] : [movie.year]
+        );
+        franchises.push({
+            id,
+            title,
+            startYear: years.length ? Math.min(...years) : null,
+            endYear: years.length ? Math.max(...years) : null,
+            votes,
+            movies: movies.map(({ id, title, year, rating, votes }): Movie => ({
+                id,
+                title,
+                year,
+                rating,
+                votes,
+            })),
+        });
+    }
+
+    franchises.sort((a, b) => b.votes - a.votes);
+
     const data: DataFile = {
         generatedAt: new Date().toISOString(),
         shows,
+        franchises,
     };
     await mkdir(path.dirname(OUT_FILE), { recursive: true });
     await writeFile(OUT_FILE, JSON.stringify(data));
     const { size } = await stat(OUT_FILE);
     log(
-        `Wrote ${shows.length} series to ${OUT_FILE} (${(size / 1e6).toFixed(1)} MB)`
+        `Wrote ${shows.length} series and ${franchises.length} film series to ${OUT_FILE} (${(size / 1e6).toFixed(1)} MB)`
     );
 }
 

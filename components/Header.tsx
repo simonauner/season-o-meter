@@ -1,5 +1,6 @@
 import Form from 'next/form';
 import Link from 'next/link';
+import { NavLinks } from './NavLinks';
 import css from './header.module.css';
 
 export function Header() {
@@ -9,15 +10,16 @@ export function Header() {
                 <Link href="/" className={css.logo}>
                     Season-o-meter
                 </Link>
+                <NavLinks />
                 <Form action="/search/" className={css.search} role="search">
                     <label htmlFor="search" className="visually-hidden">
-                        Search series
+                        Search series and movies
                     </label>
                     <input
                         id="search"
                         name="q"
                         type="search"
-                        placeholder="Search series…"
+                        placeholder="Search…"
                         autoComplete="off"
                         required
                     />

@@ -16,6 +16,11 @@ import css from './search.module.css';
 
 const MAX_RESULTS = 30;
 
+const ROUTES = {
+    series: { path: '/shows', parts: 'seasons' },
+    movies: { path: '/movies', parts: 'movies' },
+} satisfies Record<SearchEntry['type'], { path: string; parts: string }>;
+
 const normalize = (text: string) =>
     text
         .normalize('NFD')
@@ -49,7 +54,8 @@ export function SearchResults() {
     if (!query) {
         return (
             <PageIntro title="Search">
-                Type the name of a series in the search box above.
+                Type the name of a series or film series in the search box
+                above.
             </PageIntro>
         );
     }
@@ -63,27 +69,29 @@ export function SearchResults() {
                 <p className={css.status}>Searching…</p>
             ) : results.length === 0 ? (
                 <p className={css.status}>
-                    No series matched. Only series with at least two rated
-                    seasons and 5,000 votes on IMDb are included.
+                    Nothing matched. Only series with at least two rated seasons
+                    and 5,000 votes on IMDb, and film series with at least two
+                    movies, are included.
                 </p>
             ) : (
                 <ul className={css.results}>
                     {results.map((entry) => {
+                        const route = ROUTES[entry.type];
                         const change =
                             entry.ratings[entry.ratings.length - 1] -
                             entry.ratings[0];
                         return (
                             <li key={entry.id}>
                                 <Link
-                                    href={`/shows/${entry.id}/`}
+                                    href={`${route.path}/${entry.id}/`}
                                     className={css.result}
                                 >
                                     <span className={css.name}>
                                         <strong>{entry.title}</strong>
                                         <span>
                                             {formatYears(entry)} ·{' '}
-                                            {entry.ratings.length} seasons ·{' '}
-                                            {formatVotes(entry.votes)} votes
+                                            {entry.ratings.length} {route.parts}{' '}
+                                            · {formatVotes(entry.votes)} votes
                                         </span>
                                     </span>
                                     <span className={css.spark}>

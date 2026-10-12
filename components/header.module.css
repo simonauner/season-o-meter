@@ -11,6 +11,7 @@
     margin: 0 auto;
     padding: 12px 16px;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px 24px;
 }
@@ -20,6 +21,33 @@
     font-size: 1.125rem;
     letter-spacing: -0.01em;
     white-space: nowrap;
+}
+
+.nav {
+    display: flex;
+    gap: 4px;
+}
+
+.navLink {
+    padding: 6px 12px;
+    border-radius: 999px;
+    color: rgb(255 255 255 / 75%);
+    font-weight: 600;
+    font-size: 0.9375rem;
+}
+
+.navLink:hover {
+    color: #fff;
+}
+
+.navLink[aria-current='page'] {
+    background: rgb(255 255 255 / 12%);
+    color: #fff;
+}
+
+.navLink:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
 }
 
 .search {
@@ -46,4 +74,15 @@
 .search input:focus {
     outline: 2px solid var(--accent);
     outline-offset: 1px;
+}
+
+@media (max-width: 639px) {
+    .inner {
+        column-gap: 12px;
+    }
+
+    .search {
+        flex-basis: 100%;
+        max-width: none;
+    }
 }
