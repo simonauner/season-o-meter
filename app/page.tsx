@@ -1,10 +1,15 @@
 import { HomeSection } from '@/components/HomeSection';
 import { ByMinSeasons, MinSeasonsPicker } from '@/components/MinSeasonsFilter';
 import { PageIntro } from '@/components/PageIntro';
+import {
+    FilteredHomeSections,
+    RatedFilterPicker,
+} from '@/components/RatedFilter';
 import { ShowGrid } from '@/components/ShowGrid';
 import { findShowSections } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
 import { forEachMinSeasons } from '@/lib/minSeasons';
+import css from './home.module.css';
 
 const SHOWS_PER_SECTION = 6;
 
@@ -30,8 +35,14 @@ export default function Page() {
                 How TV series are rated season by season, and where they went
                 downhill.
             </PageIntro>
-            <MinSeasonsPicker />
-            <ByMinSeasons variants={variants} />
+            <div className={css.filters}>
+                <MinSeasonsPicker />
+                <RatedFilterPicker />
+            </div>
+            <FilteredHomeSections
+                all={<ByMinSeasons variants={variants} />}
+                limit={SHOWS_PER_SECTION}
+            />
         </>
     );
 }

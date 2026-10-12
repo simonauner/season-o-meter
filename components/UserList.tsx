@@ -1,30 +1,54 @@
 import Link from 'next/link';
 import { formatRating, formatYears } from '@/lib/format';
 import { ratingKey, valueOf, type UserData } from '@/lib/userData';
-import { partAverage, type ListItem } from '@/lib/userList';
+import {
+    imdbScore,
+    partAverage,
+    partCount,
+    rated,
+    watchlist,
+    type ListItem,
+} from '@/lib/userList';
 import { Sparkline } from './Sparkline';
 import css from './userList.module.css';
 
 const plural = (count: number, word: string) =>
     `${count} ${word}${count === 1 ? '' : 's'}`;
 
-const describe = ({ entry, partRatings: { length: ratedParts } }: ListItem) => {
-    if (entry.type === 'movies') {
-        const movies = entry.movieIds?.length ?? entry.ratings.length;
-        return [
-            'Film series',
-            ratedParts > 0
-                ? `${ratedParts} of ${movies} movies rated`
-                : plural(movies, 'movie'),
-        ];
-    }
-    return [
-        'Series',
-        ratedParts > 0
-            ? `${plural(ratedParts, 'season')} rated`
-            : plural(entry.ratings.length, 'season'),
-    ];
+const describe = (item: ListItem) => {
+    const ratedParts = item.partRatings.length;
+    const total = partCount(item);
+    const parts = item.entry.type === 'movies' ? 'movie' : 'season';
+    return ratedParts > 0
+        ? `${ratedParts} of ${plural(total, parts)} rated`
+        : plural(total, parts);
 };
+
+const TYPES = [
+    { type: 'series', title: 'TV series' },
+    { type: 'movies', title: 'Film series' },
+] as const;
+
+type UserListsProps = Omit<UserListProps, 'title'>;
+
+/** TV series and film series apart, each with its watchlist and ratings. */
+export function UserLists({ items, ...props }: UserListsProps) {
+    return TYPES.map(({ type, title }) => {
+        const ofType = items.filter((item) => item.entry.type === type);
+        if (ofType.length === 0) return null;
+        return (
+            <section key={type} className={css.group}>
+                <h2>{title}</h2>
+                <UserList
+                    title="Watchlist"
+                    items={watchlist(ofType)}
+                    {...props}
+                />
+                <UserList title="Rated" items={rated(ofType)} {...props} />
+            </section>
+        );
+    });
+}
 
 type UserListProps = {
     title: string;
@@ -40,14 +64,19 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
 
     return (
         <section className={css.section}>
-            <h2>
+            <h3>
                 {title} <span className={css.count}>{items.length}</span>
-            </h2>
+            </h3>
             <ul className={css.list}>
                 {items.map((item) => {
                     const { entry, rating } = item;
                     const average = rating === null ? partAverage(item) : null;
                     const parts = entry.type === 'series' ? 'season' : 'movie';
+                    const imdb = imdbScore(item);
+                    const ratedParts = item.partRatings.length;
+                    const total = partCount(item);
+                    // An average that leaves out seasons or movies not rated yet.
+                    const partial = average !== null && ratedParts < total;
                     const yours =
                         compareWith &&
                         valueOf(compareWith, ratingKey(entry.id));
@@ -60,7 +89,7 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                                 <span className={css.name}>
                                     <strong>{entry.title}</strong>
                                     <span>
-                                        {[formatYears(entry), ...describe(item)]
+                                        {[formatYears(entry), describe(item)]
                                             .filter(Boolean)
                                             .join(' · ')}
                                     </span>
@@ -79,10 +108,22 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                                     ) : average !== null ? (
                                         <span
                                             className={`${css.rating} ${css.average}`}
-                                            aria-label={`${owner} average ${parts} rating: ${formatRating(average)}`}
-                                            title={`Average of the rated ${parts}s`}
+                                            aria-label={`${owner} average ${parts} rating: ${formatRating(average)}${partial ? `, ${ratedParts} of ${total} ${parts}s rated` : ''}`}
+                                            title={
+                                                partial
+                                                    ? `Average of ${ratedParts} of ${plural(total, parts)}, the rest aren't rated yet`
+                                                    : `Average of the rated ${parts}s`
+                                            }
                                         >
                                             {formatRating(average)}
+                                            {partial && (
+                                                <span
+                                                    className={css.partial}
+                                                    aria-hidden="true"
+                                                >
+                                                    {ratedParts}/{total}
+                                                </span>
+                                            )}
                                         </span>
                                     ) : (
                                         <span
@@ -90,6 +131,18 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                                             aria-label={`${owner} rating: none`}
                                         >
                                             –
+                                        </span>
+                                    )}
+                                    {imdb !== null && (
+                                        <span
+                                            className={css.imdb}
+                                            title={
+                                                average !== null
+                                                    ? `IMDb average of the same ${parts}s`
+                                                    : undefined
+                                            }
+                                        >
+                                            IMDb {formatRating(imdb)}
                                         </span>
                                     )}
                                     {yours != null && (

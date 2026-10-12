@@ -1,4 +1,5 @@
 import type { SearchEntry } from './searchIndex';
+import { mean } from './stats';
 import type { UserData } from './userData';
 
 export type ListItem = {
@@ -7,12 +8,20 @@ export type ListItem = {
     rating: number | null;
     /** Ratings of its seasons, or of the movies in a film series. */
     partRatings: number[];
+    /** IMDb ratings of the same seasons or movies, where IMDb has one. */
+    imdbPartRatings: number[];
     onWatchlist: boolean;
     /** When anything about it last changed. */
     updatedAt: number;
 };
 
 const KEY = /^([rw]):([^/]+)(?:\/(\d+))?$/;
+
+/** Adds the visitor's rating of a season or movie at `index` in `entry.ratings`. */
+const addPart = (item: ListItem, rating: number, index = -1) => {
+    item.partRatings.push(rating);
+    if (index >= 0) item.imdbPartRatings.push(item.entry.ratings[index]);
+};
 
 /** The series and film series the visitor has rated or put on the watchlist. */
 export function listItems(data: UserData, index: SearchEntry[]): ListItem[] {
@@ -33,6 +42,7 @@ export function listItems(data: UserData, index: SearchEntry[]): ListItem[] {
                 entry,
                 rating: null,
                 partRatings: [],
+                imdbPartRatings: [],
                 onWatchlist: false,
                 updatedAt,
             };
@@ -50,12 +60,22 @@ export function listItems(data: UserData, index: SearchEntry[]): ListItem[] {
         if (kind === 'w') {
             if (entry) itemFor(entry, updatedAt).onWatchlist = true;
         } else if (season) {
-            if (entry) itemFor(entry, updatedAt).partRatings.push(value);
+            if (entry) {
+                addPart(
+                    itemFor(entry, updatedAt),
+                    value,
+                    entry.seasons?.indexOf(Number(season))
+                );
+            }
         } else if (entry) {
             itemFor(entry, updatedAt).rating = value;
         } else {
             for (const franchise of byMovie.get(id) ?? []) {
-                itemFor(franchise, updatedAt).partRatings.push(value);
+                addPart(
+                    itemFor(franchise, updatedAt),
+                    value,
+                    franchise.movieIds?.indexOf(id)
+                );
             }
         }
     }
@@ -75,6 +95,26 @@ export const partAverage = ({ partRatings }: ListItem) =>
         ? null
         : partRatings.reduce((sum, rating) => sum + rating, 0) /
           partRatings.length;
+
+/**
+ * IMDb's rating to compare with the visitor's. When the visitor has only rated
+ * some seasons or movies, it's the average of the same ones. Otherwise it's
+ * the series' own rating, or the average of a film series' movies.
+ */
+export function imdbScore(item: ListItem) {
+    const { entry, rating, partRatings, imdbPartRatings } = item;
+    if (rating === null && partRatings.length > 0) {
+        return imdbPartRatings.length > 0 ? mean(imdbPartRatings) : null;
+    }
+    if (entry.rating !== undefined) return entry.rating;
+    return entry.ratings.length > 0 ? mean(entry.ratings) : null;
+}
+
+/** How many seasons, or movies in a film series, there are to rate. */
+export const partCount = ({ entry }: ListItem) =>
+    entry.type === 'movies'
+        ? (entry.movieIds?.length ?? entry.ratings.length)
+        : (entry.seasonCount ?? entry.ratings.length);
 
 /** The overall rating, or else the average of the parts. */
 const score = (item: ListItem) => item.rating ?? partAverage(item) ?? 0;

@@ -41,6 +41,12 @@ the series front page and list pages lets visitors require at least two, three
 or four rated seasons in every section (four by default). Every choice is
 rendered at build time, and the visitor's choice is remembered in the browser.
 
+On the series front page, visitors can also show only series they have rated
+(as a whole or any season), or only ones they haven't. That depends on their
+own ratings, so it can't be rendered at build time. Instead, every section's
+full list of matches is written to `/home-sections.json`, which is fetched
+the first time the filter is used.
+
 ## Your own ratings and watchlist
 
 Visitors can rate a series or film series as a whole, each season and each
@@ -62,10 +68,6 @@ are drawn next to IMDb's in the chart, and everything is listed on
   devices. They sync when a page opens, when it comes back into view, a
   second after a change and every minute while it's visible
   ([lib/sync.ts](lib/sync.ts)).
-- **IMDb.** IMDb has no API for a user's ratings, but its ratings and
-  watchlist CSV exports can be imported on `/mine/`
-  ([lib/imdbImport.ts](lib/imdbImport.ts)). Season ratings can't be, since
-  IMDb rates episodes.
 
 ## Sync server
 
