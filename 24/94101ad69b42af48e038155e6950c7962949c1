@@ -1,0 +1,19 @@
+components/ratingTable.module.css
+  s_c03be7faca5502::t_c061f918611a46 2-3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2494101ad69b42af48e038155e6950c7962949c1",
+  "prompts": {},
+  "sessions": {
+    "s_c03be7faca5502": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dca9d4d2-f298-4ea7-a1e7-8b14222a846d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
