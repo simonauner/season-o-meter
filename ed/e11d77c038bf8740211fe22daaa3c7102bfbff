@@ -1,0 +1,29 @@
+lib/useStaticJson.ts
+  s_5d055144b1db7e::t_a24bf8914ac65d 1-42
+lib/storedChoice.ts
+  s_5d055144b1db7e::t_7a72281e841b36 1-58
+components/ChoicePicker.tsx
+  s_5d055144b1db7e::t_52a40c52cb5195 1-58
+components/choicePicker.module.css
+  s_5d055144b1db7e::t_58c6c081116aa2 1-75
+components/MinSeasonsFilter.tsx
+  s_5d055144b1db7e::t_149bab8d1def33 3,9-10,12-16,18,20,24-30
+lib/useSearchIndex.ts
+  s_5d055144b1db7e::t_9cc54a111d9b28 4,8-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ede11d77c038bf8740211fe22daaa3c7102bfbff",
+  "prompts": {},
+  "sessions": {
+    "s_5d055144b1db7e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45da416f-be94-4ab3-93c7-81beede06512",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
