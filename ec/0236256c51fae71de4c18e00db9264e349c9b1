@@ -1,0 +1,28 @@
+components/MinSeasonsFilter.tsx
+  s_e752c67912f7ba::t_2d91b5cf7766c7 58
+components/hero.module.css
+  s_e752c67912f7ba::t_8dda6af6ba770c 1-179
+components/Hero.tsx
+  s_e752c67912f7ba::t_2ac5a960d9c57f 1-169
+components/FeaturedShow.tsx
+  s_e752c67912f7ba::t_38ddd6a73483b4 1-73
+app/page.tsx
+  s_e752c67912f7ba::t_4de296aa5aaafc 1-2,13-15,17-24,27-31,33-36,38-47,52
+  s_e752c67912f7ba::t_36601f1912b233 25-26,32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ec0236256c51fae71de4c18e00db9264e349c9b1",
+  "prompts": {},
+  "sessions": {
+    "s_e752c67912f7ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "378ad334-f3f4-47fe-b34c-75c7d3843d06",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
