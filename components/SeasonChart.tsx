@@ -8,25 +8,9 @@ import css from './seasonChart.module.css';
 const HEIGHT = 300;
 const MARGIN = { top: 28, right: 20, bottom: 40, left: 40 };
 
-/** A rating domain that hugs the data, so changes between seasons are visible. */
-const ratingDomain = (ratings: number[]): [number, number] => {
-    let min = Math.max(0, Math.floor(Math.min(...ratings) - 0.3));
-    let max = Math.min(10, Math.ceil(Math.max(...ratings) + 0.3));
-    while (max - min < 2) {
-        if (min > 0) min--;
-        else max++;
-    }
-    return [min, max];
-};
-
-const ticks = ([min, max]: [number, number]) => {
-    const step = max - min <= 3 ? 0.5 : 1;
-    const result: number[] = [];
-    for (let value = min; value <= max + 1e-9; value += step) {
-        result.push(value);
-    }
-    return result;
-};
+// Always the full 0–10 scale, so charts of different series are comparable.
+const DOMAIN: [number, number] = [0, 10];
+const TICKS = [0, 2, 4, 6, 8, 10];
 
 export function SeasonChart({ seasons }: { seasons: RatedSeason[] }) {
     const wrapperRef = useRef<HTMLDivElement>(null);
@@ -44,7 +28,6 @@ export function SeasonChart({ seasons }: { seasons: RatedSeason[] }) {
     }, []);
 
     const ratings = seasons.map((season) => season.rating);
-    const domain = ratingDomain(ratings);
     const innerWidth = Math.max(width - MARGIN.left - MARGIN.right, 1);
     const innerHeight = HEIGHT - MARGIN.top - MARGIN.bottom;
 
@@ -53,7 +36,7 @@ export function SeasonChart({ seasons }: { seasons: RatedSeason[] }) {
     const x = (index: number) => MARGIN.left + step * (index + 0.5);
     const y = (rating: number) =>
         MARGIN.top +
-        ((domain[1] - rating) / (domain[1] - domain[0])) * innerHeight;
+        ((DOMAIN[1] - rating) / (DOMAIN[1] - DOMAIN[0])) * innerHeight;
 
     const points = seasons.map((s, i) => `${x(i)},${y(s.rating)}`).join(' ');
     const baseline = MARGIN.top + innerHeight;
@@ -111,7 +94,7 @@ export function SeasonChart({ seasons }: { seasons: RatedSeason[] }) {
                 className={css.svg}
                 aria-hidden="true"
             >
-                {ticks(domain).map((tick) => (
+                {TICKS.map((tick) => (
                     <g key={tick}>
                         <line
                             x1={MARGIN.left}
@@ -127,7 +110,7 @@ export function SeasonChart({ seasons }: { seasons: RatedSeason[] }) {
                             textAnchor="end"
                             dominantBaseline="middle"
                         >
-                            {Number.isInteger(tick) ? tick : tick.toFixed(1)}
+                            {tick}
                         </text>
                     </g>
                 ))}
