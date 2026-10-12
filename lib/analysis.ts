@@ -1,4 +1,5 @@
-import { DEFAULT_MIN_SEASONS, type MinSeasons } from './minSeasons';
+import { numberWord } from './format';
+import { DEFAULT_MIN_COUNT, type MinCount } from './minCount';
 import { findSections, type SectionDefinition } from './sections';
 import { mean, slope } from './stats';
 import type { RatedSeason, SeasonRating, Show } from './types';
@@ -73,12 +74,6 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
 
 const MIN_VOTES = 50_000;
 
-const NUMBER_WORDS: Record<number, string> = {
-    2: 'two',
-    3: 'three',
-    4: 'four',
-};
-
 const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'most-popular',
@@ -92,7 +87,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
         slug: 'best-over-time',
         title: 'Best over time',
         description: (minSeasons) =>
-            `Highest average across all seasons, at least ${NUMBER_WORDS[minSeasons] ?? minSeasons} of them.`,
+            `Highest average across all seasons, at least ${numberWord(minSeasons)} of them.`,
         minVotes: MIN_VOTES,
         minRatings: 2,
         score: (ratings) => mean(ratings),
@@ -175,7 +170,7 @@ export const SHOW_SECTION_SLUGS = SECTION_DEFINITIONS.map(({ slug }) => slug);
 export const findShowSections = (
     shows: Show[],
     limit: number,
-    minSeasons: MinSeasons = DEFAULT_MIN_SEASONS
+    minSeasons: MinCount = DEFAULT_MIN_COUNT.series
 ) =>
     findSections(
         shows,

@@ -1,3 +1,5 @@
+import { numberWord } from './format';
+import { DEFAULT_MIN_COUNT, type MinCount } from './minCount';
 import { findSections, type SectionDefinition } from './sections';
 import { mean, slope } from './stats';
 import type { Franchise, Movie } from './types';
@@ -75,8 +77,8 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
     {
         slug: 'best-over-time',
         title: 'Best over time',
-        description:
-            'Highest average across all movies, at least three of them.',
+        description: (minMovies) =>
+            `Highest average across all movies, at least ${numberWord(minMovies)} of them.`,
         minVotes: MIN_VOTES,
         minRatings: 3,
         score: (ratings) => mean(ratings),
@@ -151,10 +153,15 @@ export const FRANCHISE_SECTION_SLUGS = SECTION_DEFINITIONS.map(
     ({ slug }) => slug
 );
 
-export const findFranchiseSections = (franchises: Franchise[], limit: number) =>
+export const findFranchiseSections = (
+    franchises: Franchise[],
+    limit: number,
+    minMovies: MinCount = DEFAULT_MIN_COUNT.movies
+) =>
     findSections(
         franchises,
         SECTION_DEFINITIONS,
         (franchise) => franchise.movies.map((movie) => movie.rating),
-        limit
+        limit,
+        minMovies
     );

@@ -9,9 +9,9 @@ import {
     useState,
     useSyncExternalStore,
 } from 'react';
-import type { MinSeasons } from '@/lib/minSeasons';
+import type { Kind, MinCount } from '@/lib/minCount';
 import { storedChoice } from '@/lib/storedChoice';
-import { useMinSeasons } from './MinSeasonsFilter';
+import { useMinCount } from './MinCountFilter';
 import css from './hero.module.css';
 
 const visibility = storedChoice(
@@ -38,14 +38,17 @@ const usePick = () =>
  * rendered for the visitor's chosen minimum. The visitor can hide it.
  */
 export function Hero({
+    kind,
     label,
     variants,
 }: {
+    /** Whose minimum picks the candidates. */
+    kind: Kind;
     /** Accessible name of the section. */
     label: string;
-    variants: Record<MinSeasons, ReactNode[]>;
+    variants: Record<MinCount, ReactNode[]>;
 }) {
-    const candidates = variants[useMinSeasons()];
+    const candidates = variants[useMinCount(kind)];
     // Nothing is drawn until both are known in the browser.
     const shown = visibility.useStoredChoice();
     const random = usePick();
