@@ -5,9 +5,6 @@ export type MinSeasons = (typeof MIN_SEASONS_OPTIONS)[number];
 
 export const DEFAULT_MIN_SEASONS: MinSeasons = 4;
 
-export const isMinSeasons = (value: unknown): value is MinSeasons =>
-    MIN_SEASONS_OPTIONS.includes(value as MinSeasons);
-
 /**
  * Builds one value per filter choice. The site is static, so every choice is
  * rendered at build time and the visitor's choice picks one in the browser.

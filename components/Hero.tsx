@@ -10,56 +10,28 @@ import {
     useSyncExternalStore,
 } from 'react';
 import type { MinSeasons } from '@/lib/minSeasons';
+import { storedChoice } from '@/lib/storedChoice';
 import { useMinSeasons } from './MinSeasonsFilter';
 import css from './hero.module.css';
 
-const STORAGE_KEY = 'season-o-meter:hide-hero';
+const visibility = storedChoice(
+    'season-o-meter:hero',
+    ['shown', 'hidden'] as const,
+    'shown'
+);
 
-const listeners = new Set<() => void>();
-
-/** The latest choice, for when storage is blocked. */
-let hidden = false;
+const hide = () => visibility.set('hidden');
 
 /** Drawn once per page load, so the pick stays put when the filter changes. */
 let pick: number | null = null;
 
-function subscribe(listener: () => void) {
-    listeners.add(listener);
-    // Keeps other open tabs in step.
-    window.addEventListener('storage', listener);
-    return () => {
-        listeners.delete(listener);
-        window.removeEventListener('storage', listener);
-    };
-}
-
-function isHidden() {
-    try {
-        if (localStorage.getItem(STORAGE_KEY) === 'true') return true;
-    } catch {
-        // Storage can be blocked, e.g. in private windows.
-    }
-    return hidden;
-}
-
-function hide() {
-    hidden = true;
-    try {
-        localStorage.setItem(STORAGE_KEY, 'true');
-    } catch {
-        // The choice then only lasts until the page is reloaded.
-    }
-    listeners.forEach((listener) => listener());
-}
-
 const getPick = () => (pick ??= Math.random());
 
-/** Null until known in the browser, so the server renders nothing. */
-const useHidden = () =>
-    useSyncExternalStore<boolean | null>(subscribe, isHidden, () => null);
+// The pick never changes, so there is nothing to subscribe to.
+const subscribeNever = () => () => {};
 
 const usePick = () =>
-    useSyncExternalStore<number | null>(subscribe, getPick, () => null);
+    useSyncExternalStore<number | null>(subscribeNever, getPick, () => null);
 
 /**
  * A featured item, picked at random in the browser from the candidates
@@ -74,10 +46,11 @@ export function Hero({
     variants: Record<MinSeasons, ReactNode[]>;
 }) {
     const candidates = variants[useMinSeasons()];
-    const isHiddenNow = useHidden();
+    // Nothing is drawn until both are known in the browser.
+    const shown = visibility.useStoredChoice();
     const random = usePick();
 
-    if (isHiddenNow !== false || random === null || candidates.length === 0) {
+    if (shown !== 'shown' || random === null || candidates.length === 0) {
         return null;
     }
 
