@@ -1,0 +1,29 @@
+components/PostCredits.tsx
+  s_e8b9aa96710f71::t_c44372f228d12f 1-8,12-49
+  s_e8b9aa96710f71::t_eb09565535a5cf 9-11
+lib/footer.ts
+  s_e8b9aa96710f71::t_0cd9b989673913 1-156
+components/footer.module.css
+  s_e8b9aa96710f71::t_d198c8402f38ab 32
+  s_e8b9aa96710f71::t_8d12ce549ccb02 2-4,8-12,16,18-31,33-337
+components/Footer.tsx
+  s_e8b9aa96710f71::t_495f8231f00e4b 1-2,4-5,8,10-44,46-47,54-68,73-99
+  s_e8b9aa96710f71::t_d198c8402f38ab 9
+  s_e8b9aa96710f71::t_eb09565535a5cf 69-72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a1ec897cb5e1475c3872b2a910fec23ad7c9c637",
+  "prompts": {},
+  "sessions": {
+    "s_e8b9aa96710f71": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e72bc7e-a423-4f1d-842b-d7677d13f940",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
