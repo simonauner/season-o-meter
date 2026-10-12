@@ -3,7 +3,7 @@
 See how TV series are rated season by season, and film series movie by movie:
 where they peaked and where they went downhill.
 
-**Live at <https://www.auner.se/season-o-meter/>**, rebuilt every night
+**Live at <https://seasonometer.com/>**, rebuilt every night
 from the latest data.
 
 Ratings come from [IMDb's non-commercial datasets](https://developer.imdb.com/non-commercial-datasets/).
@@ -30,8 +30,8 @@ The site is fully static. There are no API calls when someone visits it.
    a page per series and film series, a list page per section, and a search
    index for client-side search.
 3. [GitHub Actions](.github/workflows/deploy.yml) does both every night and
-   deploys to GitHub Pages at <https://www.auner.se/season-o-meter/>. The
-   repository is public, so Actions minutes are free.
+   deploys to GitHub Pages at <https://seasonometer.com/>. The repository is
+   public, so Actions minutes are free.
 
 The front-page sections ("Slow starters", "Collapsed like a house of cards",
 …) and the verdict for each series are defined in
