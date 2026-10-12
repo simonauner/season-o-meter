@@ -1,0 +1,21 @@
+app/mine/MyList.tsx
+  s_dc532c7f2a4f20::t_106baf96b1bc72 3,8,40-41,43-44
+app/mine/mine.module.css
+  s_dc532c7f2a4f20::t_abafbf3656a7a4 77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "562c6075bb6e88bd703c19a344b6a1c55525c3a1",
+  "prompts": {},
+  "sessions": {
+    "s_dc532c7f2a4f20": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2b95629b-16af-45fd-9705-88f2f63802ed",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
