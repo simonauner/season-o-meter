@@ -1,7 +1,7 @@
 import { FeaturedShow } from '@/components/FeaturedShow';
 import { Hero } from '@/components/Hero';
 import { HomeSection } from '@/components/HomeSection';
-import { ByMinSeasons, MinSeasonsPicker } from '@/components/MinSeasonsFilter';
+import { ByMinCount, MinCountPicker } from '@/components/MinCountFilter';
 import { PageIntro } from '@/components/PageIntro';
 import {
     FilteredHomeSections,
@@ -10,7 +10,7 @@ import {
 import { ShowGrid } from '@/components/ShowGrid';
 import { findShowSections } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
-import { forEachMinSeasons } from '@/lib/minSeasons';
+import { forEachMinCount } from '@/lib/minCount';
 import css from './home.module.css';
 
 const SHOWS_PER_SECTION = 6;
@@ -19,11 +19,11 @@ const SHOWS_PER_SECTION = 6;
 const FEATURED_CANDIDATES = 3;
 
 export default function Page() {
-    const sectionsByMinSeasons = forEachMinSeasons((minSeasons) =>
+    const sectionsByMinSeasons = forEachMinCount((minSeasons) =>
         findShowSections(getShows(), SHOWS_PER_SECTION, minSeasons)
     );
 
-    const featured = forEachMinSeasons((minSeasons) => {
+    const featured = forEachMinCount((minSeasons) => {
         const popular = sectionsByMinSeasons[minSeasons].find(
             (section) => section.slug === 'most-popular'
         );
@@ -39,7 +39,7 @@ export default function Page() {
             ));
     });
 
-    const variants = forEachMinSeasons((minSeasons) =>
+    const variants = forEachMinCount((minSeasons) =>
         sectionsByMinSeasons[minSeasons].map((section) => (
             <HomeSection
                 key={section.slug}
@@ -54,17 +54,18 @@ export default function Page() {
 
     return (
         <>
-            <Hero label="Featured series" variants={featured} />
+            <Hero kind="series" label="Featured series" variants={featured} />
             <PageIntro title="Where did it peak?">
                 How TV series are rated season by season, and where they went
                 downhill.
             </PageIntro>
             <div className={css.filters}>
-                <MinSeasonsPicker />
+                <MinCountPicker kind="series" />
                 <RatedFilterPicker />
             </div>
             <FilteredHomeSections
-                all={<ByMinSeasons variants={variants} />}
+                kind="series"
+                all={<ByMinCount kind="series" variants={variants} />}
                 limit={SHOWS_PER_SECTION}
             />
         </>

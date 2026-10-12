@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ByMinSeasons, MinSeasonsPicker } from '@/components/MinSeasonsFilter';
+import { ByMinCount, MinCountPicker } from '@/components/MinCountFilter';
 import { PageIntro } from '@/components/PageIntro';
 import { ShowGrid } from '@/components/ShowGrid';
 import { findShowSections, SHOW_SECTION_SLUGS } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
-import { forEachMinSeasons, type MinSeasons } from '@/lib/minSeasons';
+import { forEachMinCount, type MinCount } from '@/lib/minCount';
 import css from './list.module.css';
 
 const SHOWS_PER_LIST = 24;
@@ -16,7 +16,7 @@ export function generateStaticParams() {
     return SHOW_SECTION_SLUGS.map((slug) => ({ slug }));
 }
 
-const getSection = (slug: string, minSeasons?: MinSeasons) =>
+const getSection = (slug: string, minSeasons?: MinCount) =>
     findShowSections(getShows(), SHOWS_PER_LIST, minSeasons).find(
         (section) => section.slug === slug
     );
@@ -33,23 +33,25 @@ export async function generateMetadata({
 export default async function Page({ params }: PageProps<'/lists/[slug]'>) {
     const { slug } = await params;
     if (!SHOW_SECTION_SLUGS.includes(slug)) notFound();
-    const sections = forEachMinSeasons((minSeasons) =>
+    const sections = forEachMinCount((minSeasons) =>
         getSection(slug, minSeasons)!
     );
 
     return (
         <>
-            <ByMinSeasons
-                variants={forEachMinSeasons((minSeasons) => (
+            <ByMinCount
+                kind="series"
+                variants={forEachMinCount((minSeasons) => (
                     <PageIntro title={sections[minSeasons].title}>
                         {sections[minSeasons].description}
                     </PageIntro>
                 ))}
             />
-            <MinSeasonsPicker />
+            <MinCountPicker kind="series" />
             <div className={css.list}>
-                <ByMinSeasons
-                    variants={forEachMinSeasons((minSeasons) => (
+                <ByMinCount
+                    kind="series"
+                    variants={forEachMinCount((minSeasons) => (
                         <ShowGrid shows={sections[minSeasons].items} />
                     ))}
                 />

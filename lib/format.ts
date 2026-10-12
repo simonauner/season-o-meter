@@ -1,5 +1,14 @@
 import type { Show } from './types';
 
+const NUMBER_WORDS: Record<number, string> = {
+    2: 'two',
+    3: 'three',
+    4: 'four',
+};
+
+/** Small numbers in words, as in "at least three of them". */
+export const numberWord = (n: number) => NUMBER_WORDS[n] ?? String(n);
+
 export const formatRating = (rating: number) => rating.toFixed(1);
 
 export const formatChange = (change: number) => {
