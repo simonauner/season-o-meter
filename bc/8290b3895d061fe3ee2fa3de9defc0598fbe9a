@@ -1,0 +1,24 @@
+sync/worker-configuration.d.ts
+  s_c81e265f5735ac::t_4cec974b42bd3d 2,5
+sync/wrangler.jsonc
+  s_c81e265f5735ac::t_f7733d503a68f1 12
+README.md
+  s_c81e265f5735ac::t_ac5aa79cea5cfa 6
+  s_c81e265f5735ac::t_9b20864a10bf8b 33-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bc8290b3895d061fe3ee2fa3de9defc0598fbe9a",
+  "prompts": {},
+  "sessions": {
+    "s_c81e265f5735ac": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "27bfe9b0-41af-44e4-9d4f-5b6589b1705a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
