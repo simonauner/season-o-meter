@@ -1,0 +1,64 @@
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    height: 100%;
+    padding: 16px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    transition: border-color 0.15s;
+}
+
+.card:hover,
+.card:focus-visible {
+    border-color: var(--accent);
+}
+
+.card:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+}
+
+.meta {
+    margin: 2px 0 0;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+}
+
+.verdict {
+    margin: 8px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.change {
+    display: flex;
+    justify-content: space-between;
+    margin: 6px 0 0;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-variant-numeric: tabular-nums;
+}
+
+.change strong {
+    color: var(--text-primary);
+}
+
+.up {
+    color: var(--up);
+    font-weight: 600;
+}
+
+.down {
+    color: var(--down);
+    font-weight: 600;
+}

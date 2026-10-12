@@ -1,34 +1,49 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Season-o-meter
 
-## Getting Started
+See how TV series are rated season by season: where they peaked and where
+they went downhill.
 
-First, run the development server:
+Ratings come from [IMDb's non-commercial datasets](https://developer.imdb.com/non-commercial-datasets/).
+A season's rating is the average of its episode ratings. Episodes with fewer
+than five votes are left out, and only series with at least 5,000 votes and two
+rated seasons are included.
+
+## How it works
+
+The site is fully static. There are no API calls when someone visits it.
+
+1. `npm run data` ([scripts/build-data.mts](scripts/build-data.mts)) downloads
+   the IMDb datasets (~290 MB, cached in `.imdb/` for 20 hours) and writes
+   per-season ratings for every included series to `data/shows.json`.
+2. `npm run build` reads that file and exports every page to `out/`:
+   a front page with sections, a page per series, a list page per section,
+   and a search index for client-side search.
+3. [GitHub Actions](.github/workflows/deploy.yml) does both every night and
+   deploys to GitHub Pages. The repository is public, so Actions minutes are
+   free.
+
+The front-page sections ("Slow starters", "Collapsed like a house of cards",
+…) and the verdict for each series are defined in
+[lib/analysis.ts](lib/analysis.ts).
+
+## Getting started
 
 ```bash
+nvm use
+npm install
+npm run data
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## Scripts
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Script              | What it does                                      |
+| ------------------- | ------------------------------------------------- |
+| `npm run data`      | Download IMDb datasets and generate the show data |
+| `npm run dev`       | Start the dev server                              |
+| `npm run build`     | Static export to `out/`                           |
+| `npm run lint`      | ESLint                                            |
+| `npm run typecheck` | Generate route types and run tsc                  |
+| `npm run format`    | Prettier                                          |

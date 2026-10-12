@@ -1,0 +1,32 @@
+.tile {
+    padding: 16px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+}
+
+.label {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.value {
+    margin-top: 4px;
+    font-size: 2rem;
+    font-weight: 650;
+    line-height: 1.1;
+}
+
+.up {
+    color: var(--up);
+}
+
+.down {
+    color: var(--down);
+}
+
+.detail {
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+}
