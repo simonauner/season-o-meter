@@ -7,13 +7,17 @@ import { fromImdbExport } from '@/lib/imdbImport';
 import type { SearchEntry } from '@/lib/searchIndex';
 import { encodeShare, type UserData } from '@/lib/userData';
 import { listItems, rated, watchlist } from '@/lib/userList';
+import { liveShareLink, useSyncStatus } from '@/lib/sync';
 import { importData, useUserData } from '@/lib/userStore';
 import { useSearchIndex } from '@/lib/useSearchIndex';
+import { LinkField } from './LinkField';
 import css from './mine.module.css';
+import { ConnectPrompt, SyncPanel } from './SyncPanel';
 
 export function MyList() {
     const data = useUserData();
     const { index, failed } = useSearchIndex();
+    const secret = useSyncStatus()?.secret ?? null;
     const items = useMemo(
         () => (data && index ? listItems(data, index) : null),
         [data, index]
@@ -22,9 +26,12 @@ export function MyList() {
     return (
         <>
             <PageIntro title="My list">
-                Your ratings and watchlist are kept in this browser. Nothing
-                leaves it unless you share a link.
+                {secret
+                    ? 'Your ratings and watchlist are kept in this browser and synced with your other devices.'
+                    : 'Your ratings and watchlist are kept in this browser. Nothing leaves it unless you share a link or turn on sync.'}
             </PageIntro>
+
+            <ConnectPrompt />
 
             {failed ? (
                 <p className={css.status}>Could not load your list.</p>
@@ -47,8 +54,9 @@ export function MyList() {
             )}
 
             <div className={css.panels}>
+                <SyncPanel />
                 {data && items && items.length > 0 && (
-                    <SharePanel data={data} />
+                    <SharePanel data={data} secret={secret} />
                 )}
                 <ImdbPanel index={index} />
             </div>
@@ -56,76 +64,46 @@ export function MyList() {
     );
 }
 
-function SharePanel({ data }: { data: UserData }) {
+function SharePanel({
+    data,
+    secret,
+}: {
+    data: UserData;
+    /** With sync on, the link shows the list live instead of a snapshot. */
+    secret: string | null;
+}) {
     const [link, setLink] = useState<string | null>(null);
-    const [copied, setCopied] = useState(false);
 
-    // Kept up to date, so the link always has the latest ratings.
+    // Kept up to date, so a snapshot link always has the latest ratings.
     useEffect(() => {
         let live = true;
-        encodeShare(data).then((encoded) => {
-            if (!live) return;
-            setLink(
-                `${location.origin}${process.env.NEXT_PUBLIC_BASE_PATH}/shared/#${encoded}`
-            );
-            setCopied(false);
+        const make = secret
+            ? liveShareLink(secret)
+            : encodeShare(data).then(
+                  (encoded) =>
+                      `${location.origin}${process.env.NEXT_PUBLIC_BASE_PATH}/shared/#${encoded}`
+              );
+        make.then((made) => {
+            if (live) setLink(made);
         });
         return () => {
             live = false;
         };
-    }, [data]);
-
-    const copy = async () => {
-        if (!link) return;
-        try {
-            await navigator.clipboard.writeText(link);
-            setCopied(true);
-        } catch {
-            // The link is still there to copy by hand.
-        }
-    };
+    }, [data, secret]);
 
     return (
         <section className={css.panel}>
-            <h2>Share or move your list</h2>
+            <h2>Share your list</h2>
             <p>
-                Anyone with this link can see your ratings and watchlist as they
-                are right now. To move your list to another device, open the
-                link there and choose Import.
+                {secret
+                    ? 'Anyone with this link can see your ratings and watchlist, always with your latest changes. They can’t change anything.'
+                    : 'Anyone with this link can see your ratings and watchlist as they are right now. To move your list to another device, open the link there and choose Import.'}
             </p>
-            <div className={css.linkRow}>
-                <input
-                    className={css.link}
-                    readOnly
-                    value={link ?? ''}
-                    aria-label="Link to your list"
-                    onFocus={(event) => event.target.select()}
-                />
-                <button
-                    type="button"
-                    className={css.button}
-                    onClick={copy}
-                    disabled={!link}
-                >
-                    {copied ? 'Copied' : 'Copy link'}
-                </button>
-                {link && 'share' in navigator && (
-                    <button
-                        type="button"
-                        className={css.button}
-                        onClick={() =>
-                            navigator
-                                .share({
-                                    title: 'My Season-o-meter list',
-                                    url: link,
-                                })
-                                .catch(() => {})
-                        }
-                    >
-                        Share…
-                    </button>
-                )}
-            </div>
+            <LinkField
+                link={link}
+                label="Link to your list"
+                shareTitle="My Season-o-meter list"
+            />
         </section>
     );
 }

@@ -1,27 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PageIntro } from '@/components/PageIntro';
 import { UserList } from '@/components/UserList';
+import { fetchList, syncAvailable } from '@/lib/sync';
+import { isListId } from '@/lib/syncProtocol';
 import { decodeShare, type UserData } from '@/lib/userData';
 import { listItems, rated, watchlist } from '@/lib/userList';
 import { importData, useUserData } from '@/lib/userStore';
+import { useHash } from '@/lib/useHash';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import css from '../mine/mine.module.css';
 
-function subscribeToHash(listener: () => void) {
-    window.addEventListener('hashchange', listener);
-    return () => window.removeEventListener('hashchange', listener);
-}
+const LIVE_PREFIX = 'list=';
 
-/** The URL fragment, or null until it has been read in the browser. */
-const useHash = () =>
-    useSyncExternalStore(
-        subscribeToHash,
-        () => location.hash.slice(1),
-        () => null
-    );
+/** A live list from the sync server, or a snapshot carried in the link. */
+async function load(hash: string): Promise<UserData | null> {
+    if (!hash.startsWith(LIVE_PREFIX)) return decodeShare(hash);
+    const listId = hash.slice(LIVE_PREFIX.length);
+    if (!syncAvailable || !isListId(listId)) return null;
+    return fetchList(listId).catch(() => null);
+}
 
 export function SharedList() {
     const hash = useHash();
@@ -36,7 +36,7 @@ export function SharedList() {
     useEffect(() => {
         if (hash === null) return;
         let live = true;
-        decodeShare(hash).then((data) => {
+        load(hash).then((data) => {
             if (live) setDecoded({ hash, data });
         });
         return () => {
@@ -54,8 +54,8 @@ export function SharedList() {
     if (shared === null) {
         return (
             <PageIntro title="Shared list">
-                This link doesn&apos;t contain a list. Check that the whole link
-                was copied.
+                Could not open this list. Check that the whole link was copied,
+                or try again later.
             </PageIntro>
         );
     }
