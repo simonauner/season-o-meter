@@ -1,4 +1,6 @@
 .scroll {
+    /* Contains the visually hidden header, which would widen the page. */
+    position: relative;
     overflow-x: auto;
 }
 
