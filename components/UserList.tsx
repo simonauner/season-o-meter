@@ -1,28 +1,25 @@
 import Link from 'next/link';
 import { formatRating, formatYears } from '@/lib/format';
 import { ratingKey, valueOf, type UserData } from '@/lib/userData';
-import { partAverage, type ListItem } from '@/lib/userList';
+import { partAverage, partCount, type ListItem } from '@/lib/userList';
 import { Sparkline } from './Sparkline';
 import css from './userList.module.css';
 
 const plural = (count: number, word: string) =>
     `${count} ${word}${count === 1 ? '' : 's'}`;
 
-const describe = ({ entry, partRatings: { length: ratedParts } }: ListItem) => {
-    if (entry.type === 'movies') {
-        const movies = entry.movieIds?.length ?? entry.ratings.length;
-        return [
-            'Film series',
-            ratedParts > 0
-                ? `${ratedParts} of ${movies} movies rated`
-                : plural(movies, 'movie'),
-        ];
-    }
+const describe = (item: ListItem) => {
+    const ratedParts = item.partRatings.length;
+    const total = partCount(item);
+    const [kind, parts] =
+        item.entry.type === 'movies'
+            ? ['Film series', 'movie']
+            : ['Series', 'season'];
     return [
-        'Series',
+        kind,
         ratedParts > 0
-            ? `${plural(ratedParts, 'season')} rated`
-            : plural(entry.ratings.length, 'season'),
+            ? `${ratedParts} of ${plural(total, parts)} rated`
+            : plural(total, parts),
     ];
 };
 
@@ -48,6 +45,10 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                     const { entry, rating } = item;
                     const average = rating === null ? partAverage(item) : null;
                     const parts = entry.type === 'series' ? 'season' : 'movie';
+                    const ratedParts = item.partRatings.length;
+                    const total = partCount(item);
+                    // An average that leaves out seasons or movies not rated yet.
+                    const partial = average !== null && ratedParts < total;
                     const yours =
                         compareWith &&
                         valueOf(compareWith, ratingKey(entry.id));
@@ -79,10 +80,22 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                                     ) : average !== null ? (
                                         <span
                                             className={`${css.rating} ${css.average}`}
-                                            aria-label={`${owner} average ${parts} rating: ${formatRating(average)}`}
-                                            title={`Average of the rated ${parts}s`}
+                                            aria-label={`${owner} average ${parts} rating: ${formatRating(average)}${partial ? `, ${ratedParts} of ${total} ${parts}s rated` : ''}`}
+                                            title={
+                                                partial
+                                                    ? `Average of ${ratedParts} of ${plural(total, parts)}, the rest aren't rated yet`
+                                                    : `Average of the rated ${parts}s`
+                                            }
                                         >
                                             {formatRating(average)}
+                                            {partial && (
+                                                <span
+                                                    className={css.partial}
+                                                    aria-hidden="true"
+                                                >
+                                                    {ratedParts}/{total}
+                                                </span>
+                                            )}
                                         </span>
                                     ) : (
                                         <span

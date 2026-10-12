@@ -17,6 +17,7 @@ export function GET() {
         ratings: ratedSeasons(show.seasons).map((season) =>
             roundRating(season.rating)
         ),
+        seasonCount: show.seasons.length,
     }));
     const movies = getFranchises().map((franchise): SearchEntry => ({
         type: 'movies',

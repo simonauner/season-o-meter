@@ -81,3 +81,12 @@
     font-size: 1.125rem;
     opacity: 0.75;
 }
+
+/* How many of the seasons or movies an average covers, when not all are rated. */
+.partial {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-align: right;
+}
