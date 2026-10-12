@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import { PageIntro } from '@/components/PageIntro';
-import { UserList } from '@/components/UserList';
+import { UserLists } from '@/components/UserList';
 import { decodeShare, type UserData } from '@/lib/userData';
-import { listItems, rated, watchlist } from '@/lib/userList';
+import { listItems } from '@/lib/userList';
 import { importData, useUserData } from '@/lib/userStore';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import css from '../mine/mine.module.css';
@@ -74,20 +74,7 @@ export function SharedList() {
             ) : items.length === 0 ? (
                 <p className={css.status}>This list is empty.</p>
             ) : (
-                <>
-                    <UserList
-                        title="Watchlist"
-                        items={watchlist(items)}
-                        owner="Their"
-                        compareWith={own}
-                    />
-                    <UserList
-                        title="Rated"
-                        items={rated(items)}
-                        owner="Their"
-                        compareWith={own}
-                    />
-                </>
+                <UserLists items={items} owner="Their" compareWith={own} />
             )}
 
             {shared && (

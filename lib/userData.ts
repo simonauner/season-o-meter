@@ -28,6 +28,17 @@ export const watchlistKey = (id: string) => `w:${id}`;
 
 export const valueOf = (data: UserData, key: string) => data[key]?.[0] ?? null;
 
+/** Ids of everything rated as a whole or in part, e.g. a single season. */
+export function ratedIds(data: UserData) {
+    const ids = new Set<string>();
+    for (const [key, [value]] of Object.entries(data)) {
+        if (value !== null && key.startsWith('r:')) {
+            ids.add(key.slice('r:'.length).split('/')[0]);
+        }
+    }
+    return ids;
+}
+
 const KEY_PATTERN = /^(r:(tt\d+(\/\d+)?|Q\d+)|w:(tt|Q)\d+)$/;
 
 const isRating = (value: unknown): value is number =>
