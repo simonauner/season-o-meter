@@ -26,8 +26,33 @@ export type Show = {
     seasons: SeasonRating[];
 };
 
+export type Movie = {
+    /** IMDb id, e.g. tt0076759. */
+    id: string;
+    title: string;
+    year: number | null;
+    rating: number;
+    votes: number;
+};
+
+export type Franchise = {
+    /** Wikidata id, e.g. Q22092344. */
+    id: string;
+    title: string;
+    /** Release year of the first movie. */
+    startYear: number | null;
+    /** Release year of the latest movie. */
+    endYear: number | null;
+    /** Sum of votes on its movies. */
+    votes: number;
+    /** Rated movies in release order. */
+    movies: Movie[];
+};
+
 export type DataFile = {
     generatedAt: string;
     /** Sorted by votes, most first. */
     shows: Show[];
+    /** Sorted by votes, most first. */
+    franchises: Franchise[];
 };

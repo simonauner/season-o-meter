@@ -69,3 +69,13 @@
     border-radius: 0 4px 4px 0;
     background: var(--series);
 }
+
+/* Long movie titles wrap instead of pushing the table sideways. */
+.table .title {
+    min-width: 12em;
+    white-space: normal;
+}
+
+.title a:hover {
+    text-decoration: underline;
+}

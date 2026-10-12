@@ -18,7 +18,12 @@ export function Footer() {
             </p>
             <p>
                 A season&apos;s rating is the average of its episode ratings.
-                Episodes with fewer than five votes are left out.
+                Episodes with fewer than five votes are left out. Film series
+                come from{' '}
+                <a href="https://www.wikidata.org/" rel="noreferrer">
+                    Wikidata
+                </a>
+                .
             </p>
         </footer>
     );

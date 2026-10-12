@@ -1,7 +1,7 @@
 import type { SeasonTrend } from '@/lib/analysis';
 import { changeTone, formatChange, formatRating } from '@/lib/format';
 import type { SeasonRating } from '@/lib/types';
-import css from './seasonTable.module.css';
+import css from './ratingTable.module.css';
 
 type SeasonTableProps = {
     seasons: SeasonRating[];

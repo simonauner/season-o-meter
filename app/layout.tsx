@@ -9,7 +9,7 @@ export const metadata: Metadata = {
         template: '%s · Season-o-meter',
     },
     description:
-        'See how a TV series is rated season by season: where it peaked and where it went downhill.',
+        'See how TV series are rated season by season, and film series movie by movie: where they peaked and where they went downhill.',
 };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {

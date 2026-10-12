@@ -1,6 +1,6 @@
 import type { Show } from '@/lib/types';
 import { ShowCard } from './ShowCard';
-import css from './showGrid.module.css';
+import css from './cardGrid.module.css';
 
 export function ShowGrid({ shows }: { shows: Show[] }) {
     return (

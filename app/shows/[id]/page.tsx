@@ -13,7 +13,7 @@ import {
     formatYears,
 } from '@/lib/format';
 import type { RatedSeason } from '@/lib/types';
-import css from './show.module.css';
+import css from '../../detail.module.css';
 
 export const dynamicParams = false;
 
