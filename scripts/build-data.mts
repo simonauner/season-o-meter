@@ -50,6 +50,15 @@ const MIN_MOVIE_VOTES = 1_000;
 const MIN_FRANCHISE_VOTES = 20_000;
 /** Studio filmographies, like "DreamWorks Animation feature films", aren't series. */
 const EXCLUDED_FILM_SERIES = /feature films?$/i;
+/**
+ * Movies Wikidata wrongly puts in a film series, by Wikidata id of the series
+ * and IMDb id of the movie.
+ */
+const EXCLUDED_MOVIES: Record<string, string[]> = {
+    // Peter Jackson's Lord of the Rings trilogy, not the later Middle-earth
+    // movies: The War of the Rohirrim and The Hunt for Gollum.
+    Q190214: ['tt14824600', 'tt32328070'],
+};
 
 /**
  * Every movie that is part of a film series, or of anything Wikidata counts
@@ -159,6 +168,7 @@ async function fetchFilmSeries(): Promise<Map<string, FilmSeries>> {
             continue;
         }
         const id = series.value.replace('http://www.wikidata.org/entity/', '');
+        if (EXCLUDED_MOVIES[id]?.includes(imdb.value)) continue;
         let entry = filmSeries.get(id);
         if (!entry) {
             entry = { title, movies: new Map() };
