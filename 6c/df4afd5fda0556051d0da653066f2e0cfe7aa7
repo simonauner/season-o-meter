@@ -1,0 +1,100 @@
+components/Footer.tsx
+  s_b58f07d15e9e53::t_f2a869232cf362 21-26
+lib/franchiseAnalysis.ts
+  s_b58f07d15e9e53::t_dfd06ee9630a63 1-160
+components/ShowGrid.tsx
+  s_b58f07d15e9e53::t_ea8f0c7fcde228 3
+lib/data.ts
+  s_b58f07d15e9e53::t_6dca6fa735445f 4,29-33
+app/not-found.tsx
+  s_b58f07d15e9e53::t_f2a869232cf362 7-8
+components/ShowCard.tsx
+  s_b58f07d15e9e53::t_f7da9df2ecf1f2 2,4,11-30
+app/search-index.json/route.ts
+  s_b58f07d15e9e53::t_f2a869232cf362 10-11,17-18,21-29
+  s_b58f07d15e9e53::t_099ec4d9e12f3b 2,7-8,30
+app/movies/page.tsx
+  s_b58f07d15e9e53::t_9fdaf14defe387 1-40
+components/ratingChart.module.css
+  s_b58f07d15e9e53::t_56e3da656ab60b 1-83
+components/FranchiseCard.tsx
+  s_b58f07d15e9e53::t_f7da9df2ecf1f2 1-30
+lib/sections.ts
+  s_b58f07d15e9e53::t_4259734845a645 1-57
+lib/analysis.ts
+  s_b58f07d15e9e53::t_dfd06ee9630a63 166
+  s_b58f07d15e9e53::t_5c57adee490cd0 16,43,130
+  s_b58f07d15e9e53::t_4259734845a645 1-2,75,81,90,99,110,112,129,143,154,168-173
+app/lists/[slug]/page.tsx
+  s_b58f07d15e9e53::t_6dca6fa735445f 5,13,17,37
+app/movies/[id]/page.tsx
+  s_b58f07d15e9e53::t_740eb90c80f3ba 1-101
+components/header.module.css
+  s_b58f07d15e9e53::t_a2bf9f6199020e 26-52,88
+  s_b58f07d15e9e53::t_4f1bdcd8ee491d 14,78-87
+components/SeasonChart.tsx
+  s_b58f07d15e9e53::t_87f043bc02667c 1,3,7-19
+app/search/SearchResults.tsx
+  s_b58f07d15e9e53::t_f2a869232cf362 57-58,93-94
+  s_b58f07d15e9e53::t_099ec4d9e12f3b 19-23,72-74,79,86
+components/NavLinks.tsx
+  s_b58f07d15e9e53::t_a2bf9f6199020e 1-38
+README.md
+  s_b58f07d15e9e53::t_f2a869232cf362 3-4,11-15,21-24,26-28,35-36,51-58
+components/MovieTable.tsx
+  s_b58f07d15e9e53::t_95bbcfc2c6e7ca 1-98
+components/MovieChart.tsx
+  s_b58f07d15e9e53::t_87f043bc02667c 1-28
+components/HomeSection.tsx
+  s_b58f07d15e9e53::t_9fdaf14defe387 1-34
+app/shows/[id]/page.tsx
+  s_b58f07d15e9e53::t_740eb90c80f3ba 16
+app/layout.tsx
+  s_b58f07d15e9e53::t_f2a869232cf362 12
+components/TrendCard.tsx
+  s_b58f07d15e9e53::t_f7da9df2ecf1f2 1-18,20-57
+  s_b58f07d15e9e53::t_e92776ea4a43d9 19
+lib/searchIndex.ts
+  s_b58f07d15e9e53::t_099ec4d9e12f3b 1,3-4,10
+lib/stats.ts
+  s_b58f07d15e9e53::t_4259734845a645 1-15
+components/SeasonTable.tsx
+  s_b58f07d15e9e53::t_ea8f0c7fcde228 4
+components/ratingTable.module.css
+  s_b58f07d15e9e53::t_95bbcfc2c6e7ca 1-81
+lib/types.ts
+  s_b58f07d15e9e53::t_4f238644b07390 29-51,56-57
+app/movies/lists/[slug]/page.tsx
+  s_b58f07d15e9e53::t_9fdaf14defe387 1-45
+app/page.tsx
+  s_b58f07d15e9e53::t_9fdaf14defe387 1,19-24,26
+  s_b58f07d15e9e53::t_6dca6fa735445f 4,10,25
+components/Header.tsx
+  s_b58f07d15e9e53::t_a2bf9f6199020e 3,13,16,22
+components/RatingChart.tsx
+  s_b58f07d15e9e53::t_56e3da656ab60b 26-27,224
+  s_b58f07d15e9e53::t_ea6db687f39702 1-25,28-223,229-249
+  s_b58f07d15e9e53::t_f2a869232cf362 225-228
+components/FranchiseGrid.tsx
+  s_b58f07d15e9e53::t_f7da9df2ecf1f2 1-15
+scripts/build-data.mts
+  s_b58f07d15e9e53::t_82201f857af6f3 335-341
+  s_b58f07d15e9e53::t_29744c83a64bb8 3-4,9-11,21-27,43-50,53-68,121-157,161-171,174-180,220-224,239,292-334,342-346,350,356
+  s_b58f07d15e9e53::t_56528e70c4b303 51-52,158-160,226,238
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6cdf4afd5fda0556051d0da653066f2e0cfe7aa7",
+  "prompts": {},
+  "sessions": {
+    "s_b58f07d15e9e53": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9d5b44e7-5f9f-4614-b2b0-4f7ae0852bb4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
