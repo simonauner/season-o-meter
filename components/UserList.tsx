@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { formatRating, formatYears } from '@/lib/format';
 import { ratingKey, valueOf, type UserData } from '@/lib/userData';
-import { partAverage, type ListItem } from '@/lib/userList';
+import { partAverage, rated, watchlist, type ListItem } from '@/lib/userList';
 import { Sparkline } from './Sparkline';
 import css from './userList.module.css';
 
@@ -11,20 +11,40 @@ const plural = (count: number, word: string) =>
 const describe = ({ entry, partRatings: { length: ratedParts } }: ListItem) => {
     if (entry.type === 'movies') {
         const movies = entry.movieIds?.length ?? entry.ratings.length;
-        return [
-            'Film series',
-            ratedParts > 0
-                ? `${ratedParts} of ${movies} movies rated`
-                : plural(movies, 'movie'),
-        ];
+        return ratedParts > 0
+            ? `${ratedParts} of ${movies} movies rated`
+            : plural(movies, 'movie');
     }
-    return [
-        'Series',
-        ratedParts > 0
-            ? `${plural(ratedParts, 'season')} rated`
-            : plural(entry.ratings.length, 'season'),
-    ];
+    return ratedParts > 0
+        ? `${plural(ratedParts, 'season')} rated`
+        : plural(entry.ratings.length, 'season');
 };
+
+const TYPES = [
+    { type: 'series', title: 'TV series' },
+    { type: 'movies', title: 'Film series' },
+] as const;
+
+type UserListsProps = Omit<UserListProps, 'title'>;
+
+/** TV series and film series apart, each with its watchlist and ratings. */
+export function UserLists({ items, ...props }: UserListsProps) {
+    return TYPES.map(({ type, title }) => {
+        const ofType = items.filter((item) => item.entry.type === type);
+        if (ofType.length === 0) return null;
+        return (
+            <section key={type} className={css.group}>
+                <h2>{title}</h2>
+                <UserList
+                    title="Watchlist"
+                    items={watchlist(ofType)}
+                    {...props}
+                />
+                <UserList title="Rated" items={rated(ofType)} {...props} />
+            </section>
+        );
+    });
+}
 
 type UserListProps = {
     title: string;
@@ -40,9 +60,9 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
 
     return (
         <section className={css.section}>
-            <h2>
+            <h3>
                 {title} <span className={css.count}>{items.length}</span>
-            </h2>
+            </h3>
             <ul className={css.list}>
                 {items.map((item) => {
                     const { entry, rating } = item;
@@ -60,7 +80,7 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                                 <span className={css.name}>
                                     <strong>{entry.title}</strong>
                                     <span>
-                                        {[formatYears(entry), ...describe(item)]
+                                        {[formatYears(entry), describe(item)]
                                             .filter(Boolean)
                                             .join(' · ')}
                                     </span>
