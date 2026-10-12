@@ -1,0 +1,19 @@
+README.md
+  s_8874468809caf4::t_49d008ca4a6f64 6-8,25-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "76fa214783f098c1502e0b138f6056d29dc6c03e",
+  "prompts": {},
+  "sessions": {
+    "s_8874468809caf4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b3f7206a-c5d2-4b12-bc35-79bd3198526a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
