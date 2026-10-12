@@ -1,9 +1,33 @@
 .header {
-    background: var(--header);
+    /* A faint accent glow behind the logo, fading into the header colour. */
+    background:
+        radial-gradient(
+            ellipse 480px 160px at 12% 0%,
+            color-mix(in srgb, var(--accent) 22%, transparent),
+            transparent 70%
+        ),
+        color-mix(in srgb, var(--header) 88%, transparent);
+    backdrop-filter: blur(14px) saturate(160%);
     color: var(--header-text);
     position: sticky;
     top: 0;
     z-index: 10;
+}
+
+/* Hairline that echoes the chart line: series blue into your-rating purple. */
+.header::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--accent) 25%,
+        var(--own) 75%,
+        transparent
+    );
+    opacity: 0.7;
 }
 
 .inner {
@@ -17,10 +41,45 @@
 }
 
 .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     font-weight: 800;
     font-size: 1.125rem;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
     white-space: nowrap;
+}
+
+.logo:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 6px;
+}
+
+.logoO {
+    color: var(--accent);
+}
+
+.mark {
+    width: 30px;
+    height: 30px;
+    padding: 3px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 8%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+}
+
+.markBar {
+    fill: rgb(255 255 255 / 45%);
+    transition: fill 150ms ease;
+}
+
+.markPeak {
+    fill: var(--accent);
+}
+
+.logo:hover .markBar {
+    fill: rgb(255 255 255 / 70%);
 }
 
 .nav {
@@ -42,6 +101,7 @@
 
 .navLink[aria-current='page'] {
     background: rgb(255 255 255 / 12%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
     color: #fff;
 }
 
@@ -51,14 +111,29 @@
 }
 
 .search {
+    position: relative;
     margin-left: auto;
     flex: 1 1 160px;
     max-width: 280px;
 }
 
+.searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    translate: 0 -50%;
+    fill: none;
+    stroke: rgb(255 255 255 / 55%);
+    stroke-width: 2;
+    stroke-linecap: round;
+    pointer-events: none;
+}
+
 .search input {
     width: 100%;
-    padding: 8px 12px;
+    padding: 8px 12px 8px 36px;
     border-radius: 999px;
     border: 1px solid rgb(255 255 255 / 18%);
     background: rgb(255 255 255 / 8%);
@@ -74,6 +149,7 @@
 .search input:focus {
     outline: 2px solid var(--accent);
     outline-offset: 1px;
+    background: rgb(255 255 255 / 12%);
 }
 
 @media (max-width: 639px) {
