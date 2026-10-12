@@ -1,3 +1,4 @@
+import { DEFAULT_MIN_SEASONS, type MinSeasons } from './minSeasons';
 import type { RatedSeason, SeasonRating, Show } from './types';
 
 /**
@@ -89,9 +90,11 @@ export type Section = {
     shows: Show[];
 };
 
-type SectionDefinition = Omit<Section, 'shows'> & {
+type SectionDefinition = Omit<Section, 'shows' | 'description'> & {
+    description: string | ((minSeasons: number) => string);
     /** Only consider series with at least this many votes. */
     minVotes: number;
+    /** Raised to the visitor's chosen minimum when that is higher. */
     minSeasons: number;
     maxSeasons?: number;
     onlyEnded?: boolean;
@@ -100,6 +103,12 @@ type SectionDefinition = Omit<Section, 'shows'> & {
 };
 
 const MIN_VOTES = 50_000;
+
+const NUMBER_WORDS: Record<number, string> = {
+    2: 'two',
+    3: 'three',
+    4: 'four',
+};
 
 const SECTION_DEFINITIONS: SectionDefinition[] = [
     {
@@ -113,10 +122,10 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
     {
         slug: 'best-over-time',
         title: 'Best over time',
-        description:
-            'Highest average across all seasons, at least four of them.',
+        description: (minSeasons) =>
+            `Highest average across all seasons, at least ${NUMBER_WORDS[minSeasons] ?? minSeasons} of them.`,
         minVotes: MIN_VOTES,
-        minSeasons: 4,
+        minSeasons: 2,
         score: (ratings) => mean(ratings),
     },
     {
@@ -194,16 +203,22 @@ const SECTION_DEFINITIONS: SectionDefinition[] = [
 
 export const SECTION_SLUGS = SECTION_DEFINITIONS.map(({ slug }) => slug);
 
-export function findSections(shows: Show[], limit: number): Section[] {
+export function findSections(
+    shows: Show[],
+    limit: number,
+    chosenMinSeasons: MinSeasons = DEFAULT_MIN_SEASONS
+): Section[] {
     return SECTION_DEFINITIONS.map(
         ({
+            description,
             minVotes,
-            minSeasons,
+            minSeasons: ownMinSeasons,
             maxSeasons = Infinity,
             onlyEnded,
             score,
             ...section
         }) => {
+            const minSeasons = Math.max(ownMinSeasons, chosenMinSeasons);
             const scored = shows.flatMap((show) => {
                 if (show.votes < minVotes) return [];
                 if (onlyEnded && show.endYear === null) return [];
@@ -220,6 +235,10 @@ export function findSections(shows: Show[], limit: number): Section[] {
             );
             return {
                 ...section,
+                description:
+                    typeof description === 'function'
+                        ? description(minSeasons)
+                        : description,
                 shows: scored.slice(0, limit).map(({ show }) => show),
             };
         }
