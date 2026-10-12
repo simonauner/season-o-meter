@@ -1,0 +1,21 @@
+components/SeasonChart.tsx
+  s_8874468809caf4::t_af63ac02518998 11-29,47,56,114,130
+components/Sparkline.tsx
+  s_8874468809caf4::t_e02bbf00e96cbe 2,5,9-12,16,29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e40a74ca4ac5f586e3b4f270f8197847e4892b41",
+  "prompts": {},
+  "sessions": {
+    "s_8874468809caf4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b3f7206a-c5d2-4b12-bc35-79bd3198526a",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
