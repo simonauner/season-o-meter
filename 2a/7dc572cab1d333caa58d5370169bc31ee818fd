@@ -1,0 +1,50 @@
+app/home-sections.json/route.ts
+  s_5d055144b1db7e::t_dff1e6a1087366 1-28
+components/RatedFilter.tsx
+  s_5d055144b1db7e::t_aa09b898c10c0e 1-67,71-123
+  s_5d055144b1db7e::t_8163198b66bc1d 68-70
+lib/storedChoice.ts
+  s_5d055144b1db7e::t_7a72281e841b36 1-58
+components/ChoicePicker.tsx
+  s_5d055144b1db7e::t_52a40c52cb5195 1-58
+app/page.tsx
+  s_5d055144b1db7e::t_6f4309c44fc90c 4-7,12,38-45
+app/home.module.css
+  s_5d055144b1db7e::t_6f4309c44fc90c 1-5
+lib/userData.ts
+  s_5d055144b1db7e::t_8fa3fd9cf91f70 31-41
+components/MinSeasonsFilter.tsx
+  s_5d055144b1db7e::t_149bab8d1def33 3,9-10,12-16,18,20,24-30
+lib/useStaticJson.ts
+  s_5d055144b1db7e::t_a24bf8914ac65d 1-42
+components/TrendCard.tsx
+  s_5d055144b1db7e::t_4b0837a2d11933 12
+lib/homeSections.ts
+  s_5d055144b1db7e::t_dff1e6a1087366 1-14
+lib/useSearchIndex.ts
+  s_5d055144b1db7e::t_9cc54a111d9b28 4,8-9
+README.md
+  s_5d055144b1db7e::t_3c0ab58cc6d5f2 44-49
+components/ShowCard.tsx
+  s_5d055144b1db7e::t_4b0837a2d11933 4,6,10-31
+components/homeSection.module.css
+  s_5d055144b1db7e::t_6f4309c44fc90c 34-49
+components/choicePicker.module.css
+  s_5d055144b1db7e::t_58c6c081116aa2 1-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2a7dc572cab1d333caa58d5370169bc31ee818fd",
+  "prompts": {},
+  "sessions": {
+    "s_5d055144b1db7e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45da416f-be94-4ab3-93c7-81beede06512",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
