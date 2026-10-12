@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { PageIntro } from '@/components/PageIntro';
-import { UserList } from '@/components/UserList';
+import { UserLists } from '@/components/UserList';
 import { encodeShare, type UserData } from '@/lib/userData';
-import { listItems, rated, watchlist } from '@/lib/userList';
+import { listItems } from '@/lib/userList';
 import { useUserData } from '@/lib/userStore';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import css from './mine.module.css';
@@ -34,14 +34,7 @@ export function MyList() {
                     seasons and movies, or add it to your watchlist on its page.
                 </p>
             ) : (
-                <>
-                    <UserList
-                        title="Watchlist"
-                        items={watchlist(items)}
-                        owner="Your"
-                    />
-                    <UserList title="Rated" items={rated(items)} owner="Your" />
-                </>
+                <UserLists items={items} owner="Your" />
             )}
 
             {data && items && items.length > 0 && (
