@@ -1,34 +1,44 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Season-o-meter
 
-## Getting Started
+See how a TV series is rated season by season: where it peaked and where it
+went downhill.
 
-First, run the development server:
+Each season's rating is the average of its rated episodes on
+[TMDB](https://www.themoviedb.org/). Unaired episodes and episodes without
+votes are left out, and specials (season 0) are ignored.
+
+## Getting started
+
+1. Get an API key (or API Read Access Token) at
+   <https://www.themoviedb.org/settings/api>.
+2. Copy `.env.example` to `.env.local` and set `TMDB_API_KEY`.
+3. Run the dev server:
 
 ```bash
+nvm use
+npm install
 npm run dev
-# or
-yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## How it works
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+- [Next.js](https://nextjs.org/) App Router with Cache Components. All TMDB
+  calls happen on the server in [`lib/tmdb.ts`](lib/tmdb.ts) and are cached
+  with `"use cache"` (lists for hours, show details for days).
+- A show and all its seasons are fetched with TMDB's `append_to_response`,
+  so most shows need a single request.
+- The verdict ("Peaked in season 3", "Fell at the finish line", …) comes from
+  [`lib/analysis.ts`](lib/analysis.ts).
+- Charts are plain SVG, no chart library.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Scripts
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+| Script              | What it does                     |
+| ------------------- | -------------------------------- |
+| `npm run dev`       | Start the dev server             |
+| `npm run build`     | Production build                 |
+| `npm run lint`      | ESLint                           |
+| `npm run typecheck` | Generate route types and run tsc |
+| `npm run format`    | Prettier                         |

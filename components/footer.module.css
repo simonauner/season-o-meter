@@ -1,0 +1,16 @@
+.footer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 32px 16px 48px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.footer p {
+    margin: 0 0 4px;
+}
+
+.footer a {
+    text-decoration: underline;
+}

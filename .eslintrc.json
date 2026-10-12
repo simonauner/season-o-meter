@@ -1,9 +1,0 @@
-{
-    "parser": "@typescript-eslint/parser",
-    "extends": ["next/core-web-vitals", "plugin:prettier/recommended"],
-
-    "rules": {
-        "no-console": 1, // Means warning
-        "prettier/prettier": 2 // Means error
-    }
-}

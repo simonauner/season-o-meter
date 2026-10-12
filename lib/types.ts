@@ -1,82 +1,28 @@
-// FROM TMDB
-export type tvShowSummaryResponse = {
-    backdrop_path: string;
-    first_air_date: string;
-    last_air_date: string;
-    // genre_ids: [10764]
+export type ShowSummary = {
     id: number;
     name: string;
-    origin_country: string[];
-    original_language: string;
-    original_name: string;
     overview: string;
-    popularity: number;
-    poster_path: string;
-    vote_average: number;
-    vote_count: number;
-    in_production: boolean;
+    posterPath: string | null;
+    backdropPath: string | null;
+    firstAirDate: string | null;
+    voteAverage: number;
+    voteCount: number;
 };
 
-export type SeasonResponse = {
-    air_date: string;
-    episode_count: number;
-    season_number: number;
+export type SeasonRating = {
+    seasonNumber: number;
+    airDate: string | null;
+    episodeCount: number;
+    ratedEpisodeCount: number;
+    /** Mean episode rating (0–10), or null if no episode has been rated yet. */
+    rating: number | null;
 };
 
-export type tvShowDetailsResponse = tvShowSummaryResponse & {
-    number_of_seasons: number;
-    seasons: SeasonResponse[];
-};
+export type RatedSeason = SeasonRating & { rating: number };
 
-export type tvShowEpisodeDetailsResponse = {
-    vote_average: number;
-};
-
-export type tvShowSeasonDetailsResponse = {
-    episodes: tvShowEpisodeDetailsResponse[];
-};
-
-export type TopRatedSeriesResponse = {
-    page: number;
-    total_pages: number;
-    total_results: number;
-    results: Array<tvShowDetailsResponse>;
-};
-
-// FROM API TO FE
-export type tvShowSummary = {
-    backdrop_path: string;
-    first_air_date: string;
-    last_air_date: string;
-    // genre_ids: [10764]
-    id: number;
-    name: string;
-    origin_country: string[];
-    original_language: string;
-    original_name: string;
-    overview: string;
-    popularity: number;
-    poster_path: string;
-    vote_average: number;
-    vote_count: number;
-    in_production: boolean;
-};
-
-export type Season = {
-    air_date: string;
-    episode_count: number;
-    season_number: number;
-    rating: number;
-};
-
-export type tvShowDetails = tvShowSummary & {
-    number_of_seasons: number;
-    seasons: Season[];
-};
-
-export type TopRatedSeries = {
-    page: number;
-    total_pages: number;
-    total_results: number;
-    results: Array<tvShowDetails>;
+export type ShowWithSeasons = ShowSummary & {
+    lastAirDate: string | null;
+    inProduction: boolean;
+    status: string;
+    seasons: SeasonRating[];
 };
