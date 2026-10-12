@@ -31,6 +31,8 @@ jobs:
             - run: npm ci
             - run: npm run lint
             - run: npm run typecheck
+            - run: npm ci --prefix sync
+            - run: npm run typecheck --prefix sync
             - run: npm run data
 
             - id: pages
@@ -40,6 +42,8 @@ jobs:
             - run: npm run build
               env:
                   PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+                  # The sync server's URL. Sync isn't offered while it's unset.
+                  NEXT_PUBLIC_SYNC_URL: ${{ vars.SYNC_URL }}
 
             - if: github.event_name != 'pull_request'
               uses: actions/upload-pages-artifact@v5

@@ -55,14 +55,41 @@ are drawn next to IMDb's in the chart, and everything is listed on
 `/mine/`. There are no accounts. Everything is kept in `localStorage`
 ([lib/userStore.ts](lib/userStore.ts)).
 
-- **Sharing and moving to another device.** `/mine/` creates a link to
-  `/shared/` with the whole list compressed into the URL fragment, which is
-  never sent to a server. Whoever opens it sees the list next to their own
-  ratings, and can import it. Importing is how a list moves between devices.
+- **Sharing.** `/mine/` creates a link to `/shared/` with the whole list
+  compressed into the URL fragment, which is never sent to a server. Whoever
+  opens it sees the list next to their own ratings, and can import it. With
+  sync on, the link instead points at the synced list, so it is always
+  current.
 - **Merging.** Every value is stored with when it was set, and the latest
   change wins per title, season or movie ([lib/userData.ts](lib/userData.ts)).
-  That makes imports safe in any order, and is what continuous sync would
-  build on.
+  That makes imports and syncs safe in any order.
+- **Sync between devices.** Turning on sync on `/mine/` creates a random
+  secret and a private link, `/mine/#sync=<secret>`, that connects other
+  devices. They sync when a page opens, when it comes back into view, a
+  second after a change and every minute while it's visible
+  ([lib/sync.ts](lib/sync.ts)).
+
+## Sync server
+
+[sync/](sync/) is a Cloudflare Worker with one Durable Object per synced
+list, which keeps the list in SQLite and merges changes with the same rule as
+the site. Lists are stored under a hash of the secret, which is also the id in
+read-only links, so the server never stores a secret
+([lib/syncProtocol.ts](lib/syncProtocol.ts)).
+
+- `POST /v1/sync` with `Authorization: Bearer <secret>` sends a device's
+  changes and returns what changed since the device's last sync.
+- `GET /v1/lists/<id>` returns a list for a read-only link.
+
+The site only offers sync when it's built with `NEXT_PUBLIC_SYNC_URL`, which
+the deploy workflow takes from the `SYNC_URL` repository variable.
+
+```bash
+cd sync
+npm install
+npm run dev     # http://localhost:8787
+npm run deploy  # needs `npx wrangler login` first
+```
 
 ## Getting started
 

@@ -30,5 +30,6 @@
         ".next/dev/types/**/*.ts",
         "**/*.mts"
     ],
-    "exclude": ["node_modules"]
+    // The sync server has its own config, with Workers types.
+    "exclude": ["node_modules", "sync"]
 }

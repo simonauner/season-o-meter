@@ -7,6 +7,9 @@ const STORAGE_KEY = 'season-o-meter:mine';
 
 const listeners = new Set<() => void>();
 
+/** Told about changes made on this device, but not ones from sync. */
+const localChangeListeners = new Set<() => void>();
+
 /** The parsed copy of what's stored, reused while the stored text is the same. */
 let cache: { raw: string | null; data: UserData } = { raw: null, data: {} };
 
@@ -20,6 +23,13 @@ function subscribe(listener: () => void) {
     return () => {
         listeners.delete(listener);
         window.removeEventListener('storage', listener);
+    };
+}
+
+export function onLocalChange(listener: () => void) {
+    localChangeListeners.add(listener);
+    return () => {
+        localChangeListeners.delete(listener);
     };
 }
 
@@ -42,7 +52,7 @@ function read(): UserData {
     return cache.data;
 }
 
-function write(data: UserData) {
+function write(data: UserData, { fromSync = false } = {}) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch {
@@ -50,7 +60,11 @@ function write(data: UserData) {
         fallback = data;
     }
     listeners.forEach((listener) => listener());
+    if (!fromSync) localChangeListeners.forEach((listener) => listener());
 }
+
+/** Everything stored, read outside React. */
+export const getUserData = read;
 
 /** Sets values, or clears them with null. */
 export function setValues(changes: Record<string, number | null>) {
@@ -66,9 +80,9 @@ export const setValue = (key: string, value: number | null) =>
     setValues({ [key]: value });
 
 /** Merges data from elsewhere and returns how many values changed. */
-export function importData(incoming: UserData) {
+export function importData(incoming: UserData, { fromSync = false } = {}) {
     const { merged, changed } = merge(read(), incoming);
-    if (changed > 0) write(merged);
+    if (changed > 0) write(merged, { fromSync });
     return changed;
 }
 
