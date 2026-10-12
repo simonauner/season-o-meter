@@ -1,0 +1,67 @@
+app/mine/MyList.tsx
+  s_c03be7faca5502::t_3632b580e69f59 7
+  s_c03be7faca5502::t_1e788e11e904ad 3,5,8-9,44
+app/shared/SharedList.tsx
+  s_c03be7faca5502::t_1e575df242d976 6
+  s_c03be7faca5502::t_09ea609b4bd9a3 10,77
+README.md
+  s_c03be7faca5502::t_2ba3262f5735e5 44-49
+app/home-sections.json/route.ts
+  s_c03be7faca5502::t_5ddc09c89f6e6f 1-28
+app/home.module.css
+  s_c03be7faca5502::t_11352ae5551876 1-5
+app/mine/mine.module.css
+  s_c03be7faca5502::t_216f47eacd8626 77
+app/page.tsx
+  s_c03be7faca5502::t_9e6f7e0f33d3d5 4-7,12,38-45
+app/search-index.json/route.ts
+  s_c03be7faca5502::t_7185eb9f2ad33e 10-23
+components/ChoicePicker.tsx
+  s_c03be7faca5502::t_60329cfa52b473 1-58
+components/MinSeasonsFilter.tsx
+  s_c03be7faca5502::t_a4950b176c0fbf 3,9-10,12-16,18,20,24-30
+components/RatedFilter.tsx
+  s_c03be7faca5502::t_3cbdeb1cd910ff 1-123
+components/ShowCard.tsx
+  s_c03be7faca5502::t_907bb83999d2fd 4,6,10-31
+components/TrendCard.tsx
+  s_c03be7faca5502::t_e914a916dda741 12
+components/UserList.tsx
+  s_c03be7faca5502::t_7a67ce0037b2d6 4-11,18-24,27-52,67,69,75-79,92,111-116,119-126,136-147
+components/choicePicker.module.css
+  s_c03be7faca5502::t_6a581c292ff3ba 51
+components/homeSection.module.css
+  s_c03be7faca5502::t_f39b7b119de99e 34-49
+components/userList.module.css
+  s_c03be7faca5502::t_7f43b803f64e1f 1-9,11,14-15,35,74,94-102
+lib/homeSections.ts
+  s_c03be7faca5502::t_b4ae20d5b7747d 1-14
+lib/searchIndex.ts
+  s_c03be7faca5502::t_bc3c867576a786 12-17
+lib/storedChoice.ts
+  s_c03be7faca5502::t_4f64e70c5f3b11 1,3,6-7,9-17,19-35,37-45,47,49-57
+lib/useSearchIndex.ts
+  s_c03be7faca5502::t_36393f859b9e0b 4,8-9
+lib/useStaticJson.ts
+  s_c03be7faca5502::t_9f50773aee3d50 1-42
+lib/userData.ts
+  s_c03be7faca5502::t_9c629c4aa8fe30 31-41
+lib/userList.ts
+  s_c03be7faca5502::t_1311790e629a75 2,11-12,20-25,45,63-69,74-78,99-118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3f2b72ffb2f7fd8bb8bff57903a9a26bd13f2a42",
+  "prompts": {},
+  "sessions": {
+    "s_c03be7faca5502": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dca9d4d2-f298-4ea7-a1e7-8b14222a846d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
