@@ -6,6 +6,8 @@ import {
     formatVotes,
 } from '@/lib/format';
 import type { Movie } from '@/lib/types';
+import { ratingKey } from '@/lib/userData';
+import { RatingSelect } from './YourRating';
 import css from './ratingTable.module.css';
 
 type MovieTableProps = {
@@ -29,6 +31,9 @@ export function MovieTable({ movies, trend }: MovieTableProps) {
                         </th>
                         <th scope="col" className={css.num}>
                             Change
+                        </th>
+                        <th scope="col" className={css.num}>
+                            You
                         </th>
                         <th scope="col" className={css.barCol}>
                             <span className="visually-hidden">Rating bar</span>
@@ -79,6 +84,12 @@ export function MovieTable({ movies, trend }: MovieTableProps) {
                                     {change === null
                                         ? ''
                                         : formatChange(change)}
+                                </td>
+                                <td className={css.num}>
+                                    <RatingSelect
+                                        storeKey={ratingKey(movie.id)}
+                                        label={`Your rating of ${movie.title}`}
+                                    />
                                 </td>
                                 <td className={css.barCol}>
                                     <span

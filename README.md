@@ -41,6 +41,27 @@ the series front page and list pages lets visitors require at least two, three
 or four rated seasons in every section (four by default). Every choice is
 rendered at build time, and the visitor's choice is remembered in the browser.
 
+## Your own ratings and watchlist
+
+Visitors can rate a series or film series as a whole, each season and each
+movie (1–10), and add series and film series to a watchlist. Their own ratings
+are drawn next to IMDb's in the chart, and everything is listed on
+`/mine/`. There are no accounts. Everything is kept in `localStorage`
+([lib/userStore.ts](lib/userStore.ts)).
+
+- **Sharing and moving to another device.** `/mine/` creates a link to
+  `/shared/` with the whole list compressed into the URL fragment, which is
+  never sent to a server. Whoever opens it sees the list next to their own
+  ratings, and can import it. Importing is how a list moves between devices.
+- **Merging.** Every value is stored with when it was set, and the latest
+  change wins per title, season or movie ([lib/userData.ts](lib/userData.ts)).
+  That makes imports safe in any order, and is what continuous sync would
+  build on.
+- **IMDb.** IMDb has no API for a user's ratings, but its ratings and
+  watchlist CSV exports can be imported on `/mine/`
+  ([lib/imdbImport.ts](lib/imdbImport.ts)). Season ratings can't be, since
+  IMDb rates episodes.
+
 ## Getting started
 
 ```bash

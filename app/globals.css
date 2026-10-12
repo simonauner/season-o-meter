@@ -11,6 +11,8 @@
     --text-muted: #77766f;
     --accent: #2a78d6;
     --series: #2a78d6;
+    /* The visitor's own ratings. */
+    --own: #7c3aed;
     --up: #0a7d0a;
     --down: #c4372b;
     --header: #0d1b2a;
@@ -35,6 +37,7 @@
         --text-muted: #9a998f;
         --accent: #3987e5;
         --series: #3987e5;
+        --own: #a78bfa;
         --up: #4fc24f;
         --down: #f0776b;
         --header: #000000;

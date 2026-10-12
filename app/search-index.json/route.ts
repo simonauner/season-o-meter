@@ -26,6 +26,7 @@ export function GET() {
         endYear: franchise.endYear,
         votes: franchise.votes,
         ratings: franchise.movies.map((movie) => roundRating(movie.rating)),
+        movieIds: franchise.movies.map((movie) => movie.id),
     }));
     const entries = [...series, ...movies].sort((a, b) => b.votes - a.votes);
     return Response.json(entries);
