@@ -1,0 +1,20 @@
+scripts/build-data.mts
+  s_0629f9976b0b8c::t_b455291efa27f8 53-61
+  s_0629f9976b0b8c::t_b3dd19c2037f58 171
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "526eca8791bd8f9d93237e951bd2d56f1f219873",
+  "prompts": {},
+  "sessions": {
+    "s_0629f9976b0b8c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8529a75a-cc43-48ec-89be-b0067e8f8b70",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
