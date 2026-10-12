@@ -55,7 +55,7 @@ function setMinSeasons(minSeasons: MinSeasons) {
 const useStoredMinSeasons = () =>
     useSyncExternalStore<MinSeasons | null>(subscribe, getSnapshot, () => null);
 
-const useMinSeasons = () => useStoredMinSeasons() ?? DEFAULT_MIN_SEASONS;
+export const useMinSeasons = () => useStoredMinSeasons() ?? DEFAULT_MIN_SEASONS;
 
 export function MinSeasonsPicker() {
     const current = useStoredMinSeasons();
