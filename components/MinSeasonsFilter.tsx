@@ -1,6 +1,11 @@
 'use client';
 
-import { type ReactNode, useId, useSyncExternalStore } from 'react';
+import {
+    type CSSProperties,
+    type ReactNode,
+    useId,
+    useSyncExternalStore,
+} from 'react';
 import {
     DEFAULT_MIN_SEASONS,
     isMinSeasons,
@@ -46,17 +51,39 @@ function setMinSeasons(minSeasons: MinSeasons) {
     listeners.forEach((listener) => listener());
 }
 
-const useMinSeasons = () =>
-    useSyncExternalStore(subscribe, getSnapshot, () => DEFAULT_MIN_SEASONS);
+/** The visitor's choice, or null until it has been read in the browser. */
+const useStoredMinSeasons = () =>
+    useSyncExternalStore<MinSeasons | null>(subscribe, getSnapshot, () => null);
+
+const useMinSeasons = () => useStoredMinSeasons() ?? DEFAULT_MIN_SEASONS;
 
 export function MinSeasonsPicker() {
-    const current = useMinSeasons();
+    const current = useStoredMinSeasons();
     const labelId = useId();
 
     return (
         <div className={css.picker} role="group" aria-labelledby={labelId}>
             <span id={labelId}>Series with at least</span>
-            <span className={css.options}>
+            <span
+                className={css.options}
+                style={
+                    {
+                        '--count': MIN_SEASONS_OPTIONS.length,
+                    } as CSSProperties
+                }
+            >
+                {/* Not drawn until the choice is known, so it doesn't jump. */}
+                {current !== null && (
+                    <span
+                        className={css.indicator}
+                        style={
+                            {
+                                '--index': MIN_SEASONS_OPTIONS.indexOf(current),
+                            } as CSSProperties
+                        }
+                        aria-hidden
+                    />
+                )}
                 {MIN_SEASONS_OPTIONS.map((minSeasons) => (
                     <button
                         key={minSeasons}
