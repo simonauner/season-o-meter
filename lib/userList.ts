@@ -110,6 +110,12 @@ export function imdbScore(item: ListItem) {
     return entry.ratings.length > 0 ? mean(entry.ratings) : null;
 }
 
+/** How many seasons, or movies in a film series, there are to rate. */
+export const partCount = ({ entry }: ListItem) =>
+    entry.type === 'movies'
+        ? (entry.movieIds?.length ?? entry.ratings.length)
+        : (entry.seasonCount ?? entry.ratings.length);
+
 /** The overall rating, or else the average of the parts. */
 const score = (item: ListItem) => item.rating ?? partAverage(item) ?? 0;
 

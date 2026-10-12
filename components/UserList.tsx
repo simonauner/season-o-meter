@@ -4,6 +4,7 @@ import { ratingKey, valueOf, type UserData } from '@/lib/userData';
 import {
     imdbScore,
     partAverage,
+    partCount,
     rated,
     watchlist,
     type ListItem,
@@ -14,16 +15,13 @@ import css from './userList.module.css';
 const plural = (count: number, word: string) =>
     `${count} ${word}${count === 1 ? '' : 's'}`;
 
-const describe = ({ entry, partRatings: { length: ratedParts } }: ListItem) => {
-    if (entry.type === 'movies') {
-        const movies = entry.movieIds?.length ?? entry.ratings.length;
-        return ratedParts > 0
-            ? `${ratedParts} of ${movies} movies rated`
-            : plural(movies, 'movie');
-    }
+const describe = (item: ListItem) => {
+    const ratedParts = item.partRatings.length;
+    const total = partCount(item);
+    const parts = item.entry.type === 'movies' ? 'movie' : 'season';
     return ratedParts > 0
-        ? `${plural(ratedParts, 'season')} rated`
-        : plural(entry.ratings.length, 'season');
+        ? `${ratedParts} of ${plural(total, parts)} rated`
+        : plural(total, parts);
 };
 
 const TYPES = [
@@ -75,6 +73,10 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                     const average = rating === null ? partAverage(item) : null;
                     const parts = entry.type === 'series' ? 'season' : 'movie';
                     const imdb = imdbScore(item);
+                    const ratedParts = item.partRatings.length;
+                    const total = partCount(item);
+                    // An average that leaves out seasons or movies not rated yet.
+                    const partial = average !== null && ratedParts < total;
                     const yours =
                         compareWith &&
                         valueOf(compareWith, ratingKey(entry.id));
@@ -106,10 +108,22 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                                     ) : average !== null ? (
                                         <span
                                             className={`${css.rating} ${css.average}`}
-                                            aria-label={`${owner} average ${parts} rating: ${formatRating(average)}`}
-                                            title={`Average of the rated ${parts}s`}
+                                            aria-label={`${owner} average ${parts} rating: ${formatRating(average)}${partial ? `, ${ratedParts} of ${total} ${parts}s rated` : ''}`}
+                                            title={
+                                                partial
+                                                    ? `Average of ${ratedParts} of ${plural(total, parts)}, the rest aren't rated yet`
+                                                    : `Average of the rated ${parts}s`
+                                            }
                                         >
                                             {formatRating(average)}
+                                            {partial && (
+                                                <span
+                                                    className={css.partial}
+                                                    aria-hidden="true"
+                                                >
+                                                    {ratedParts}/{total}
+                                                </span>
+                                            )}
                                         </span>
                                     ) : (
                                         <span

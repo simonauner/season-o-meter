@@ -13,6 +13,8 @@ export type SearchEntry = {
     rating?: number;
     /** Season numbers of a series' rated seasons, in the same order. */
     seasons?: number[];
+    /** How many seasons a series has, including ones without a rating yet. */
+    seasonCount?: number;
     /** IMDb ids of a film series' movies, in the same order. */
     movieIds?: string[];
 };
