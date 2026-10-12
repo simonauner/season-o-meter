@@ -9,4 +9,6 @@ export type SearchEntry = {
     votes: number;
     /** Ratings per rated season, or per movie, in order. */
     ratings: number[];
+    /** IMDb ids of a film series' movies, in the same order. */
+    movieIds?: string[];
 };

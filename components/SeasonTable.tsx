@@ -1,9 +1,12 @@
 import type { SeasonTrend } from '@/lib/analysis';
 import { changeTone, formatChange, formatRating } from '@/lib/format';
 import type { SeasonRating } from '@/lib/types';
+import { ratingKey } from '@/lib/userData';
+import { RatingSelect } from './YourRating';
 import css from './ratingTable.module.css';
 
 type SeasonTableProps = {
+    showId: string;
     seasons: SeasonRating[];
     trend: SeasonTrend | null;
 };
@@ -19,7 +22,7 @@ const changes = (seasons: SeasonRating[]) =>
             : null;
     });
 
-export function SeasonTable({ seasons, trend }: SeasonTableProps) {
+export function SeasonTable({ showId, seasons, trend }: SeasonTableProps) {
     const seasonChanges = changes(seasons);
 
     return (
@@ -37,6 +40,9 @@ export function SeasonTable({ seasons, trend }: SeasonTableProps) {
                         </th>
                         <th scope="col" className={css.num}>
                             Change
+                        </th>
+                        <th scope="col" className={css.num}>
+                            You
                         </th>
                         <th scope="col" className={css.barCol}>
                             <span className="visually-hidden">Rating bar</span>
@@ -87,6 +93,15 @@ export function SeasonTable({ seasons, trend }: SeasonTableProps) {
                                     {change === null
                                         ? ''
                                         : formatChange(change)}
+                                </td>
+                                <td className={css.num}>
+                                    <RatingSelect
+                                        storeKey={ratingKey(
+                                            showId,
+                                            season.seasonNumber
+                                        )}
+                                        label={`Your rating of season ${season.seasonNumber}`}
+                                    />
                                 </td>
                                 <td className={css.barCol}>
                                     {season.rating !== null && (

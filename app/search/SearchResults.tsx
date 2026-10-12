@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { PageIntro } from '@/components/PageIntro';
 import { Sparkline } from '@/components/Sparkline';
 import {
@@ -12,6 +12,7 @@ import {
     formatYears,
 } from '@/lib/format';
 import type { SearchEntry } from '@/lib/searchIndex';
+import { useSearchIndex } from '@/lib/useSearchIndex';
 import css from './search.module.css';
 
 const MAX_RESULTS = 30;
@@ -29,15 +30,7 @@ const normalize = (text: string) =>
 
 export function SearchResults() {
     const query = useSearchParams().get('q')?.trim() ?? '';
-    const [index, setIndex] = useState<SearchEntry[] | null>(null);
-    const [failed, setFailed] = useState(false);
-
-    useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_BASE_PATH}/search-index.json`)
-            .then((res) => res.json())
-            .then(setIndex)
-            .catch(() => setFailed(true));
-    }, []);
+    const { index, failed } = useSearchIndex();
 
     const results = useMemo(() => {
         if (!index || !query) return [];

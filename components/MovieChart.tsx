@@ -1,11 +1,13 @@
 import { formatChange, formatVotes } from '@/lib/format';
 import type { Movie } from '@/lib/types';
+import { ratingKey } from '@/lib/userData';
 import { RatingChart } from './RatingChart';
 
 export function MovieChart({ movies }: { movies: Movie[] }) {
     return (
         <RatingChart
             label="Movie rating chart. Use the arrow keys to step through the movies."
+            ownKeys={movies.map((movie) => ratingKey(movie.id))}
             points={movies.map((movie, i) => {
                 const previous = movies[i - 1];
                 return {

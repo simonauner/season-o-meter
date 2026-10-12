@@ -1,0 +1,123 @@
+'use client';
+
+import Link from 'next/link';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import { PageIntro } from '@/components/PageIntro';
+import { UserList } from '@/components/UserList';
+import { decodeShare, type UserData } from '@/lib/userData';
+import { listItems, rated, watchlist } from '@/lib/userList';
+import { importData, useUserData } from '@/lib/userStore';
+import { useSearchIndex } from '@/lib/useSearchIndex';
+import css from '../mine/mine.module.css';
+
+function subscribeToHash(listener: () => void) {
+    window.addEventListener('hashchange', listener);
+    return () => window.removeEventListener('hashchange', listener);
+}
+
+/** The URL fragment, or null until it has been read in the browser. */
+const useHash = () =>
+    useSyncExternalStore(
+        subscribeToHash,
+        () => location.hash.slice(1),
+        () => null
+    );
+
+export function SharedList() {
+    const hash = useHash();
+    const [decoded, setDecoded] = useState<{
+        hash: string;
+        data: UserData | null;
+    } | null>(null);
+    const own = useUserData();
+    const { index, failed } = useSearchIndex();
+    const [imported, setImported] = useState<number | null>(null);
+
+    useEffect(() => {
+        if (hash === null) return;
+        let live = true;
+        decodeShare(hash).then((data) => {
+            if (live) setDecoded({ hash, data });
+        });
+        return () => {
+            live = false;
+        };
+    }, [hash]);
+
+    // Undefined while the link is being read, null if it isn't a list.
+    const shared = decoded?.hash === hash ? decoded.data : undefined;
+    const items = useMemo(
+        () => (shared && index ? listItems(shared, index) : null),
+        [shared, index]
+    );
+
+    if (shared === null) {
+        return (
+            <PageIntro title="Shared list">
+                This link doesn&apos;t contain a list. Check that the whole link
+                was copied.
+            </PageIntro>
+        );
+    }
+
+    return (
+        <>
+            <PageIntro title="Shared list">
+                Someone shared their ratings and watchlist with you. Where
+                you&apos;ve rated the same title, your rating is shown too.
+            </PageIntro>
+
+            {failed ? (
+                <p className={css.status}>Could not load the list.</p>
+            ) : !items ? (
+                <p className={css.status}>Loading…</p>
+            ) : items.length === 0 ? (
+                <p className={css.status}>This list is empty.</p>
+            ) : (
+                <>
+                    <UserList
+                        title="Watchlist"
+                        items={watchlist(items)}
+                        owner="Their"
+                        compareWith={own}
+                    />
+                    <UserList
+                        title="Rated"
+                        items={rated(items)}
+                        owner="Their"
+                        compareWith={own}
+                    />
+                </>
+            )}
+
+            {shared && (
+                <div className={css.panels}>
+                    <section className={css.panel}>
+                        <h2>Is this your own list?</h2>
+                        <p>
+                            Import it to keep it on this device too. Where both
+                            have a rating or watchlist entry for the same thing,
+                            the most recent change wins.
+                        </p>
+                        <button
+                            type="button"
+                            className={css.button}
+                            disabled={!own}
+                            onClick={() => setImported(importData(shared))}
+                        >
+                            Import into my list
+                        </button>
+                        {imported !== null && (
+                            <p className={css.result} role="status">
+                                {imported === 0
+                                    ? 'Your list already had everything.'
+                                    : `${imported} ratings and watchlist entries were added or updated.`}{' '}
+                                <Link href="/mine/">See my list</Link>
+                            </p>
+                        )}
+                    </section>
+                </div>
+            )}
+        </>
+    );
+}

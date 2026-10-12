@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { SeasonChart } from '@/components/SeasonChart';
 import { SeasonTable } from '@/components/SeasonTable';
 import { StatTile } from '@/components/StatTile';
+import { TitleActions } from '@/components/YourRating';
 import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
 import { getShow, getShows } from '@/lib/data';
 import {
@@ -59,6 +60,7 @@ export default async function Page({ params }: PageProps<'/shows/[id]'>) {
                     </a>
                 </p>
                 {trend && <p className={css.verdict}>{trend.verdict}</p>}
+                <TitleActions id={show.id} />
             </header>
 
             {trend ? (
@@ -89,7 +91,7 @@ export default async function Page({ params }: PageProps<'/shows/[id]'>) {
 
                     <section className={css.section}>
                         <h2>Average episode rating per season</h2>
-                        <SeasonChart seasons={seasons} />
+                        <SeasonChart showId={show.id} seasons={seasons} />
                     </section>
                 </>
             ) : (
@@ -101,7 +103,11 @@ export default async function Page({ params }: PageProps<'/shows/[id]'>) {
 
             <section className={css.section}>
                 <h2>Season by season</h2>
-                <SeasonTable seasons={show.seasons} trend={trend} />
+                <SeasonTable
+                    showId={show.id}
+                    seasons={show.seasons}
+                    trend={trend}
+                />
             </section>
         </article>
     );

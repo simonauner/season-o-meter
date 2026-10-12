@@ -16,6 +16,11 @@ const LINKS = [
         label: 'Movies',
         isActive: (path: string) => path.startsWith('/movies/'),
     },
+    {
+        href: '/mine/',
+        label: 'My list',
+        isActive: (path: string) => /^\/(mine|shared)\//.test(path),
+    },
 ];
 
 export function NavLinks() {

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { MovieChart } from '@/components/MovieChart';
 import { MovieTable } from '@/components/MovieTable';
 import { StatTile } from '@/components/StatTile';
+import { TitleActions } from '@/components/YourRating';
 import { getFranchise, getFranchises } from '@/lib/data';
 import { analyzeMovies } from '@/lib/franchiseAnalysis';
 import {
@@ -57,6 +58,7 @@ export default async function Page({ params }: PageProps<'/movies/[id]'>) {
                     </a>
                 </p>
                 {trend && <p className={css.verdict}>{trend.verdict}</p>}
+                <TitleActions id={franchise.id} />
             </header>
 
             {trend && (
