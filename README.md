@@ -57,10 +57,6 @@ are drawn next to IMDb's in the chart, and everything is listed on
   change wins per title, season or movie ([lib/userData.ts](lib/userData.ts)).
   That makes imports safe in any order, and is what continuous sync would
   build on.
-- **IMDb.** IMDb has no API for a user's ratings, but its ratings and
-  watchlist CSV exports can be imported on `/mine/`
-  ([lib/imdbImport.ts](lib/imdbImport.ts)). Season ratings can't be, since
-  IMDb rates episodes.
 
 ## Getting started
 
