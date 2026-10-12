@@ -1,51 +1,39 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
-import { formatChange, formatRating, posterUrl, year } from '@/lib/format';
-import type { ShowWithSeasons } from '@/lib/types';
+import {
+    changeTone,
+    formatChange,
+    formatRating,
+    formatVotes,
+    formatYears,
+} from '@/lib/format';
+import type { Show } from '@/lib/types';
 import { Sparkline } from './Sparkline';
 import css from './showCard.module.css';
 
-export function ShowCard({ show }: { show: ShowWithSeasons }) {
+export function ShowCard({ show }: { show: Show }) {
     const seasons = ratedSeasons(show.seasons);
-    const trend = analyzeSeasons(show.seasons, { ended: !show.inProduction });
+    const trend = analyzeSeasons(show);
 
     return (
-        <Link href={`/shows/${show.id}`} className={css.card}>
-            <div className={css.poster}>
-                {show.posterPath && (
-                    <Image
-                        src={posterUrl(show.posterPath, 185)}
-                        alt=""
-                        fill
-                        sizes="72px"
-                    />
-                )}
-            </div>
-            <div className={css.body}>
-                <h3 className={css.title}>{show.name}</h3>
+        <Link href={`/shows/${show.id}/`} className={css.card}>
+            <div>
+                <h3 className={css.title}>{show.title}</h3>
                 <p className={css.meta}>
-                    {year(show.firstAirDate)} · {seasons.length} seasons
+                    {formatYears(show)} · {seasons.length} seasons ·{' '}
+                    {formatVotes(show.votes)} votes
                 </p>
                 {trend && <p className={css.verdict}>{trend.verdict}</p>}
             </div>
             <div className={css.chart}>
-                <Sparkline seasons={seasons} />
+                <Sparkline ratings={seasons.map((season) => season.rating)} />
                 {trend && (
                     <p className={css.change}>
                         <span>
                             S{trend.first.seasonNumber}{' '}
                             <strong>{formatRating(trend.first.rating)}</strong>
                         </span>
-                        <span
-                            className={
-                                trend.change >= 0.05
-                                    ? css.up
-                                    : trend.change <= -0.05
-                                      ? css.down
-                                      : undefined
-                            }
-                        >
+                        <span className={css[changeTone(trend.change) ?? '']}>
                             {formatChange(trend.change)}
                         </span>
                         <span>

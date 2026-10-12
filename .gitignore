@@ -39,4 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-!.env.example
+
+# IMDb datasets and generated data
+/.imdb/
+/data/

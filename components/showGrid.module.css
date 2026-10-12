@@ -3,30 +3,6 @@
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
     gap: 16px;
-}
-
-.skeleton {
-    aspect-ratio: 260 / 200;
-    border-radius: var(--radius);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    animation: pulse 1.4s ease-in-out infinite;
-}
-
-.empty {
-    color: var(--text-secondary);
-}
-
-@keyframes pulse {
-    50% {
-        opacity: 0.5;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .skeleton {
-        animation: none;
-    }
 }

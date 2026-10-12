@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import { formatChange, formatRating, year } from '@/lib/format';
+import { formatChange, formatRating } from '@/lib/format';
 import type { RatedSeason } from '@/lib/types';
 import css from './seasonChart.module.css';
 
@@ -222,8 +222,7 @@ export function SeasonChart({ seasons }: { seasons: RatedSeason[] }) {
                     </strong>
                     <span>
                         Season {activeSeason.seasonNumber}
-                        {activeSeason.airDate &&
-                            ` · ${year(activeSeason.airDate)}`}
+                        {activeSeason.year && ` · ${activeSeason.year}`}
                     </span>
                     <span>
                         {activeSeason.ratedEpisodeCount} rated episodes

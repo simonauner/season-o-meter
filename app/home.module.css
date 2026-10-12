@@ -1,0 +1,33 @@
+.section {
+    margin-top: 40px;
+}
+
+.heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.heading h2 {
+    font-size: 1.375rem;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+}
+
+.heading p {
+    margin: 4px 0 0;
+    color: var(--text-secondary);
+}
+
+.more {
+    flex-shrink: 0;
+    color: var(--accent);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.more:hover {
+    text-decoration: underline;
+}

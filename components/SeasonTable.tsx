@@ -1,5 +1,5 @@
 import type { SeasonTrend } from '@/lib/analysis';
-import { formatChange, formatRating, year } from '@/lib/format';
+import { changeTone, formatChange, formatRating } from '@/lib/format';
 import type { SeasonRating } from '@/lib/types';
 import css from './seasonTable.module.css';
 
@@ -52,7 +52,11 @@ export function SeasonTable({ seasons, trend }: SeasonTableProps) {
                                 : trend?.worst.seasonNumber ===
                                     season.seasonNumber
                                   ? 'Worst'
-                                  : null;
+                                  : season.rating !== null &&
+                                      season.ratedEpisodeCount * 2 <
+                                          season.episodeCount
+                                    ? 'Partial'
+                                    : null;
 
                         return (
                             <tr key={season.seasonNumber}>
@@ -62,7 +66,7 @@ export function SeasonTable({ seasons, trend }: SeasonTableProps) {
                                         <span className={css.tag}>{tag}</span>
                                     )}
                                 </th>
-                                <td>{year(season.airDate) ?? 'TBA'}</td>
+                                <td>{season.year ?? '–'}</td>
                                 <td className={css.num}>
                                     {season.ratedEpisodeCount}/
                                     {season.episodeCount}
@@ -76,11 +80,8 @@ export function SeasonTable({ seasons, trend }: SeasonTableProps) {
                                     className={`${css.num} ${
                                         change === null
                                             ? ''
-                                            : change >= 0.05
-                                              ? css.up
-                                              : change <= -0.05
-                                                ? css.down
-                                                : ''
+                                            : (css[changeTone(change) ?? ''] ??
+                                              '')
                                     }`}
                                 >
                                     {change === null

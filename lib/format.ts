@@ -1,3 +1,5 @@
+import type { Show } from './types';
+
 export const formatRating = (rating: number) => rating.toFixed(1);
 
 export const formatChange = (change: number) => {
@@ -6,7 +8,21 @@ export const formatChange = (change: number) => {
     return `${rounded > 0 ? '+' : '−'}${Math.abs(rounded).toFixed(1)}`;
 };
 
-export const year = (date: string | null) => date?.slice(0, 4) ?? null;
+export const formatVotes = (votes: number) =>
+    new Intl.NumberFormat('en', {
+        notation: 'compact',
+        maximumFractionDigits: 1,
+    }).format(votes);
 
-export const posterUrl = (path: string, width: 185 | 342 | 500 = 342) =>
-    `https://image.tmdb.org/t/p/w${width}${path}`;
+export const formatYears = ({
+    startYear,
+    endYear,
+}: Pick<Show, 'startYear' | 'endYear'>) => {
+    if (startYear === null) return '';
+    if (endYear === null) return `${startYear}–`;
+    if (endYear === startYear) return String(startYear);
+    return `${startYear}–${endYear}`;
+};
+
+export const changeTone = (change: number) =>
+    change >= 0.05 ? 'up' : change <= -0.05 ? 'down' : undefined;
