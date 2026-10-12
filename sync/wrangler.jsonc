@@ -9,7 +9,7 @@
     "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SyncList"] }],
     "vars": {
         // Comma-separated origins that may call the API.
-        "ALLOWED_ORIGINS": "https://www.auner.se",
+        "ALLOWED_ORIGINS": "https://seasonometer.com,https://www.auner.se",
     },
     "observability": { "enabled": true },
 }
