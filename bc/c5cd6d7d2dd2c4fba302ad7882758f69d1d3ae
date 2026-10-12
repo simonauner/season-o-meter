@@ -1,0 +1,46 @@
+sync/src/index.ts
+  s_c03be7faca5502::t_9700b93af71562 1-41,51-76,79-93,106,114-147,150-214,218-223
+  s_c03be7faca5502::t_3b9ee4dfca5e04 42-43,47-50,77-78,105,107-113
+  s_c03be7faca5502::t_cb118b9a764ac3 44-46,94-104,148-149,215-217
+eslint.config.mjs
+  s_c03be7faca5502::t_429cb4597c3c66 10-14,16-17
+  s_c03be7faca5502::t_cdddc2e4be48fe 15
+sync/.gitignore
+  s_c03be7faca5502::t_d7b3983d3420c8 1-3
+lib/userData.ts
+  s_c03be7faca5502::t_2d1dbcb89c8b9c 95,98
+  s_c03be7faca5502::t_555cd265162583 81
+lib/syncProtocol.ts
+  s_c03be7faca5502::t_555cd265162583 1-42
+.prettierignore
+  s_c03be7faca5502::t_0ee922ac4c1bae 4
+  s_c03be7faca5502::t_cdddc2e4be48fe 5
+tsconfig.json
+  s_c03be7faca5502::t_429cb4597c3c66 33-34
+sync/worker-configuration.d.ts
+  s_c03be7faca5502::t_cb118b9a764ac3 1-15758
+sync/tsconfig.json
+  s_c03be7faca5502::t_8093ec3a2ddda6 1-14
+sync/package.json
+  s_c03be7faca5502::t_8093ec3a2ddda6 1-15
+sync/wrangler.jsonc
+  s_c03be7faca5502::t_8093ec3a2ddda6 1-15
+sync/package-lock.json
+  s_c03be7faca5502::t_1565dbe084a7ba 1-1605
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bcc5cd6d7d2dd2c4fba302ad7882758f69d1d3ae",
+  "prompts": {},
+  "sessions": {
+    "s_c03be7faca5502": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dca9d4d2-f298-4ea7-a1e7-8b14222a846d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
