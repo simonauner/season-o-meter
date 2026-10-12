@@ -1,0 +1,67 @@
+components/UserList.tsx
+  s_7a419f05e68a5d::t_77dd764a3c956f 7-11,21-24,27-52,67,69,75
+  s_7a419f05e68a5d::t_9968ee7c6d209a 4-6,92,136-147
+lib/userList.ts
+  s_7a419f05e68a5d::t_77dd764a3c956f 112
+  s_7a419f05e68a5d::t_1eb25f392971cd 2,11-12,20-25,45,63-69,74-78,99-111
+app/search-index.json/route.ts
+  s_7a419f05e68a5d::t_9f02e8f5306c69 10-23
+lib/searchIndex.ts
+  s_7a419f05e68a5d::t_b2a078d7f5c65b 12-15
+README.md
+  s_7a419f05e68a5d::t_387650ac66f420 44-49
+app/home-sections.json/route.ts
+  s_7a419f05e68a5d::t_bd0d24dd3f0410 1-28
+app/home.module.css
+  s_7a419f05e68a5d::t_83a646376ec222 1-5
+app/mine/MyList.tsx
+  s_7a419f05e68a5d::t_5d4b9936c07f91 3,5,7-8,37,40-41,43-44
+app/mine/mine.module.css
+  s_7a419f05e68a5d::t_11627e9be25e3b 77
+app/page.tsx
+  s_7a419f05e68a5d::t_63d85e2676ecb9 4-7,12,38-45
+app/shared/SharedList.tsx
+  s_7a419f05e68a5d::t_c65c6ba8e2eaff 6,8,77
+components/ChoicePicker.tsx
+  s_7a419f05e68a5d::t_719dca1bfa7ee2 1-58
+components/MinSeasonsFilter.tsx
+  s_7a419f05e68a5d::t_6c5d48b230f530 3,9-10,12-16,18,20,24-30
+components/RatedFilter.tsx
+  s_7a419f05e68a5d::t_b25a2ea318a121 1-123
+components/ShowCard.tsx
+  s_7a419f05e68a5d::t_33a7778239e4fa 4,6,10-31
+components/TrendCard.tsx
+  s_7a419f05e68a5d::t_5ca2675f06564a 12
+components/choicePicker.module.css
+  s_7a419f05e68a5d::t_eba1c845d7ef01 51
+components/homeSection.module.css
+  s_7a419f05e68a5d::t_650379085fb606 34-49
+components/userList.module.css
+  s_7a419f05e68a5d::t_b08187e31a97ba 1-9,11,14-15,35,74
+lib/homeSections.ts
+  s_7a419f05e68a5d::t_3763d3e8237ab0 1-14
+lib/storedChoice.ts
+  s_7a419f05e68a5d::t_16c7ad65adedb1 1,3,6-7,9-17,19-35,37-45,47,49-57
+lib/useSearchIndex.ts
+  s_7a419f05e68a5d::t_cd0f56cf2e5dbe 4,8-9
+lib/useStaticJson.ts
+  s_7a419f05e68a5d::t_9f36b8cf396a67 1-42
+lib/userData.ts
+  s_7a419f05e68a5d::t_cad8108251e985 31-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1f41e414e44f0d39d7f12abc6a2bc2c3abd0968d",
+  "prompts": {},
+  "sessions": {
+    "s_7a419f05e68a5d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e9eafaba-2b6d-4eaf-9542-962d16c952db",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
