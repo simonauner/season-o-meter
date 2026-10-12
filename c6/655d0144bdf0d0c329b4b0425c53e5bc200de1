@@ -1,0 +1,83 @@
+app/mine/MyList.tsx
+  s_c03be7faca5502::t_48c6c1cfd20abe 1-91,95-117,122-184,188-207
+  s_c03be7faca5502::t_d1aac93c5803a2 92-94,118-121,185-187
+components/UserList.tsx
+  s_c03be7faca5502::t_5b8066b662adab 2,4,11,49-50,72-94
+  s_c03be7faca5502::t_dfd84470309563 1,3,5-10,12-48,51-71,95-108
+components/NavLinks.tsx
+  s_c03be7faca5502::t_d1aac93c5803a2 19-23
+lib/userStore.ts
+  s_c03be7faca5502::t_526d72ce3ff178 1-77
+components/MovieChart.tsx
+  s_c03be7faca5502::t_41e5c82697f274 10
+  s_c03be7faca5502::t_0879f02ce05ac3 3
+components/RatingChart.tsx
+  s_c03be7faca5502::t_e0944c7f2028b0 5-6,24-25,53-67,71,84-88,136-142
+  s_c03be7faca5502::t_be2f2f65bc4d5b 143-153,155-198,200-204,206,208-210,212-213,215-230,232-298
+components/SeasonChart.tsx
+  s_c03be7faca5502::t_b1223e63e09fda 3
+  s_c03be7faca5502::t_41e5c82697f274 6-12,16-18
+lib/userList.ts
+  s_c03be7faca5502::t_5b8066b662adab 8-9,35,53,58,72-82,85-86
+  s_c03be7faca5502::t_099f542c173b33 1-7,10-34,36-52,54-57,59-65,67-71,83-84
+  s_c03be7faca5502::t_dfd84470309563 66
+components/userList.module.css
+  s_c03be7faca5502::t_5b8066b662adab 78-83
+  s_c03be7faca5502::t_dfd84470309563 1-77
+components/SeasonTable.tsx
+  s_c03be7faca5502::t_41e5c82697f274 4-5,9,25,44-46,97-104
+  s_c03be7faca5502::t_1be2886194db82 105
+app/mine/page.tsx
+  s_c03be7faca5502::t_f53ab876b979c7 1-8
+app/shared/SharedList.tsx
+  s_c03be7faca5502::t_1d3aa40bea2ed7 1-123
+lib/userData.ts
+  s_c03be7faca5502::t_dbea43c7b6ea63 1-125
+lib/imdbImport.ts
+  s_c03be7faca5502::t_6a711805b3c500 1-49,51-80,85-89,91-92,94-96
+  s_c03be7faca5502::t_89b0247398e830 50
+  s_c03be7faca5502::t_55a4e25ea3f760 81-84,90,93
+components/MovieTable.tsx
+  s_c03be7faca5502::t_41e5c82697f274 9-10,35-37,88-92
+  s_c03be7faca5502::t_336ab9e6648f5d 93
+app/movies/[id]/page.tsx
+  s_c03be7faca5502::t_41e5c82697f274 6,61
+components/yourRating.module.css
+  s_c03be7faca5502::t_34a74c0a4af33d 1-65,68-136
+  s_c03be7faca5502::t_369c26044719e7 66-67
+app/search-index.json/route.ts
+  s_c03be7faca5502::t_aec13faee1b1df 29
+README.md
+  s_c03be7faca5502::t_74f4c469ad0d72 44-64
+lib/searchIndex.ts
+  s_c03be7faca5502::t_aec13faee1b1df 12-13
+components/YourRating.tsx
+  s_c03be7faca5502::t_16a7a5436e1239 7,121
+  s_c03be7faca5502::t_0b147a9d6a8f1d 1-6,8-120,122-125
+app/globals.css
+  s_c03be7faca5502::t_fb94586c4ed1d6 14-15,40
+app/shows/[id]/page.tsx
+  s_c03be7faca5502::t_41e5c82697f274 6,63,94,106-110
+components/ratingChart.module.css
+  s_c03be7faca5502::t_be2f2f65bc4d5b 84-126
+app/mine/mine.module.css
+  s_c03be7faca5502::t_eb5e545825bf29 1-81
+app/shared/page.tsx
+  s_c03be7faca5502::t_d1aac93c5803a2 1-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c6655d0144bdf0d0c329b4b0425c53e5bc200de1",
+  "prompts": {},
+  "sessions": {
+    "s_c03be7faca5502": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dca9d4d2-f298-4ea7-a1e7-8b14222a846d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
