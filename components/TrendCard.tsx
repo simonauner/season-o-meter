@@ -9,7 +9,7 @@ type Endpoint = {
     rating: number;
 };
 
-type TrendCardProps = {
+export type TrendCardProps = {
     href: string;
     title: string;
     meta: string;
