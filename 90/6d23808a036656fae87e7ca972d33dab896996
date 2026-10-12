@@ -1,0 +1,19 @@
+app/globals.css
+  s_e8b9aa96710f71::t_eb09565535a5cf 58,60-62,84-85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "906d23808a036656fae87e7ca972d33dab896996",
+  "prompts": {},
+  "sessions": {
+    "s_e8b9aa96710f71": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e72bc7e-a423-4f1d-842b-d7677d13f940",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
