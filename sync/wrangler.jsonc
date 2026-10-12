@@ -1,0 +1,15 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "season-o-meter-sync",
+    "main": "src/index.ts",
+    "compatibility_date": "2026-09-01",
+    "durable_objects": {
+        "bindings": [{ "name": "LISTS", "class_name": "SyncList" }],
+    },
+    "migrations": [{ "tag": "v1", "new_sqlite_classes": ["SyncList"] }],
+    "vars": {
+        // Comma-separated origins that may call the API.
+        "ALLOWED_ORIGINS": "https://www.auner.se",
+    },
+    "observability": { "enabled": true },
+}

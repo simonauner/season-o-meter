@@ -78,7 +78,7 @@ export function merge(current: UserData, incoming: UserData) {
 
 const SHARE_VERSION = '1';
 
-const toBase64Url = (bytes: Uint8Array) => {
+export const toBase64Url = (bytes: Uint8Array) => {
     let binary = '';
     for (const byte of bytes) binary += String.fromCharCode(byte);
     return btoa(binary)
@@ -92,9 +92,10 @@ const fromBase64Url = (text: string) => {
     return Uint8Array.from(binary, (char) => char.charCodeAt(0));
 };
 
+// slice() copies into a plain ArrayBuffer, which Blob's types ask for.
 const transform = (bytes: Uint8Array, stream: TransformStream) =>
     new Response(
-        new Blob([bytes as BlobPart]).stream().pipeThrough(stream)
+        new Blob([bytes.slice()]).stream().pipeThrough(stream)
     ).arrayBuffer();
 
 /** Encodes everything that is set, for a share link. */

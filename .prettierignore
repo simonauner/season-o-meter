@@ -1,3 +1,5 @@
 .next
 node_modules
 package-lock.json
+sync/worker-configuration.d.ts
+sync/.wrangler
