@@ -7,17 +7,20 @@ export const dynamic = 'force-static';
 const roundRating = (rating: number) => Math.round(rating * 10) / 10;
 
 export function GET() {
-    const series = getShows().map((show): SearchEntry => ({
-        type: 'series',
-        id: show.id,
-        title: show.title,
-        startYear: show.startYear,
-        endYear: show.endYear,
-        votes: show.votes,
-        ratings: ratedSeasons(show.seasons).map((season) =>
-            roundRating(season.rating)
-        ),
-    }));
+    const series = getShows().map((show): SearchEntry => {
+        const seasons = ratedSeasons(show.seasons);
+        return {
+            type: 'series',
+            id: show.id,
+            title: show.title,
+            startYear: show.startYear,
+            endYear: show.endYear,
+            votes: show.votes,
+            ratings: seasons.map((season) => roundRating(season.rating)),
+            rating: roundRating(show.rating),
+            seasons: seasons.map((season) => season.seasonNumber),
+        };
+    });
     const movies = getFranchises().map((franchise): SearchEntry => ({
         type: 'movies',
         id: franchise.id,

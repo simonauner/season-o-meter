@@ -1,7 +1,13 @@
 import Link from 'next/link';
 import { formatRating, formatYears } from '@/lib/format';
 import { ratingKey, valueOf, type UserData } from '@/lib/userData';
-import { partAverage, rated, watchlist, type ListItem } from '@/lib/userList';
+import {
+    imdbScore,
+    partAverage,
+    rated,
+    watchlist,
+    type ListItem,
+} from '@/lib/userList';
 import { Sparkline } from './Sparkline';
 import css from './userList.module.css';
 
@@ -68,6 +74,7 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                     const { entry, rating } = item;
                     const average = rating === null ? partAverage(item) : null;
                     const parts = entry.type === 'series' ? 'season' : 'movie';
+                    const imdb = imdbScore(item);
                     const yours =
                         compareWith &&
                         valueOf(compareWith, ratingKey(entry.id));
@@ -110,6 +117,18 @@ export function UserList({ title, items, owner, compareWith }: UserListProps) {
                                             aria-label={`${owner} rating: none`}
                                         >
                                             –
+                                        </span>
+                                    )}
+                                    {imdb !== null && (
+                                        <span
+                                            className={css.imdb}
+                                            title={
+                                                average !== null
+                                                    ? `IMDb average of the same ${parts}s`
+                                                    : undefined
+                                            }
+                                        >
+                                            IMDb {formatRating(imdb)}
                                         </span>
                                     )}
                                     {yours != null && (
