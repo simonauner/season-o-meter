@@ -3,6 +3,9 @@
 See how TV series are rated season by season, and film series movie by movie:
 where they peaked and where they went downhill.
 
+**Live at <https://www.auner.se/season-o-meter/>**, rebuilt every night
+from the latest data.
+
 Ratings come from [IMDb's non-commercial datasets](https://developer.imdb.com/non-commercial-datasets/).
 A season's rating is the average of its episode ratings. Episodes with fewer
 than five votes are left out, and only series with at least 5,000 votes and two
@@ -27,13 +30,16 @@ The site is fully static. There are no API calls when someone visits it.
    a page per series and film series, a list page per section, and a search
    index for client-side search.
 3. [GitHub Actions](.github/workflows/deploy.yml) does both every night and
-   deploys to GitHub Pages. The repository is public, so Actions minutes are
-   free.
+   deploys to GitHub Pages at <https://www.auner.se/season-o-meter/>. The
+   repository is public, so Actions minutes are free.
 
 The front-page sections ("Slow starters", "Collapsed like a house of cards",
 …) and the verdict for each series are defined in
 [lib/analysis.ts](lib/analysis.ts), and the ones for film series in
-[lib/franchiseAnalysis.ts](lib/franchiseAnalysis.ts).
+[lib/franchiseAnalysis.ts](lib/franchiseAnalysis.ts). A picker at the top of
+the series front page and list pages lets visitors require at least two, three
+or four rated seasons in every section (four by default). Every choice is
+rendered at build time, and the visitor's choice is remembered in the browser.
 
 ## Getting started
 
