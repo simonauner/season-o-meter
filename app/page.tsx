@@ -8,6 +8,7 @@ import {
     FilteredHomeSections,
     RatedFilterPicker,
 } from '@/components/RatedFilter';
+import { Reveal } from '@/components/Reveal';
 import { ShowGrid } from '@/components/ShowGrid';
 import { findShowSections } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
@@ -51,7 +52,7 @@ export default function Page() {
     );
 
     return (
-        <>
+        <Reveal>
             <Hero kind="series" label="Featured series" variants={featured} />
             <PageIntro title="Where did it peak?">
                 How TV series are rated season by season, and where they went
@@ -66,6 +67,6 @@ export default function Page() {
                 all={<ByMinCount kind="series" variants={variants} />}
                 limit={SHOWS_PER_SECTION}
             />
-        </>
+        </Reveal>
     );
 }
