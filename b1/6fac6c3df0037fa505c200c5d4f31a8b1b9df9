@@ -1,0 +1,19 @@
+components/Reveal.tsx
+  s_212df004a813bf::t_bec2d3e7e78603 3-8,14-16,30-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b16fac6c3df0037fa505c200c5d4f31a8b1b9df9",
+  "prompts": {},
+  "sessions": {
+    "s_212df004a813bf": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f038a8a0-d4a6-40aa-aa57-9b6a4d97ec13",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
