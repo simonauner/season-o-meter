@@ -3,6 +3,25 @@ import { DEFAULT_MIN_COUNT, type MinCount } from './minCount';
 import { findSections, type SectionDefinition } from './sections';
 import { mean, slope } from './stats';
 import type { Franchise, Movie } from './types';
+import {
+    BETTER_WITH_AGE,
+    BIG_SPREAD,
+    BIG_SPREAD_MIN,
+    COMEBACK,
+    FLAWLESS,
+    hasStandout,
+    hasTwinPeaks,
+    isComeback,
+    isZigzag,
+    pickVerdict,
+    RAN_OUT_OF_STEAM,
+    SAVED_THE_BEST,
+    STANDOUT,
+    STEADY,
+    STEADY_AND_LOW,
+    TWIN_PEAKS,
+    ZIGZAG,
+} from './verdicts';
 
 export type MovieTrend = {
     best: Movie;
@@ -16,7 +35,7 @@ export type MovieTrend = {
     verdict: string;
 };
 
-export function analyzeMovies({ movies }: Franchise): MovieTrend | null {
+export function analyzeMovies({ id, movies }: Franchise): MovieTrend | null {
     if (movies.length < 2) return null;
 
     const ratings = movies.map((movie) => movie.rating);
@@ -29,27 +48,53 @@ export function analyzeMovies({ movies }: Franchise): MovieTrend | null {
     // The trend over the whole series, so long series aren't judged per movie.
     const fittedChange = slope(ratings) * (movies.length - 1);
 
-    let verdict: string;
-    if (spread < 0.4) {
-        verdict = 'Rock steady';
-    } else if (best === first) {
-        verdict =
-            movies.length === 2
-                ? 'The sequel fell short'
-                : 'Never topped the original';
-    } else if (best === last) {
-        verdict =
-            movies.length === 2
-                ? 'The sequel is better'
-                : 'Saved the best for last';
-    } else if (last === worst) {
-        verdict = 'Ran out of steam';
-    } else if (fittedChange <= -0.5) {
-        verdict = `All downhill after ${best.title}`;
-    } else if (fittedChange >= 0.5) {
-        verdict = 'Getting better with age';
-    } else {
-        verdict = `Peaked with ${best.title}`;
+    const verdict = pickVerdict(id, verdictOptions());
+
+    function verdictOptions(): string[] {
+        if (worst.rating >= 8) return FLAWLESS;
+        if (spread < 0.4) {
+            return average < 6
+                ? STEADY_AND_LOW
+                : [
+                      ...STEADY,
+                      'Same procedure as every sequel',
+                      'Sequel-y good',
+                  ];
+        }
+        if (best === first) {
+            return [
+                movies.length === 2
+                    ? 'The sequel fell short'
+                    : 'Never topped the original',
+                "You can't handle the sequel",
+                'Nothing beats the original',
+                'Sequelitis',
+            ];
+        }
+        if (best === last) {
+            return movies.length === 2
+                ? [
+                      'The sequel is better',
+                      'The Empire Strikes Back',
+                      "I'll be back… and better",
+                  ]
+                : [...SAVED_THE_BEST, "I'll be back… and better"];
+        }
+        if (last === worst) return RAN_OUT_OF_STEAM;
+        if (isZigzag(ratings)) return ZIGZAG;
+        if (hasTwinPeaks(ratings)) return TWIN_PEAKS;
+        if (isComeback(ratings)) return COMEBACK;
+        if (spread >= BIG_SPREAD_MIN) return BIG_SPREAD;
+        if (fittedChange <= -0.5) {
+            return [
+                `All downhill after ${best.title}`,
+                'I see dead sequels',
+                "Should've quit while ahead",
+            ];
+        }
+        if (fittedChange >= 0.5) return BETTER_WITH_AGE;
+        if (hasStandout(ratings)) return STANDOUT;
+        return [`Peaked with ${best.title}`];
     }
 
     return {

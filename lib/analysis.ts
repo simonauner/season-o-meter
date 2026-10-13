@@ -3,6 +3,25 @@ import { DEFAULT_MIN_COUNT, type MinCount } from './minCount';
 import { findSections, type SectionDefinition } from './sections';
 import { mean, slope } from './stats';
 import type { RatedSeason, SeasonRating, Show } from './types';
+import {
+    BETTER_WITH_AGE,
+    BIG_SPREAD,
+    BIG_SPREAD_MIN,
+    COMEBACK,
+    FLAWLESS,
+    hasStandout,
+    hasTwinPeaks,
+    isComeback,
+    isZigzag,
+    pickVerdict,
+    RAN_OUT_OF_STEAM,
+    SAVED_THE_BEST,
+    STANDOUT,
+    STEADY,
+    STEADY_AND_LOW,
+    TWIN_PEAKS,
+    ZIGZAG,
+} from './verdicts';
 
 /**
  * Seasons with a rating based on at least half of their episodes. A season
@@ -16,6 +35,21 @@ export const ratedSeasons = (seasons: SeasonRating[]): RatedSeason[] =>
     );
 
 const hasEnded = (show: Show) => show.endYear !== null;
+
+const STILL_CLIMBING = [
+    'Still climbing',
+    'To infinity and beyond!',
+    "We're gonna need a bigger boat",
+    'The best is yet to come',
+];
+const FELL_AT_THE_FINISH = [
+    'Fell at the finish line',
+    'You were the chosen one!',
+    'Hasta la vista, quality',
+    'Houston, we have a problem',
+];
+/** Still running, and the latest season is the worst so far. */
+const LATEST_IS_WORST = ['Brace yourselves', 'Winter is coming'];
 
 export type SeasonTrend = {
     best: RatedSeason;
@@ -44,21 +78,42 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
     const fittedChange = slope(ratings) * (rated.length - 1);
     const ended = hasEnded(show);
 
-    let verdict: string;
-    if (spread < 0.4) {
-        verdict = 'Rock steady';
-    } else if (best === last) {
-        verdict = ended ? 'Saved the best for last' : 'Still climbing';
-    } else if (ended && last === worst) {
-        verdict = 'Fell at the finish line';
-    } else if (ended && last.rating < average - 0.3) {
-        verdict = 'Ran out of steam';
-    } else if (fittedChange <= -0.5) {
-        verdict = `All downhill since season ${best.seasonNumber}`;
-    } else if (fittedChange >= 0.5) {
-        verdict = 'Getting better with age';
-    } else {
-        verdict = `Peaked in season ${best.seasonNumber}`;
+    const verdict = pickVerdict(show.id, verdictOptions());
+
+    function verdictOptions(): string[] {
+        if (worst.rating >= 8.5) return FLAWLESS;
+        if (spread < 0.4) {
+            return average < 7
+                ? STEADY_AND_LOW
+                : [...STEADY, 'Same procedure as every season'];
+        }
+        if (best === last) return ended ? SAVED_THE_BEST : STILL_CLIMBING;
+        if (last === worst) return ended ? FELL_AT_THE_FINISH : LATEST_IS_WORST;
+        if (ended && last.rating < average - 0.3) return RAN_OUT_OF_STEAM;
+        if (isZigzag(ratings)) return ZIGZAG;
+        if (hasTwinPeaks(ratings)) return TWIN_PEAKS;
+        if (isComeback(ratings)) return COMEBACK;
+        if (spread >= BIG_SPREAD_MIN) return BIG_SPREAD;
+        if (fittedChange <= -0.5) {
+            return [
+                `All downhill since season ${best.seasonNumber}`,
+                'I see dead seasons',
+                "Should've quit while ahead",
+            ];
+        }
+        if (fittedChange >= 0.5) {
+            return [...BETTER_WITH_AGE, 'Seasoned to perfection'];
+        }
+        if (hasStandout(ratings)) return STANDOUT;
+        return [
+            `Peaked in season ${best.seasonNumber}`,
+            ...(best.seasonNumber === 1
+                ? ["Here's looking at you, season 1", 'You had me at season 1']
+                : []),
+            ...(best.seasonNumber === 4
+                ? ['May the 4th season be with you']
+                : []),
+        ];
     }
 
     return {

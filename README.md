@@ -44,7 +44,9 @@ though posters are loaded from TMDB's image server.
 The front-page sections ("Slow starters", "Collapsed like a house of cards",
 …) and the verdict for each series are defined in
 [lib/analysis.ts](lib/analysis.ts), and the ones for film series in
-[lib/franchiseAnalysis.ts](lib/franchiseAnalysis.ts). A picker at the top of
+[lib/franchiseAnalysis.ts](lib/franchiseAnalysis.ts). Most verdicts have a
+few wordings, listed there and in [lib/verdicts.ts](lib/verdicts.ts), and
+each title always gets the same one, picked by its id. A picker at the top of
 the series front page and list pages lets visitors require at least two, three
 or four rated seasons in every section (four by default). Every choice is
 rendered at build time, and the visitor's choice is remembered in the browser.
