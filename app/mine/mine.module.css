@@ -101,8 +101,88 @@
     outline-offset: 2px;
 }
 
-.panel .linkRow + .secondary {
+.secondary[aria-pressed='true'] {
+    border-color: var(--own);
+    color: var(--own);
+}
+
+.ways {
+    margin-top: 12px;
+}
+
+.panel .stop {
+    display: block;
+    margin-top: 20px;
+}
+
+/* The QR code or pairing code, under the buttons that show them. */
+.reveal {
     margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.panel .reveal p {
+    margin: 0 0 12px;
+}
+
+.qr {
+    display: block;
+    width: min(100%, 220px);
+    height: auto;
+    border-radius: 8px;
+}
+
+.code {
+    display: block;
+    color: var(--text-primary);
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 1.375rem;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.panel .expiry {
+    margin: 8px 0 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Getting a pairing code on a device that doesn't sync yet. */
+.codeForm {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.panel .codeForm p {
+    margin: 0 0 12px;
+}
+
+.panel .codeForm .expiry {
+    margin: 8px 0 0;
+}
+
+.panel .codeForm .expiry + .expiry {
+    margin: 2px 0 16px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+}
+
+.panel .problem,
+.panel .success {
+    margin: 10px 0 0;
+    color: var(--down);
+}
+
+.panel .success {
+    color: var(--up);
 }
 
 .buttons {
