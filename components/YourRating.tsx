@@ -32,8 +32,8 @@ function rate(key: string, rating: number | null, from: Element) {
 
 /**
  * Whether to run a wave across the scale, to show a visitor who hasn't rated
- * anything yet where ratings go. It runs once, when the scale is in view, and
- * stops for good once it has finished or the visitor clicks the scale.
+ * anything yet where ratings go. It starts once the scale is in view, repeats
+ * after a pause, and stops for good when the visitor clicks a step.
  */
 function useHint(enabled: boolean) {
     const data = useUserData();
@@ -91,9 +91,6 @@ export function RatingPicker({
                 ref={ref}
                 className={css.scale}
                 data-hint={playing ? '' : undefined}
-                onAnimationEnd={(event) => {
-                    if (event.target === event.currentTarget.lastChild) stop();
-                }}
             >
                 {RATINGS.map((rating, index) => (
                     <button
