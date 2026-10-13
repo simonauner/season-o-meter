@@ -1,0 +1,24 @@
+app/globals.css
+  s_919bd9d64a7fc9::t_e24293c1ee883d 14
+components/RatingChart.tsx
+  s_919bd9d64a7fc9::t_e24293c1ee883d 105-106
+  s_919bd9d64a7fc9::t_2353dcc84ac555 107-113,236
+components/ratingChart.module.css
+  s_919bd9d64a7fc9::t_e24293c1ee883d 60-67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "310c00648ee22ad7b3002961a3719b67ed0ed5da",
+  "prompts": {},
+  "sessions": {
+    "s_919bd9d64a7fc9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ca91eb07-5731-4f06-924f-cf25e9c2af4d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
