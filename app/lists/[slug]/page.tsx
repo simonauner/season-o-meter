@@ -10,6 +10,7 @@ import { forEachMinCount, type MinCount } from '@/lib/minCount';
 import homeCss from '../../home.module.css';
 import css from './list.module.css';
 
+/** Shown at first, and how many more each "Show more" adds. */
 const SHOWS_PER_LIST = 24;
 
 export const dynamicParams = false;
@@ -19,7 +20,7 @@ export function generateStaticParams() {
 }
 
 const getSection = (slug: string, minSeasons?: MinCount) =>
-    findShowSections(getShows(), SHOWS_PER_LIST, minSeasons).find(
+    findShowSections(getShows(), Infinity, minSeasons).find(
         (section) => section.slug === slug
     );
 
@@ -62,7 +63,10 @@ export default async function Page({ params }: PageProps<'/lists/[slug]'>) {
                             kind="series"
                             variants={forEachMinCount((minSeasons) => (
                                 <ShowGrid
-                                    shows={sections[minSeasons].items}
+                                    shows={sections[minSeasons].items.slice(
+                                        0,
+                                        SHOWS_PER_LIST
+                                    )}
                                     hideVerdicts={
                                         sections[minSeasons].sharedVerdict
                                     }
@@ -70,6 +74,9 @@ export default async function Page({ params }: PageProps<'/lists/[slug]'>) {
                             ))}
                         />
                     }
+                    totals={forEachMinCount(
+                        (minSeasons) => sections[minSeasons].items.length
+                    )}
                     limit={SHOWS_PER_LIST}
                 />
             </div>

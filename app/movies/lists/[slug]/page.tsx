@@ -13,6 +13,7 @@ import { forEachMinCount, type MinCount } from '@/lib/minCount';
 import homeCss from '../../../home.module.css';
 import css from '../../../lists/[slug]/list.module.css';
 
+/** Shown at first, and how many more each "Show more" adds. */
 const FRANCHISES_PER_LIST = 24;
 
 export const dynamicParams = false;
@@ -22,7 +23,7 @@ export function generateStaticParams() {
 }
 
 const getSection = (slug: string, minMovies?: MinCount) =>
-    findFranchiseSections(getFranchises(), FRANCHISES_PER_LIST, minMovies).find(
+    findFranchiseSections(getFranchises(), Infinity, minMovies).find(
         (section) => section.slug === slug
     );
 
@@ -67,7 +68,10 @@ export default async function Page({
                             kind="movies"
                             variants={forEachMinCount((minMovies) => (
                                 <FranchiseGrid
-                                    franchises={sections[minMovies].items}
+                                    franchises={sections[minMovies].items.slice(
+                                        0,
+                                        FRANCHISES_PER_LIST
+                                    )}
                                     hideVerdicts={
                                         sections[minMovies].sharedVerdict
                                     }
@@ -75,6 +79,9 @@ export default async function Page({
                             ))}
                         />
                     }
+                    totals={forEachMinCount(
+                        (minMovies) => sections[minMovies].items.length
+                    )}
                     limit={FRANCHISES_PER_LIST}
                 />
             </div>
