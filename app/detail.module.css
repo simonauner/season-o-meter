@@ -118,6 +118,26 @@
     margin-bottom: 12px;
 }
 
+/* How it's rated, in words, under the chart. */
+.summary {
+    max-width: 68ch;
+    margin: 16px 0 0;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+/* Cards of other titles, like the sections on the front page. */
+.related {
+    margin-top: 40px;
+}
+
+.related h2 {
+    margin-bottom: 16px;
+    font-size: 1.375rem;
+    font-weight: 750;
+    letter-spacing: -0.01em;
+}
+
 .empty {
     margin-top: 32px;
     color: var(--text-secondary);

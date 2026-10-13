@@ -25,6 +25,12 @@ Opening a title from a list or Swipe grows its poster into the one on its
 page, in browsers with view transitions
 ([components/PosterTransition.tsx](components/PosterTransition.tsx)).
 
+Each title's page says in a few sentences how it's rated, under the chart
+([lib/summaries.ts](lib/summaries.ts)), and ends
+with six similar titles ([lib/related.ts](lib/related.ts)). Those links are
+picked so that every title can be reached from the front page, which is how
+search engines find the many pages that no list links to.
+
 Shared links show a preview image: for a series or film series, its verdict
 and a bar per season or movie, and for every other page, the site's own.
 They're drawn at build time, one `og.png` next to each title's page

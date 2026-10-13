@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SeasonChart } from '@/components/SeasonChart';
 import { SeasonTable } from '@/components/SeasonTable';
+import { ShowGrid } from '@/components/ShowGrid';
 import { Poster, type PosterEntry } from '@/components/Poster';
 import { SharedPoster } from '@/components/PosterTransition';
 import { StatTile } from '@/components/StatTile';
@@ -19,6 +20,8 @@ import {
     yearsInText,
 } from '@/lib/format';
 import { openGraph } from '@/lib/openGraph';
+import { relatedShows } from '@/lib/related';
+import { summarizeSeasons } from '@/lib/summaries';
 import type { RatedSeason } from '@/lib/types';
 import css from '../../detail.module.css';
 
@@ -146,6 +149,9 @@ export default async function Page({ params }: PageProps<'/shows/[id]'>) {
                     <section className={css.section}>
                         <h2>Average episode rating per season</h2>
                         <SeasonChart showId={show.id} seasons={seasons} />
+                        <p className={css.summary}>
+                            {summarizeSeasons(show, trend)}
+                        </p>
                     </section>
                 </>
             ) : (
@@ -162,6 +168,11 @@ export default async function Page({ params }: PageProps<'/shows/[id]'>) {
                     seasons={show.seasons}
                     trend={trend}
                 />
+            </section>
+
+            <section className={css.related}>
+                <h2>Similar series</h2>
+                <ShowGrid shows={relatedShows(show, getShows())} />
             </section>
         </article>
     );
