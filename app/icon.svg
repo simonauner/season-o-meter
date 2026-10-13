@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 30 30">
+    <!-- The header's LogoMark on its tile, against the header navy. -->
+    <rect x="-3" y="-3" width="30" height="30" rx="8" fill="#0d1b2a" />
+    <rect x="-2.5" y="-2.5" width="29" height="29" rx="7.5" fill="#ffffff" fill-opacity="0.08" stroke="#ffffff" stroke-opacity="0.12" />
+    <g fill="#ffffff" fill-opacity="0.45">
+        <rect x="1" y="12" width="3.2" height="9" rx="1.2" />
+        <rect x="5.6" y="8" width="3.2" height="13" rx="1.2" />
+        <rect x="14.8" y="9" width="3.2" height="12" rx="1.2" />
+        <rect x="19.4" y="14" width="3.2" height="7" rx="1.2" />
+    </g>
+    <rect x="10.2" y="3" width="3.2" height="18" rx="1.2" fill="#3987e5" />
+</svg>
