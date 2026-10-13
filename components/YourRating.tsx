@@ -8,6 +8,7 @@ import {
     valueOf,
     watchlistKey,
 } from '@/lib/userData';
+import { popcorn } from '@/lib/popcorn';
 import { setValue, useUserData } from '@/lib/userStore';
 import css from './yourRating.module.css';
 
@@ -20,6 +21,12 @@ const RATINGS = Array.from(
 function useValue(key: string) {
     const data = useUserData();
     return { ready: data !== null, value: data && valueOf(data, key) };
+}
+
+/** Saves a rating, with popcorn for a 10. */
+function rate(key: string, rating: number | null, from: Element) {
+    setValue(key, rating);
+    if (rating === MAX_RATING) popcorn(from);
 }
 
 /** A 1–10 scale. Choosing the current rating again clears it. */
@@ -50,8 +57,12 @@ export function RatingPicker({
                         aria-pressed={rating === value}
                         aria-label={`${rating} of ${MAX_RATING}`}
                         disabled={!ready}
-                        onClick={() =>
-                            setValue(storeKey, rating === value ? null : rating)
+                        onClick={(event) =>
+                            rate(
+                                storeKey,
+                                rating === value ? null : rating,
+                                event.currentTarget
+                            )
                         }
                     >
                         {rating}
@@ -80,9 +91,10 @@ export function RatingSelect({
             data-set={value !== null ? '' : undefined}
             disabled={!ready}
             onChange={(event) =>
-                setValue(
+                rate(
                     storeKey,
-                    event.target.value ? Number(event.target.value) : null
+                    event.target.value ? Number(event.target.value) : null,
+                    event.currentTarget
                 )
             }
         >

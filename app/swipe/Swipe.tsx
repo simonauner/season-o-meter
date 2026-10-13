@@ -16,6 +16,7 @@ import { ChoicePicker } from '@/components/ChoicePicker';
 import { Poster } from '@/components/Poster';
 import { SharedPoster } from '@/components/PosterTransition';
 import { formatYears } from '@/lib/format';
+import { popcorn } from '@/lib/popcorn';
 import type { SearchEntry } from '@/lib/searchIndex';
 import { storedChoice } from '@/lib/storedChoice';
 import { deckOrder, entryHref, partsLabel, remaining } from '@/lib/swipeDeck';
@@ -132,6 +133,7 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
         rating: number;
     } | null>(null);
     const scaleLabel = useId();
+    const scale = useRef<HTMLSpanElement>(null);
     const commandKey = useCommandKey();
     const undoTip = useTip('swipe-undo-key');
 
@@ -189,6 +191,8 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                 0,
                 `Rated ${top.title} ${rating}.`
             );
+            // From the 10 on the scale, also when rated from the keyboard.
+            if (rating === MAX_RATING) popcorn(scale.current?.lastElementChild);
         }
     };
 
@@ -324,7 +328,7 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                     <span id={scaleLabel} className={css.rateLabel}>
                         Seen it? Rate it
                     </span>
-                    <span className={css.scale}>
+                    <span ref={scale} className={css.scale}>
                         {RATINGS.map((rating) => (
                             <button
                                 key={rating}
