@@ -336,3 +336,11 @@
     color: rgb(255 255 255 / 50%);
     font-size: 0.75rem;
 }
+
+.studio {
+    margin: 8px 0 0;
+    text-align: center;
+    color: rgb(255 255 255 / 50%);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+}

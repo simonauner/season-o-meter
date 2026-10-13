@@ -96,6 +96,13 @@ export function Footer() {
                     . Used with permission. No episodes were harmed in the
                     making of this site.
                 </p>
+                <p className={css.studio}>
+                    A{' '}
+                    <a href="https://hackskaduha.se/" rel="noreferrer">
+                        hackskaduha.se
+                    </a>{' '}
+                    production
+                </p>
             </div>
         </footer>
     );
