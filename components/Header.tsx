@@ -1,6 +1,6 @@
 import Form from 'next/form';
 import Link from 'next/link';
-import { NavLinks } from './NavLinks';
+import { NavLinks, ProfileLink } from './NavLinks';
 import css from './header.module.css';
 
 // Season heights for the logo mark: a series that peaks, then goes downhill.
@@ -40,6 +40,7 @@ export function Header() {
                         Season<span className={css.logoO}>-o-</span>meter
                     </span>
                 </Link>
+                <ProfileLink />
                 <NavLinks />
                 <Form action="/search/" className={css.search} role="search">
                     <label htmlFor="search" className="visually-hidden">

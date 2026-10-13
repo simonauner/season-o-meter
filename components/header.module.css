@@ -113,6 +113,7 @@
 .search {
     position: relative;
     margin-left: auto;
+    order: 1;
     flex: 1 1 160px;
     max-width: 280px;
 }
@@ -152,13 +153,75 @@
     background: rgb(255 255 255 / 12%);
 }
 
+/* After the search on wide screens, next to the logo on phones. */
+.profile {
+    order: 2;
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    color: rgb(255 255 255 / 75%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
+}
+
+.profile svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+}
+
+.profile:hover {
+    color: #fff;
+}
+
+.profile[aria-current='page'] {
+    background: rgb(255 255 255 / 12%);
+    color: #fff;
+}
+
+.profile:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
 @media (max-width: 639px) {
     .inner {
         column-gap: 12px;
     }
 
+    .profile {
+        order: 0;
+        margin-left: auto;
+    }
+
+    /* A row of its own, scrolling sideways if it's still too narrow. */
+    .nav {
+        flex-basis: 100%;
+        gap: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .navLink {
+        flex: none;
+        padding: 6px 10px;
+    }
+
     .search {
         flex-basis: 100%;
         max-width: none;
+    }
+}
+
+/* Small phones: tighter links, so all five still fit on one row. */
+@media (max-width: 374px) {
+    .navLink {
+        padding-inline: 6px;
+        font-size: 0.875rem;
     }
 }

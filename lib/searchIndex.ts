@@ -17,4 +17,6 @@ export type SearchEntry = {
     seasonCount?: number;
     /** IMDb ids of a film series' movies, in the same order. */
     movieIds?: string[];
+    /** TMDB poster path, like /abc.jpg (see lib/poster.ts). */
+    poster?: string;
 };

@@ -1,0 +1,88 @@
+.poster,
+.drawn {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.poster {
+    object-fit: cover;
+    background: var(--surface-raised);
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* A poster drawn from the title and its ratings, in a colour of its own. */
+.drawn {
+    display: flex;
+    flex-direction: column;
+    padding: 9% 9% 0;
+    overflow: hidden;
+    background:
+        radial-gradient(
+            ellipse 90% 60% at 20% 0%,
+            hsl(var(--hue) 70% 55% / 45%),
+            transparent 70%
+        ),
+        linear-gradient(
+            165deg,
+            hsl(var(--hue) 45% 26%),
+            hsl(calc(var(--hue) + 40) 55% 9%)
+        );
+    color: #ffffff;
+    container-type: inline-size;
+}
+
+.kind {
+    font-size: max(10px, 4cqi);
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.7;
+}
+
+.title {
+    margin-top: 6%;
+    font-size: 11cqi;
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+}
+
+.years {
+    margin-top: 3%;
+    font-size: max(11px, 4.5cqi);
+    font-weight: 600;
+    opacity: 0.75;
+}
+
+/* A season or movie per bar, like the logo mark and the footer skyline. */
+.bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2.5%;
+    height: 38%;
+    margin-top: auto;
+}
+
+.bar,
+.peak {
+    flex: 1;
+    border-radius: 3px 3px 0 0;
+}
+
+.bar {
+    background: rgb(255 255 255 / 28%);
+}
+
+.peak {
+    background: hsl(calc(var(--hue) + 180) 85% 65%);
+}
+
+/* Without a title, the bars sit higher, clear of a caption over the bottom. */
+.drawn[data-untitled] .bars {
+    height: 45%;
+    margin-block: auto 38%;
+}

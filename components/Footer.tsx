@@ -48,6 +48,9 @@ export function Footer() {
         dateStyle: 'long',
         timeZone: 'UTC',
     });
+    const hasPosters = [...data.shows, ...data.franchises].some(
+        (title) => title.poster
+    );
 
     return (
         <footer className={css.footer}>
@@ -74,6 +77,19 @@ export function Footer() {
                             </a>
                         </dd>
                     </div>
+                    {hasPosters && (
+                        <div>
+                            <dt>Posters</dt>
+                            <dd>
+                                <a
+                                    href="https://www.themoviedb.org/"
+                                    rel="noreferrer"
+                                >
+                                    TMDB
+                                </a>
+                            </dd>
+                        </div>
+                    )}
                     <div>
                         <dt>Season rating</dt>
                         <dd>The average of its episode ratings</dd>
@@ -93,8 +109,10 @@ export function Footer() {
                     <a href="https://www.imdb.com/" rel="noreferrer">
                         IMDb
                     </a>
-                    . Used with permission. No episodes were harmed in the
-                    making of this site.
+                    . Used with permission.
+                    {hasPosters &&
+                        ' This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.'}{' '}
+                    No episodes were harmed in the making of this site.
                 </p>
                 <p className={css.studio}>
                     A{' '}

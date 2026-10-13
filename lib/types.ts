@@ -24,6 +24,8 @@ export type Show = {
     rating: number;
     votes: number;
     seasons: SeasonRating[];
+    /** TMDB poster path, like /abc.jpg, if the data was built with TMDB. */
+    poster?: string;
 };
 
 export type Movie = {
@@ -47,6 +49,8 @@ export type Franchise = {
     votes: number;
     /** Rated movies in release order. */
     movies: Movie[];
+    /** TMDB poster path of the collection or first movie, if found. */
+    poster?: string;
 };
 
 export type DataFile = {
