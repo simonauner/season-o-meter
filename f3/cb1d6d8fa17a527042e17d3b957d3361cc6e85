@@ -1,0 +1,30 @@
+app/swipe/Swipe.tsx
+  s_d590e5794495d2::t_21d5af988b6259 356-359
+  s_d590e5794495d2::t_bcb5be2e20b8bd 30,184,187,217-230,322-350,352-355,360-362
+  s_d590e5794495d2::t_a40d609defa676 351
+  s_d590e5794495d2::t_fb962243e64738 363-365
+app/profile/Profile.tsx
+  s_d590e5794495d2::t_0041139546c71f 10,46,194-227
+  s_d590e5794495d2::t_31a9f3b3c0f314 228-230
+app/swipe/swipe.module.css
+  s_d590e5794495d2::t_21d5af988b6259 146-154
+  s_d590e5794495d2::t_2d370f1d730564 112-145,155-201,439-440
+lib/tips.ts
+  s_d590e5794495d2::t_c448d94480c5dc 1-90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f3cb1d6d8fa17a527042e17d3b957d3361cc6e85",
+  "prompts": {},
+  "sessions": {
+    "s_d590e5794495d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "93b7eb4a-d42a-4da5-8ce6-0786914e341c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
