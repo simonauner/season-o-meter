@@ -11,14 +11,19 @@ import { listItems } from '@/lib/userList';
 import { importData, useUserData } from '@/lib/userStore';
 import { useHash } from '@/lib/useHash';
 import { useSearchIndex } from '@/lib/useSearchIndex';
+import { AddFriendPanel } from '../friends/AddFriend';
 import css from '../mine/mine.module.css';
 
 const LIVE_PREFIX = 'list=';
 
+/** The id of a live list's link, or null for a snapshot. */
+const liveListId = (hash: string) =>
+    hash.startsWith(LIVE_PREFIX) ? hash.slice(LIVE_PREFIX.length) : null;
+
 /** A live list from the sync server, or a snapshot carried in the link. */
 async function load(hash: string): Promise<UserData | null> {
-    if (!hash.startsWith(LIVE_PREFIX)) return decodeShare(hash);
-    const listId = hash.slice(LIVE_PREFIX.length);
+    const listId = liveListId(hash);
+    if (listId === null) return decodeShare(hash);
     if (!syncAvailable || !isListId(listId)) return null;
     return fetchList(listId).catch(() => null);
 }
@@ -51,6 +56,8 @@ export function SharedList() {
         [shared, index]
     );
 
+    const friendListId = shared && hash !== null ? liveListId(hash) : null;
+
     if (shared === null) {
         return (
             <PageIntro title="Shared list">
@@ -79,6 +86,8 @@ export function SharedList() {
 
             {shared && (
                 <div className={css.panels}>
+                    {/* Only a live list stays up to date to compare with. */}
+                    {friendListId && <AddFriendPanel listId={friendListId} />}
                     <section className={css.panel}>
                         <h2>Is this your own list?</h2>
                         <p>

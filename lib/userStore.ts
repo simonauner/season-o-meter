@@ -1,7 +1,7 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
-import { merge, sanitize, type UserData } from './userData';
+import { merge, sanitize, type Stamped, type UserData } from './userData';
 
 const STORAGE_KEY = 'season-o-meter:mine';
 
@@ -67,7 +67,7 @@ function write(data: UserData, { fromSync = false } = {}) {
 export const getUserData = read;
 
 /** Sets values, or clears them with null. */
-export function setValues(changes: Record<string, number | null>) {
+export function setValues(changes: Record<string, Stamped[0]>) {
     const now = Date.now();
     const data = { ...read() };
     for (const [key, value] of Object.entries(changes)) {
@@ -76,7 +76,7 @@ export function setValues(changes: Record<string, number | null>) {
     write(data);
 }
 
-export const setValue = (key: string, value: number | null) =>
+export const setValue = (key: string, value: Stamped[0]) =>
     setValues({ [key]: value });
 
 /** Merges data from elsewhere and returns how many values changed. */

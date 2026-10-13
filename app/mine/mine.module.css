@@ -206,3 +206,10 @@
 .phase[data-phase='failed'] {
     color: var(--down);
 }
+
+/* A field on its own line, above another one. */
+.field {
+    display: block;
+    width: 100%;
+    margin-bottom: 16px;
+}

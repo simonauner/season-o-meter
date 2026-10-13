@@ -1,6 +1,6 @@
 /**
  * Sync server for Season-o-meter. One Durable Object per synced list holds
- * its ratings and watchlist in SQLite, and merges changes from devices with
+ * its ratings, watchlist and friends in SQLite, and merges changes from devices with
  * the same "latest change wins" rule as the site (lib/userData.ts). Pairing
  * codes, which connect a new device to a list, are in pairing.ts.
  */
@@ -13,7 +13,7 @@ import {
     type ListResponse,
     type SyncResponse,
 } from '../../lib/syncProtocol';
-import { sanitize, type UserData } from '../../lib/userData';
+import { sanitize, shareable, type UserData } from '../../lib/userData';
 import { parsePairingCode } from '../../lib/pairingCode';
 import { canSealFor, pairing } from './pairing';
 
@@ -32,7 +32,7 @@ class HttpError extends Error {
     }
 }
 
-type Row = { key: string; value: number | null; updated_at: number };
+type Row = { key: string; value: number | string | null; updated_at: number };
 
 const toData = (rows: Iterable<Row>): UserData =>
     Object.fromEntries(
@@ -53,13 +53,42 @@ export class SyncList extends DurableObject<Env> {
         return last ?? 0;
     }
 
-    private hasTable() {
-        return (
-            this.sql
-                .exec(
-                    "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'entries'"
-                )
-                .toArray().length > 0
+    /** How the entries table was created, or null if it hasn't been. */
+    private tableSql() {
+        const [table] = this.sql
+            .exec<{
+                sql: string;
+            }>(
+                "SELECT sql FROM sqlite_master WHERE type = 'table' AND name = 'entries'"
+            )
+            .toArray();
+        return table?.sql ?? null;
+    }
+
+    private createTable() {
+        // Lists from before friends had a numeric value column, which would
+        // turn a friend named "42" into the number 42. Copied into a new one.
+        const old = /value INTEGER/.test(this.tableSql() ?? '');
+        if (old) this.sql.exec('ALTER TABLE entries RENAME TO entries_old');
+        this.sql.exec(`
+            CREATE TABLE IF NOT EXISTS entries (
+                key TEXT PRIMARY KEY,
+                -- No type, so ratings stay numbers and names stay text.
+                value,
+                updated_at INTEGER NOT NULL,
+                -- Bumped on every write, so devices can ask for what's new.
+                seq INTEGER NOT NULL
+            );
+        `);
+        if (old) {
+            this.sql.exec(`
+                INSERT INTO entries SELECT key, value, updated_at, seq
+                FROM entries_old;
+                DROP TABLE entries_old;
+            `);
+        }
+        this.sql.exec(
+            'CREATE INDEX IF NOT EXISTS entries_seq ON entries (seq)'
         );
     }
 
@@ -68,16 +97,7 @@ export class SyncList extends DurableObject<Env> {
         return this.ctx.storage.transactionSync(() => {
             // Tables are only created on the first write, so reading a list
             // that doesn't exist doesn't store anything.
-            this.sql.exec(`
-                CREATE TABLE IF NOT EXISTS entries (
-                    key TEXT PRIMARY KEY,
-                    value INTEGER,
-                    updated_at INTEGER NOT NULL,
-                    -- Bumped on every write, so devices can ask for what's new.
-                    seq INTEGER NOT NULL
-                );
-                CREATE INDEX IF NOT EXISTS entries_seq ON entries (seq);
-            `);
+            this.createTable();
 
             const seq = this.lastSeq() + 1;
             for (const [key, [value, updatedAt]] of Object.entries(changes)) {
@@ -120,13 +140,15 @@ export class SyncList extends DurableObject<Env> {
         });
     }
 
-    /** Everything that is set, for a read-only link. */
+    /** What others may see, for a read-only link. Friends are left out. */
     list(): ListResponse {
-        if (!this.hasTable()) return { data: {} };
+        if (this.tableSql() === null) return { data: {} };
         return {
-            data: toData(
-                this.sql.exec<Row>(
-                    'SELECT key, value, updated_at FROM entries WHERE value IS NOT NULL'
+            data: shareable(
+                toData(
+                    this.sql.exec<Row>(
+                        'SELECT key, value, updated_at FROM entries WHERE value IS NOT NULL'
+                    )
                 )
             ),
         };

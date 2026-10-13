@@ -54,7 +54,7 @@ export function listItems(data: UserData, index: SearchEntry[]): ListItem[] {
 
     for (const [key, [value, updatedAt]] of Object.entries(data)) {
         const match = KEY.exec(key);
-        if (value === null || !match) continue;
+        if (typeof value !== 'number' || !match) continue;
         const [, kind, id, season] = match;
         const entry = byId.get(id);
         if (kind === 'w') {
