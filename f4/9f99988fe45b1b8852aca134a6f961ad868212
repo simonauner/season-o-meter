@@ -1,0 +1,19 @@
+app/mine/LinkField.tsx
+  s_977d47f66a32cc::t_3186acaf972294 33-48,68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f49f99988fe45b1b8852aca134a6f961ad868212",
+  "prompts": {},
+  "sessions": {
+    "s_977d47f66a32cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f32c614f-dc5d-4030-a6d5-b51951d616ff",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
