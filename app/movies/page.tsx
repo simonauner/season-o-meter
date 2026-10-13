@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
+import { FeaturedFranchise } from '@/components/FeaturedFranchise';
 import { FranchiseGrid } from '@/components/FranchiseGrid';
+import { Hero } from '@/components/Hero';
 import { HomeSection } from '@/components/HomeSection';
 import { ByMinCount, MinCountPicker } from '@/components/MinCountFilter';
 import { PageIntro } from '@/components/PageIntro';
@@ -10,6 +12,7 @@ import {
 import { getFranchises } from '@/lib/data';
 import { findFranchiseSections } from '@/lib/franchiseAnalysis';
 import { forEachMinCount } from '@/lib/minCount';
+import { topOfEachSection } from '@/lib/sections';
 import css from '../home.module.css';
 
 const FRANCHISES_PER_SECTION = 6;
@@ -21,12 +24,29 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-    const variants = forEachMinCount((minMovies) =>
+    const sectionsByMinMovies = forEachMinCount((minMovies) =>
         findFranchiseSections(
             getFranchises(),
             FRANCHISES_PER_SECTION,
             minMovies
-        ).map((section) => (
+        )
+    );
+
+    // The hero picks one of the film series that top a section.
+    const featured = forEachMinCount((minMovies) =>
+        topOfEachSection(sectionsByMinMovies[minMovies]).map(
+            ({ section, item }) => (
+                <FeaturedFranchise
+                    key={item.id}
+                    franchise={item}
+                    eyebrow={`No. 1 in ${section.title}`}
+                />
+            )
+        )
+    );
+
+    const variants = forEachMinCount((minMovies) =>
+        sectionsByMinMovies[minMovies].map((section) => (
             <HomeSection
                 key={section.slug}
                 title={section.title}
@@ -40,6 +60,7 @@ export default function Page() {
 
     return (
         <>
+            <Hero kind="movies" label="Featured movies" variants={featured} />
             <PageIntro title="Did the sequels hold up?">
                 How film series are rated movie by movie, from the original to
                 the latest sequel.
