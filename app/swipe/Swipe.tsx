@@ -10,6 +10,7 @@ import {
     useMemo,
     useRef,
     useState,
+    useSyncExternalStore,
 } from 'react';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { Poster } from '@/components/Poster';
@@ -61,6 +62,21 @@ const FLICK_DISTANCE = 40;
 /** Movement before a press counts as a drag rather than a tap. */
 const DRAG_SLOP = 6;
 
+/**
+ * Where the up and down arrows start on the scale. Most of what's been seen
+ * is rated somewhere in between, so either is a few presses away.
+ */
+const UP_START = 5;
+const DOWN_START = MAX_RATING;
+
+/** Whether shortcuts use ⌘ rather than Ctrl, as on a Mac. */
+const useCommandKey = () =>
+    useSyncExternalStore(
+        () => () => {},
+        () => /Mac|iPhone|iPad/.test(navigator.platform),
+        () => false
+    );
+
 /** How wide a card is, for picking a poster size. */
 const POSTER_SIZES = '(max-width: 420px) 80vw, 360px';
 
@@ -107,13 +123,22 @@ export function Swipe() {
 function Deck({ deck }: { deck: SearchEntry[] }) {
     const [leaving, setLeaving] = useState<Leaving | null>(null);
     const [history, setHistory] = useState<Action[]>([]);
+    /** A rating picked with the up and down arrows, for Enter to save. */
+    const [picking, setPicking] = useState<{
+        id: string;
+        rating: number;
+    } | null>(null);
     const scaleLabel = useId();
+    const commandKey = useCommandKey();
+    const undoTip = useTip('swipe-undo-key');
 
     const cards = deck
         .filter((entry) => entry.id !== leaving?.entry.id)
         .slice(0, 3);
     const top = cards.at(0);
     const last = history.at(-1);
+    // Only for the card it was picked on.
+    const picked = picking && picking.id === top?.id ? picking.rating : null;
 
     const act = (
         entry: SearchEntry,
@@ -164,6 +189,18 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
         }
     };
 
+    /** Moves the picked rating up or down the scale, or starts picking. */
+    const pick = (step: 1 | -1) => {
+        if (!top) return;
+        const rating =
+            picked === null
+                ? step > 0
+                    ? UP_START
+                    : DOWN_START
+                : Math.min(MAX_RATING, Math.max(MIN_RATING, picked + step));
+        setPicking({ id: top.id, rating });
+    };
+
     const undo = () => {
         if (!last) return;
         setValue(last.key, null);
@@ -172,19 +209,41 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
     };
 
     const onKeyDown = useEffectEvent((event: KeyboardEvent) => {
-        if (event.altKey || event.ctrlKey || event.metaKey) return;
         if (
             event.target instanceof Element &&
             event.target.closest('input, textarea, select, [contenteditable]')
         ) {
             return;
         }
+        // ⌘Z or Ctrl+Z, but not with Shift, which is redo.
+        if (
+            event.key.toLowerCase() === 'z' &&
+            (event.metaKey || event.ctrlKey) &&
+            !event.altKey &&
+            !event.shiftKey
+        ) {
+            if (last) {
+                undo();
+                markTipSeen('swipe-undo-key');
+                event.preventDefault();
+            }
+            return;
+        }
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
         if (event.key === 'ArrowLeft') {
             skip();
             markTipSeen('swipe-skip-key');
         } else if (event.key === 'ArrowRight') {
             save();
             markTipSeen('swipe-save-key');
+        } else if (event.key === 'ArrowUp') {
+            pick(1);
+        } else if (event.key === 'ArrowDown') {
+            pick(-1);
+        } else if (event.key === 'Enter' && picked !== null) {
+            rate(picked);
+        } else if (event.key === 'Escape' && picked !== null) {
+            setPicking(null);
         } else if (/^\d$/.test(event.key)) {
             // 0 is 10, the key after 9.
             rate(Number(event.key) || MAX_RATING);
@@ -269,6 +328,7 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                                 type="button"
                                 className={css.step}
                                 aria-label={`${rating} of ${MAX_RATING}`}
+                                data-picked={rating === picked ? '' : undefined}
                                 disabled={!top}
                                 onClick={() => rate(rating)}
                             >
@@ -288,15 +348,30 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                 </button>
 
                 <div className={css.feedback}>
-                    <p aria-live="polite">{last?.message}</p>
-                    {last && (
-                        <button
-                            type="button"
-                            className={css.undo}
-                            onClick={undo}
-                        >
-                            Undo
-                        </button>
+                    <p aria-live="polite">
+                        {picked !== null && top
+                            ? `Rate ${top.title} ${picked}? Press Enter.`
+                            : last?.message}
+                    </p>
+                    {last && picked === null && (
+                        <span className={css.undoGroup}>
+                            <button
+                                type="button"
+                                className={css.undo}
+                                aria-keyshortcuts={
+                                    commandKey ? 'Meta+Z' : 'Control+Z'
+                                }
+                                onClick={undo}
+                            >
+                                Undo
+                            </button>
+                            {undoTip && (
+                                // The key itself is told with aria-keyshortcuts.
+                                <kbd className={css.undoKey} aria-hidden>
+                                    {commandKey ? '⌘Z' : 'Ctrl+Z'}
+                                </kbd>
+                            )}
+                        </span>
                     )}
                 </div>
 
@@ -306,7 +381,8 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                     </span>
                     <span className={css.keyHint}>
                         Drag left or press ← to skip, drag right or press → to
-                        add to your watchlist, press 1–9 and 0 to rate.
+                        add to your watchlist, press 1–9 and 0 to rate, or pick
+                        a rating with ↑ and ↓ and press Enter.
                     </span>{' '}
                     Skipped ones can be brought back on your{' '}
                     <Link href="/profile/">Profile</Link>.
