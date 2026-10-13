@@ -29,6 +29,32 @@
     gap: 14px;
 }
 
+/* Room for the visitor's rating, when they have one. */
+.top:has(.yours) {
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+}
+
+.yours {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+}
+
+.yours strong {
+    color: var(--own);
+    font-size: 1.375rem;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.yours span {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
 .poster {
     aspect-ratio: 2 / 3;
     overflow: hidden;

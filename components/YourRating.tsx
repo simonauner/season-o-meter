@@ -135,3 +135,23 @@ export function TitleActions({ id }: { id: string }) {
         </div>
     );
 }
+
+/** The visitor's rating of a title, for a card. Nothing if it isn't rated. */
+export function CardRating({
+    id,
+    className,
+}: {
+    id: string;
+    className?: string;
+}) {
+    const { value } = useValue(ratingKey(id));
+    if (value === null) return null;
+
+    return (
+        <p className={className}>
+            <span className="visually-hidden">Your rating: </span>
+            <strong>{value}</strong>
+            <span aria-hidden>You</span>
+        </p>
+    );
+}

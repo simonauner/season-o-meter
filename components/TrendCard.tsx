@@ -2,6 +2,7 @@ import { changeTone, formatChange, formatRating } from '@/lib/format';
 import { Poster, type PosterEntry } from './Poster';
 import { PosterLink, PosterScope, SharedPoster } from './PosterTransition';
 import { Sparkline } from './Sparkline';
+import { CardRating } from './YourRating';
 import css from './trendCard.module.css';
 
 type Endpoint = {
@@ -40,6 +41,7 @@ export function TrendCard({
                         <p className={css.meta}>{meta}</p>
                         {verdict && <p className={css.verdict}>{verdict}</p>}
                     </div>
+                    <CardRating id={entry.id} className={css.yours} />
                 </div>
                 <div className={css.chart}>
                     <Sparkline ratings={entry.ratings} />
