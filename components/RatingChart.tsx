@@ -102,6 +102,15 @@ export function RatingChart({ points, label, ownKeys }: RatingChartProps) {
     // Only label the extremes directly; the tooltip and table carry the rest.
     const bestIndex = ratings.indexOf(Math.max(...ratings));
     const worstIndex = ratings.indexOf(Math.min(...ratings));
+    // A completely flat line has no peak or dip worth colouring.
+    const extremeClass = (index: number) =>
+        bestIndex === worstIndex
+            ? ''
+            : index === bestIndex
+              ? css.best
+              : index === worstIndex
+                ? css.worst
+                : '';
 
     // Thin out x labels when there are many points.
     const labelEvery = Math.ceil(points.length / Math.max(innerWidth / 36, 1));
@@ -224,7 +233,7 @@ export function RatingChart({ points, label, ownKeys }: RatingChartProps) {
                                 cx={x(i)}
                                 cy={y(point.rating)}
                                 r={i === active ? 6 : 4}
-                                className={css.point}
+                                className={`${css.point} ${extremeClass(i)}`}
                             />
                         ) : null
                     )}
