@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { FranchiseGrid } from '@/components/FranchiseGrid';
 import { MovieChart } from '@/components/MovieChart';
 import { MovieTable } from '@/components/MovieTable';
 import { Poster, type PosterEntry } from '@/components/Poster';
@@ -19,6 +20,8 @@ import {
     yearsInText,
 } from '@/lib/format';
 import { openGraph } from '@/lib/openGraph';
+import { relatedFranchises } from '@/lib/related';
+import { summarizeMovies } from '@/lib/summaries';
 import type { Movie } from '@/lib/types';
 import css from '../../detail.module.css';
 
@@ -143,6 +146,9 @@ export default async function Page({ params }: PageProps<'/movies/[id]'>) {
                     <section className={css.section}>
                         <h2>IMDb rating per movie</h2>
                         <MovieChart movies={franchise.movies} />
+                        <p className={css.summary}>
+                            {summarizeMovies(franchise, trend)}
+                        </p>
                     </section>
                 </>
             )}
@@ -150,6 +156,13 @@ export default async function Page({ params }: PageProps<'/movies/[id]'>) {
             <section className={css.section}>
                 <h2>Movie by movie</h2>
                 <MovieTable movies={franchise.movies} trend={trend} />
+            </section>
+
+            <section className={css.related}>
+                <h2>Related film series</h2>
+                <FranchiseGrid
+                    franchises={relatedFranchises(franchise, getFranchises())}
+                />
             </section>
         </article>
     );

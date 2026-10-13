@@ -15,6 +15,7 @@ import {
     isZigzag,
     pickVerdict,
     RAN_OUT_OF_STEAM,
+    type Shape,
     SAVED_THE_BEST,
     STANDOUT,
     STEADY,
@@ -60,6 +61,7 @@ export type SeasonTrend = {
     average: number;
     /** Rating change from the first to the last rated season. */
     change: number;
+    shape: Shape;
     verdict: string;
 };
 
@@ -78,41 +80,60 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
     const fittedChange = slope(ratings) * (rated.length - 1);
     const ended = hasEnded(show);
 
-    const verdict = pickVerdict(show.id, verdictOptions());
+    const [shape, options] = verdictOptions();
+    const verdict = pickVerdict(show.id, options);
 
-    function verdictOptions(): string[] {
-        if (worst.rating >= 8.5) return FLAWLESS;
+    function verdictOptions(): [Shape, string[]] {
+        if (worst.rating >= 8.5) return ['flawless', FLAWLESS];
         if (spread < 0.4) {
-            return average < 7
-                ? STEADY_AND_LOW
-                : [...STEADY, 'Same procedure as every season'];
+            return [
+                'steady',
+                average < 7
+                    ? STEADY_AND_LOW
+                    : [...STEADY, 'Same procedure as every season'],
+            ];
         }
-        if (best === last) return ended ? SAVED_THE_BEST : STILL_CLIMBING;
-        if (last === worst) return ended ? FELL_AT_THE_FINISH : LATEST_IS_WORST;
-        if (ended && last.rating < average - 0.3) return RAN_OUT_OF_STEAM;
-        if (isZigzag(ratings)) return ZIGZAG;
-        if (hasTwinPeaks(ratings)) return TWIN_PEAKS;
-        if (isComeback(ratings)) return COMEBACK;
-        if (spread >= BIG_SPREAD_MIN) return BIG_SPREAD;
+        if (best === last) {
+            return ['best-last', ended ? SAVED_THE_BEST : STILL_CLIMBING];
+        }
+        if (last === worst) {
+            return ['worst-last', ended ? FELL_AT_THE_FINISH : LATEST_IS_WORST];
+        }
+        if (ended && last.rating < average - 0.3) {
+            return ['ran-out-of-steam', RAN_OUT_OF_STEAM];
+        }
+        if (isZigzag(ratings)) return ['zigzag', ZIGZAG];
+        if (hasTwinPeaks(ratings)) return ['twin-peaks', TWIN_PEAKS];
+        if (isComeback(ratings)) return ['comeback', COMEBACK];
+        if (spread >= BIG_SPREAD_MIN) return ['big-spread', BIG_SPREAD];
         if (fittedChange <= -0.5) {
             return [
-                `All downhill since season ${best.seasonNumber}`,
-                'I see dead seasons',
-                "Should've quit while ahead",
+                'decline',
+                [
+                    `All downhill since season ${best.seasonNumber}`,
+                    'I see dead seasons',
+                    "Should've quit while ahead",
+                ],
             ];
         }
         if (fittedChange >= 0.5) {
-            return [...BETTER_WITH_AGE, 'Seasoned to perfection'];
+            return ['rise', [...BETTER_WITH_AGE, 'Seasoned to perfection']];
         }
-        if (hasStandout(ratings)) return STANDOUT;
+        if (hasStandout(ratings)) return ['standout', STANDOUT];
         return [
-            `Peaked in season ${best.seasonNumber}`,
-            ...(best.seasonNumber === 1
-                ? ["Here's looking at you, season 1", 'You had me at season 1']
-                : []),
-            ...(best.seasonNumber === 4
-                ? ['May the 4th season be with you']
-                : []),
+            'peaked',
+            [
+                `Peaked in season ${best.seasonNumber}`,
+                ...(best.seasonNumber === 1
+                    ? [
+                          "Here's looking at you, season 1",
+                          'You had me at season 1',
+                      ]
+                    : []),
+                ...(best.seasonNumber === 4
+                    ? ['May the 4th season be with you']
+                    : []),
+            ],
         ];
     }
 
@@ -123,6 +144,7 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
         last,
         average,
         change: last.rating - first.rating,
+        shape,
         verdict,
     };
 }

@@ -8,6 +8,26 @@ import { hashUnit } from './hash';
 export const pickVerdict = (id: string, options: string[]) =>
     options[Math.floor(hashUnit(id) * options.length)];
 
+/**
+ * The shape of a title's ratings, which its verdict is one way of saying.
+ * Titles with the same shape are alike in a way their genres don't tell.
+ */
+export type Shape =
+    | 'flawless'
+    | 'steady'
+    | 'original-best'
+    | 'best-last'
+    | 'worst-last'
+    | 'ran-out-of-steam'
+    | 'zigzag'
+    | 'twin-peaks'
+    | 'comeback'
+    | 'big-spread'
+    | 'decline'
+    | 'rise'
+    | 'standout'
+    | 'peaked';
+
 // Verdicts that read the same for series and film series.
 export const FLAWLESS = ['Flawless victory', 'No notes', "Chef's kiss"];
 export const STEADY = [
