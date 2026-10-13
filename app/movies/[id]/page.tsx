@@ -14,6 +14,7 @@ import {
     formatRating,
     formatVotes,
     formatYears,
+    sentence,
 } from '@/lib/format';
 import type { Movie } from '@/lib/types';
 import css from '../../detail.module.css';
@@ -32,7 +33,7 @@ export async function generateMetadata({
     const trend = analyzeMovies(franchise);
     return {
         title: franchise.title,
-        description: `${franchise.title} rated movie by movie${trend ? `: ${trend.verdict.toLowerCase()}` : ''}.`,
+        description: `${franchise.title} rated movie by movie.${trend ? ` ${sentence(trend.verdict)}` : ''}`,
     };
 }
 

@@ -14,6 +14,7 @@ import {
     formatRating,
     formatVotes,
     formatYears,
+    sentence,
 } from '@/lib/format';
 import type { RatedSeason } from '@/lib/types';
 import css from '../../detail.module.css';
@@ -32,7 +33,7 @@ export async function generateMetadata({
     const trend = analyzeSeasons(show);
     return {
         title: show.title,
-        description: `${show.title} rated season by season${trend ? `: ${trend.verdict.toLowerCase()}` : ''}.`,
+        description: `${show.title} rated season by season.${trend ? ` ${sentence(trend.verdict)}` : ''}`,
     };
 }
 
