@@ -23,7 +23,7 @@
     text-decoration-color: currentColor;
 }
 
-/* ---- The skyline: popular series as clusters of season bars ---- */
+/* ---- The skyline: popular series and films as clusters of bars ---- */
 
 .skyline {
     display: flex;

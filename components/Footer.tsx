@@ -1,46 +1,8 @@
-import Link from 'next/link';
-import type { CSSProperties } from 'react';
 import { getData } from '@/lib/data';
-import { postCreditsFacts, skylineShows, type SkylineShow } from '@/lib/footer';
+import { postCreditsFacts, skylinePool } from '@/lib/footer';
 import { PostCredits } from './PostCredits';
+import { Skyline } from './Skyline';
 import css from './footer.module.css';
-
-// Ratings from FLOOR up map onto the bar height, so the skyline has some drama.
-const FLOOR = 5;
-const barHeight = (rating: number) =>
-    `${Math.max(12, Math.min(100, ((rating - FLOOR) / (10 - FLOOR)) * 100))}%`;
-
-function Skyline({ shows }: { shows: SkylineShow[] }) {
-    return (
-        <nav aria-label="Popular series" className={css.skyline}>
-            {shows.map(({ href, title, ratings }) => {
-                const peak = ratings.indexOf(Math.max(...ratings));
-                return (
-                    <Link
-                        key={href}
-                        href={href}
-                        className={css.building}
-                        data-title={title}
-                        aria-label={title}
-                    >
-                        {ratings.map((rating, i) => (
-                            <span
-                                key={i}
-                                className={i === peak ? css.peak : css.bar}
-                                style={
-                                    {
-                                        '--h': barHeight(rating),
-                                        '--i': i,
-                                    } as CSSProperties
-                                }
-                            />
-                        ))}
-                    </Link>
-                );
-            })}
-        </nav>
-    );
-}
 
 export function Footer() {
     const data = getData();
@@ -54,7 +16,7 @@ export function Footer() {
 
     return (
         <footer className={css.footer}>
-            <Skyline shows={skylineShows(data)} />
+            <Skyline pool={skylinePool(data)} />
             <div className={css.body}>
                 <p className={css.wrap}>That&apos;s a wrap</p>
                 <dl className={css.credits}>
