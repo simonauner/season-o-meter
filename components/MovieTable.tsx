@@ -18,7 +18,7 @@ type MovieTableProps = {
 export function MovieTable({ movies, trend }: MovieTableProps) {
     return (
         <div className={css.scroll}>
-            <table className={css.table}>
+            <table className={`${css.table} ${css.cards}`}>
                 <thead>
                     <tr>
                         <th scope="col">Movie</th>
@@ -66,15 +66,17 @@ export function MovieTable({ movies, trend }: MovieTableProps) {
                                         <span className={css.tag}>{tag}</span>
                                     )}
                                 </th>
-                                <td>{movie.year ?? '–'}</td>
-                                <td className={css.num}>
+                                <td className={css.year}>
+                                    {movie.year ?? '–'}
+                                </td>
+                                <td className={`${css.num} ${css.votes}`}>
                                     {formatVotes(movie.votes)}
                                 </td>
                                 <td className={`${css.num} ${css.rating}`}>
                                     {formatRating(movie.rating)}
                                 </td>
                                 <td
-                                    className={`${css.num} ${
+                                    className={`${css.num} ${css.change} ${
                                         change === null
                                             ? ''
                                             : (css[changeTone(change) ?? ''] ??
@@ -85,7 +87,7 @@ export function MovieTable({ movies, trend }: MovieTableProps) {
                                         ? ''
                                         : formatChange(change)}
                                 </td>
-                                <td className={css.num}>
+                                <td className={`${css.num} ${css.you}`}>
                                     <RatingSelect
                                         storeKey={ratingKey(movie.id)}
                                         label={`Your rating of ${movie.title}`}
