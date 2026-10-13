@@ -11,7 +11,14 @@
     },
     "migrations": [
         { "tag": "v1", "new_sqlite_classes": ["SyncList"] },
-        { "tag": "v2", "new_sqlite_classes": ["Pairing"] },
+        // An earlier version of pairing, with one object per code. Deployed
+        // once, so kept here for the record.
+        { "tag": "v2", "new_sqlite_classes": ["PairingCode"] },
+        {
+            "tag": "v3",
+            "deleted_classes": ["PairingCode"],
+            "new_sqlite_classes": ["Pairing"],
+        },
     ],
     // Pairing requests per IP address (sync/src/index.ts). The ids must be
     // unused by other rate limits on the account.
