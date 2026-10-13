@@ -127,6 +127,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
         slug: 'house-of-cards',
         title: 'Collapsed like a house of cards',
         description: 'Ended on a final season far below everything before it.',
+        sharedVerdict: true,
         minVotes: MIN_VOTES,
         minRatings: 3,
         filter: hasEnded,
@@ -141,6 +142,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
         slug: 'better-every-season',
         title: 'Better every season',
         description: 'Every season rated higher than the one before.',
+        sharedVerdict: true,
         minVotes: MIN_VOTES,
         minRatings: 3,
         score: (ratings) =>

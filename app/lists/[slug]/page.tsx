@@ -52,7 +52,10 @@ export default async function Page({ params }: PageProps<'/lists/[slug]'>) {
                 <ByMinCount
                     kind="series"
                     variants={forEachMinCount((minSeasons) => (
-                        <ShowGrid shows={sections[minSeasons].items} />
+                        <ShowGrid
+                            shows={sections[minSeasons].items}
+                            hideVerdicts={sections[minSeasons].sharedVerdict}
+                        />
                     ))}
                 />
             </div>

@@ -57,7 +57,10 @@ export default async function Page({
                 <ByMinCount
                     kind="movies"
                     variants={forEachMinCount((minMovies) => (
-                        <FranchiseGrid franchises={sections[minMovies].items} />
+                        <FranchiseGrid
+                            franchises={sections[minMovies].items}
+                            hideVerdicts={sections[minMovies].sharedVerdict}
+                        />
                     ))}
                 />
             </div>

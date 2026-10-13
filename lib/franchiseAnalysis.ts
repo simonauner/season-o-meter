@@ -98,6 +98,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
         slug: 'original-is-best',
         title: 'Should have stopped at one',
         description: 'Every sequel fell well short of the original.',
+        sharedVerdict: true,
         minVotes: MIN_VOTES,
         minRatings: 2,
         score: ([first, ...rest]) => {
@@ -140,6 +141,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
         slug: 'diminishing-returns',
         title: 'Diminishing returns',
         description: 'Every movie rated lower than the one before.',
+        sharedVerdict: true,
         minVotes: MIN_VOTES,
         minRatings: 3,
         score: (ratings) =>
