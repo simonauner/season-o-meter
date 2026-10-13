@@ -1,0 +1,50 @@
+app/profile/Profile.tsx
+  s_d590e5794495d2::t_eab21d25129f1e 231,254-255,259-264
+  s_d590e5794495d2::t_f9751e21e432d0 5,8,48-49,199-230,232-253,256-258
+.github/workflows/deploy.yml
+  s_8f1988521a0c6f::t_477f09f9d35f68 36-49,64-71
+README.md
+  s_8f1988521a0c6f::t_9ce37608b7d520 52-54
+app/globals.css
+  s_8f1988521a0c6f::t_863346fc64016f 14-16,43-44
+app/movies/page.tsx
+  s_8f1988521a0c6f::t_16736b79055cf4 2,4,15,27,32-49,63
+app/page.tsx
+  s_8f1988521a0c6f::t_82510b707993e6 14,24-27,29-31,33-35
+components/Featured.tsx
+  s_8f1988521a0c6f::t_b99a5a31debe71 1-92
+components/FeaturedFranchise.tsx
+  s_8f1988521a0c6f::t_d7dea46dbf47da 1-60
+components/FeaturedShow.tsx
+  s_8f1988521a0c6f::t_6c4a992c9cd8a0 4,13,20-55
+components/Hero.tsx
+  s_8f1988521a0c6f::t_aa7d20e23eaaed 17,19-26,41-42,57,67,72,141
+components/Sparkline.tsx
+  s_8f1988521a0c6f::t_cb6b191cdf98af 35-46,67-79,84
+lib/sections.ts
+  s_8f1988521a0c6f::t_d1614c8a268a7e 76-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "476df3d6db8e6fec18018601d9215589ba0221c4",
+  "prompts": {},
+  "sessions": {
+    "s_8f1988521a0c6f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c75ea7f6-5422-4df6-9c95-2e8c163565ff",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    },
+    "s_d590e5794495d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "93b7eb4a-d42a-4da5-8ce6-0786914e341c",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
