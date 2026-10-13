@@ -11,7 +11,7 @@ import {
     formatVotes,
     formatYears,
 } from '@/lib/format';
-import type { SearchEntry } from '@/lib/searchIndex';
+import { type SearchEntry, search } from '@/lib/searchIndex';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import css from './search.module.css';
 
@@ -22,27 +22,14 @@ const ROUTES = {
     movies: { path: '/movies', parts: 'movies' },
 } satisfies Record<SearchEntry['type'], { path: string; parts: string }>;
 
-const normalize = (text: string) =>
-    text
-        .normalize('NFD')
-        .replace(/\p{Diacritic}/gu, '')
-        .toLowerCase();
-
 export function SearchResults() {
     const query = useSearchParams().get('q')?.trim() ?? '';
     const { index, failed } = useSearchIndex();
 
-    const results = useMemo(() => {
-        if (!index || !query) return [];
-        const words = normalize(query).split(/\s+/);
-        // The index is sorted by votes, so popular matches come first.
-        return index
-            .filter((entry) => {
-                const title = normalize(entry.title);
-                return words.every((word) => title.includes(word));
-            })
-            .slice(0, MAX_RESULTS);
-    }, [index, query]);
+    const results = useMemo(
+        () => (index ? search(index, query).slice(0, MAX_RESULTS) : []),
+        [index, query]
+    );
 
     if (!query) {
         return (

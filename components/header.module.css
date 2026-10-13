@@ -110,49 +110,6 @@
     outline-offset: 1px;
 }
 
-.search {
-    position: relative;
-    margin-left: auto;
-    order: 1;
-    flex: 1 1 160px;
-    max-width: 280px;
-}
-
-.searchIcon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    width: 16px;
-    height: 16px;
-    translate: 0 -50%;
-    fill: none;
-    stroke: rgb(255 255 255 / 55%);
-    stroke-width: 2;
-    stroke-linecap: round;
-    pointer-events: none;
-}
-
-.search input {
-    width: 100%;
-    padding: 8px 12px 8px 36px;
-    border-radius: 999px;
-    border: 1px solid rgb(255 255 255 / 18%);
-    background: rgb(255 255 255 / 8%);
-    color: #fff;
-    font: inherit;
-    font-size: 0.9375rem;
-}
-
-.search input::placeholder {
-    color: rgb(255 255 255 / 55%);
-}
-
-.search input:focus {
-    outline: 2px solid var(--accent);
-    outline-offset: 1px;
-    background: rgb(255 255 255 / 12%);
-}
-
 /* After the search on wide screens, next to the logo on phones. */
 .profile {
     order: 2;
@@ -210,11 +167,6 @@
     .navLink {
         flex: none;
         padding: 6px 10px;
-    }
-
-    .search {
-        flex-basis: 100%;
-        max-width: none;
     }
 }
 
