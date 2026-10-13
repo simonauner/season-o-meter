@@ -102,12 +102,18 @@ export function CodeOffer() {
         // Effects aren't cleaned up when the page is reloaded or closed.
         const leave = () => cancelPairing(pairing);
         window.addEventListener('pagehide', leave);
+        // Leaving cancelled the code, even if the page is then restored.
+        const back = (event: PageTransitionEvent) => {
+            if (event.persisted) setOffer({ phase: 'expired' });
+        };
+        window.addEventListener('pageshow', back);
         return () => {
             live = false;
             clearInterval(timer);
             clearInterval(clock);
             document.removeEventListener('visibilitychange', check);
             window.removeEventListener('pagehide', leave);
+            window.removeEventListener('pageshow', back);
             // Connected, cancelled or expired: the code isn't needed.
             cancelPairing(pairing);
         };
