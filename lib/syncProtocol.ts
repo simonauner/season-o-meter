@@ -40,6 +40,12 @@ export type SyncRequest = { since: number; changes: UserData };
 
 export type SyncResponse = { cursor: number; changes: UserData };
 
+/*
+ * DELETE /v1/sync with `Authorization: Bearer <secret>` deletes the list for
+ * good. From then on POST /v1/sync with its secret returns 410, so devices
+ * that still sync with it stop, and its read-only link shows an empty list.
+ */
+
 /** GET /v1/lists/<list id>: everything that is set. */
 export type ListResponse = { data: UserData };
 

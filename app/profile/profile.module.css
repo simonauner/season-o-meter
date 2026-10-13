@@ -82,3 +82,60 @@
     color: var(--text-secondary);
     font-size: 0.9375rem;
 }
+
+/* The recovery key, big enough to copy by hand. */
+.panel .key {
+    letter-spacing: 0.04em;
+}
+
+.keyButtons {
+    margin-top: 16px;
+}
+
+/* Restoring from a key, under the key or the button that creates one. */
+.keyForm {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+/* Set apart in the color for losing something. */
+.danger {
+    border-color: color-mix(in srgb, var(--down) 45%, var(--border));
+}
+
+/* Each way to remove data, under a line of its own. */
+.removal {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.removal h3 {
+    font-size: 0.9375rem;
+    font-weight: 700;
+}
+
+.danger h2,
+.danger .warning {
+    color: var(--down);
+}
+
+.danger .warning {
+    font-weight: 650;
+}
+
+.danger .delete {
+    border-color: var(--down);
+    color: var(--down);
+}
+
+.danger .delete:hover {
+    background: color-mix(in srgb, var(--down) 8%, var(--surface));
+}
+
+.danger .confirm {
+    border-color: var(--down);
+    background: var(--down);
+    color: var(--page);
+}

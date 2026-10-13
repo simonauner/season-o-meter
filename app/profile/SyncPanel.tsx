@@ -21,6 +21,7 @@ const PHASES: Record<SyncStatus['phase'], string> = {
     idle: 'Sync is on and up to date.',
     syncing: 'Sync is on. Syncing…',
     failed: 'Could not reach the sync server. Your changes are kept on this device and sync when it is back.',
+    deleted: 'Your synced list has been deleted.',
 };
 
 /** The fragment that links to the sync panel, as from the Friends page. */
@@ -48,6 +49,12 @@ export function SyncPanel() {
         return (
             <section ref={ref} className={css.panel}>
                 <h2>Sync your devices</h2>
+                {status.phase === 'deleted' && (
+                    <p className={css.problem} role="status">
+                        Your synced list has been deleted, so this device
+                        stopped syncing. What’s on it stays.
+                    </p>
+                )}
                 <p>
                     Keep your list in step on your phone, computer and tablet,
                     with no account. Turn on sync here, then connect your other
