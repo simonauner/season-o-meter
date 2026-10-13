@@ -1,0 +1,25 @@
+package.json
+  s_977d47f66a32cc::t_86cb95113fa508 18
+app/mine/SyncPanel.tsx
+  s_977d47f66a32cc::t_bb15bb5c8674f3 3,57-64
+app/mine/mine.module.css
+  s_977d47f66a32cc::t_87c8bcf69e238a 230-235
+package-lock.json
+  s_977d47f66a32cc::t_d0e70f23d9d25c 11,29,1455,2626,4595-4609
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c09d903884ba7f74ddeaba5990572304517d47fd",
+  "prompts": {},
+  "sessions": {
+    "s_977d47f66a32cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f32c614f-dc5d-4030-a6d5-b51951d616ff",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
