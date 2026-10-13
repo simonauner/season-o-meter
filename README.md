@@ -16,15 +16,23 @@ IMDb doesn't say which movies belong together, so film series come from
 trilogy or other kind of film series there. A film series is included if it has
 at least two movies with 1,000 votes each and 20,000 votes in total.
 
+Posters come from [TMDB](https://www.themoviedb.org/). This website uses TMDB
+and the TMDB APIs but is not endorsed, certified, or otherwise approved by
+TMDB.
+
 ## How it works
 
-The site is fully static. There are no API calls when someone visits it.
+The site is fully static. There are no API calls when someone visits it,
+though posters are loaded from TMDB's image server.
 
 1. `npm run data` ([scripts/build-data.mts](scripts/build-data.mts)) downloads
    the IMDb datasets (~290 MB, cached in `.imdb/` for 20 hours), queries
-   Wikidata for film series, and writes per-season ratings for every included
-   series and per-movie ratings for every included film series to
-   `data/shows.json`.
+   Wikidata for film series, looks up posters on TMDB, and writes per-season
+   ratings for every included series and per-movie ratings for every
+   included film series to `data/shows.json`. Posters need a TMDB API key or
+   read access token in `TMDB_API_KEY`, in `.env` locally and as a
+   repository secret for the deploy workflow. Without it the data has no
+   posters, and the site draws its own from the title and its ratings.
 2. `npm run build` reads that file and exports every page to `out/`:
    a front page with sections for series and one for movies (`/movies/`),
    a page per series and film series, a list page per section, and a search
@@ -68,6 +76,17 @@ are drawn next to IMDb's in the chart, and everything is listed on
   kept with the ratings, so they sync too, but they are left out of share
   links and live links: a friend's link lets anyone read their list, and
   they only gave it to you ([lib/friends.ts](lib/friends.ts)).
+- **Swipe.** `/swipe/` shows one series or film series at a time, with its
+  poster and how many seasons or movies it has, to rate or skip. Skipping
+  is a button, an arrow key or dragging the card aside; ratings are a tap
+  or a number key. It favours popular titles, the ones visitors are most
+  likely to have seen, but in a new order every visit
+  ([lib/swipeDeck.ts](lib/swipeDeck.ts)). Anything rated, skipped or on the
+  watchlist doesn't come up again. Skips are kept with the ratings, so they
+  sync, but are left out of share links and live links. `/profile/` lists
+  them and brings them back. Browsers that let a page turn off swiping
+  back and forward in history (Chrome on a trackpad) don't do it on
+  `/swipe/`; swiping from the edge of a phone's screen still goes back.
 - **Merging.** Every value is stored with when it was set, and the latest
   change wins per title, season or movie ([lib/userData.ts](lib/userData.ts)).
   That makes imports and syncs safe in any order.

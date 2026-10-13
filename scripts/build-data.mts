@@ -9,6 +9,9 @@
  * IMDb doesn't say which movies belong together, so film series and their
  * movies come from Wikidata.
  *
+ * With TMDB_API_KEY set, posters come from TMDB. Without it the data has no
+ * posters, and the site draws its own where it shows one.
+ *
  * Datasets: https://developer.imdb.com/non-commercial-datasets/
  */
 import { createReadStream, createWriteStream } from 'node:fs';
@@ -74,6 +77,12 @@ SELECT ?series ?label ?mulLabel ?imdb ?ordinal WHERE {
   OPTIONAL { ?series rdfs:label ?label FILTER(LANG(?label) = "en") }
   OPTIONAL { ?series rdfs:label ?mulLabel FILTER(LANG(?mulLabel) = "mul") }
 }`;
+
+const TMDB_URL = 'https://api.themoviedb.org/3';
+/** TMDB's API read access token, or its older API key. */
+const TMDB_API_KEY = process.env.TMDB_API_KEY;
+/** Requests to TMDB at a time, well within its rate limit. */
+const TMDB_CONCURRENCY = 16;
 
 const log = (message: string) =>
     console.log(`[${new Date().toISOString().slice(11, 19)}] ${message}`);
@@ -178,6 +187,106 @@ async function fetchFilmSeries(): Promise<Map<string, FilmSeries>> {
         entry.movies.set(imdb.value, Number.isNaN(number) ? null : number);
     }
     return filmSeries;
+}
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Runs `fn` on every item, at most `limit` at a time. */
+async function mapLimit<T>(
+    items: T[],
+    limit: number,
+    fn: (item: T) => Promise<void>
+) {
+    let next = 0;
+    const worker = async () => {
+        while (next < items.length) await fn(items[next++]);
+    };
+    await Promise.all(Array.from({ length: limit }, worker));
+}
+
+/** A TMDB API response, or null if TMDB doesn't have it. */
+async function tmdb<T>(apiKey: string, pathname: string): Promise<T | null> {
+    const url = new URL(`${TMDB_URL}${pathname}`);
+    const headers: Record<string, string> = {
+        Accept: 'application/json',
+        'User-Agent': USER_AGENT,
+    };
+    // A read access token is a JWT. An API key goes in the query instead.
+    if (apiKey.startsWith('eyJ')) headers.Authorization = `Bearer ${apiKey}`;
+    else url.searchParams.set('api_key', apiKey);
+
+    for (let attempt = 1; ; attempt++) {
+        const res = await fetch(url, { headers });
+        if (res.ok) return (await res.json()) as T;
+        if (res.status === 404) return null;
+        if ((res.status === 429 || res.status >= 500) && attempt < 4) {
+            const seconds = Number(res.headers.get('Retry-After')) || attempt;
+            await sleep(seconds * 1_000);
+            continue;
+        }
+        throw new Error(`TMDB ${pathname}: HTTP ${res.status}`);
+    }
+}
+
+type TmdbTitle = { id: number; poster_path: string | null };
+type TmdbFind = { tv_results: TmdbTitle[]; movie_results: TmdbTitle[] };
+type TmdbMovie = TmdbTitle & {
+    belongs_to_collection: { poster_path: string | null } | null;
+};
+
+/**
+ * Adds TMDB posters: a series' own, and a film series' collection poster,
+ * or else its first movie's. A failed lookup only leaves that poster out.
+ */
+async function addPosters(shows: Show[], franchises: Franchise[]) {
+    if (!TMDB_API_KEY) {
+        log('TMDB_API_KEY is not set, leaving posters out');
+        return;
+    }
+    const apiKey = TMDB_API_KEY;
+    try {
+        await tmdb(apiKey, '/configuration');
+    } catch (error) {
+        log(`TMDB can't be reached (${error}), leaving posters out`);
+        return;
+    }
+
+    const find = (imdbId: string) =>
+        tmdb<TmdbFind>(apiKey, `/find/${imdbId}?external_source=imdb_id`);
+    let failed = 0;
+    const lookup = async (fn: () => Promise<void>) => {
+        try {
+            await fn();
+        } catch {
+            failed++;
+        }
+    };
+
+    log('Looking up posters on TMDB…');
+    await mapLimit(shows, TMDB_CONCURRENCY, (show) =>
+        lookup(async () => {
+            const poster = (await find(show.id))?.tv_results[0]?.poster_path;
+            if (poster) show.poster = poster;
+        })
+    );
+    await mapLimit(franchises, TMDB_CONCURRENCY, (franchise) =>
+        lookup(async () => {
+            const found = (await find(franchise.movies[0].id))
+                ?.movie_results[0];
+            if (!found) return;
+            const movie = await tmdb<TmdbMovie>(apiKey, `/movie/${found.id}`);
+            const poster =
+                movie?.belongs_to_collection?.poster_path ?? found.poster_path;
+            if (poster) franchise.poster = poster;
+        })
+    );
+
+    const count = (titles: { poster?: string }[]) =>
+        titles.filter((title) => title.poster).length;
+    log(
+        `Found posters for ${count(shows)} of ${shows.length} series and ${count(franchises)} of ${franchises.length} film series` +
+            (failed > 0 ? ` (${failed} lookups failed)` : '')
+    );
 }
 
 async function main() {
@@ -353,6 +462,8 @@ async function main() {
     }
 
     franchises.sort((a, b) => b.votes - a.votes);
+
+    await addPosters(shows, franchises);
 
     const data: DataFile = {
         generatedAt: new Date().toISOString(),

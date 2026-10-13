@@ -34,6 +34,9 @@ jobs:
             - run: npm ci --prefix sync
             - run: npm run typecheck --prefix sync
             - run: npm run data
+              env:
+                  # For posters. They're drawn instead while it's unset.
+                  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
 
             - id: pages
               if: github.event_name != 'pull_request'

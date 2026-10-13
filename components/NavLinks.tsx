@@ -26,6 +26,11 @@ const LINKS = [
         label: 'Friends',
         isActive: (path: string) => path.startsWith('/friends/'),
     },
+    {
+        href: '/swipe/',
+        label: 'Swipe',
+        isActive: (path: string) => path.startsWith('/swipe/'),
+    },
 ];
 
 export function NavLinks() {
@@ -44,5 +49,23 @@ export function NavLinks() {
                 </Link>
             ))}
         </nav>
+    );
+}
+
+export function ProfileLink() {
+    const pathname = usePathname();
+
+    return (
+        <Link
+            href="/profile/"
+            className={css.profile}
+            aria-current={pathname.startsWith('/profile/') ? 'page' : undefined}
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <circle cx="12" cy="8.5" r="4" />
+                <path d="M4.5 20c.8-3.8 3.9-6 7.5-6s6.7 2.2 7.5 6" />
+            </svg>
+            <span className="visually-hidden">Profile</span>
+        </Link>
     );
 }

@@ -11,6 +11,8 @@
  *   movie (IMDb id), 1–10.
  * - `r:<id>/<season>` rates a season of a series, 1–10.
  * - `w:<id>` is 1 when a series or film series is on the watchlist.
+ * - `s:<id>` is 1 when a series or film series was skipped in Swipe, so it
+ *   isn't shown there again.
  * - `f:<list id>` is a friend's synced list, to compare ratings with. The
  *   value is the name the visitor gave them.
  */
@@ -29,6 +31,8 @@ export const ratingKey = (id: string, season?: number) =>
 export const watchlistKey = (id: string) => `w:${id}`;
 
 export const friendKey = (listId: string) => `f:${listId}`;
+
+export const skipKey = (id: string) => `s:${id}`;
 
 export const MAX_NAME_LENGTH = 40;
 
@@ -49,9 +53,20 @@ export function ratedIds(data: UserData) {
     return ids;
 }
 
+/** Ids of everything with the value 1 under a prefix, like `w:`. */
+export function flaggedIds(data: UserData, prefix: 'w:' | 's:') {
+    const ids = new Set<string>();
+    for (const [key, [value]] of Object.entries(data)) {
+        if (value === 1 && key.startsWith(prefix)) {
+            ids.add(key.slice(prefix.length));
+        }
+    }
+    return ids;
+}
+
 // A list id has the same shape as a secret (lib/syncProtocol.ts).
 const KEY_PATTERN =
-    /^(r:(tt\d+(\/\d+)?|Q\d+)|w:(tt|Q)\d+|f:[A-Za-z0-9_-]{22})$/;
+    /^(r:(tt\d+(\/\d+)?|Q\d+)|[ws]:(tt|Q)\d+|f:[A-Za-z0-9_-]{22})$/;
 
 const isRating = (value: unknown): value is number =>
     Number.isInteger(value) &&
@@ -72,7 +87,7 @@ const isStamped = (key: string, stamped: unknown): stamped is Stamped => {
     }
     if (value === null) return true;
     if (key.startsWith('f:')) return isName(value);
-    return key.startsWith('w:') ? value === 1 : isRating(value);
+    return key.startsWith('r:') ? isRating(value) : value === 1;
 };
 
 /** Keeps the well-formed entries of untrusted data, e.g. from a link. */
@@ -86,14 +101,15 @@ export function sanitize(input: unknown): UserData {
 }
 
 /**
- * What others may see of a list: everything that is set, except friends. A
- * friend's list id lets anyone read their list, and they only gave it to
- * the visitor.
+ * What others may see of a list: everything that is set, except friends and
+ * skips. A friend's list id lets anyone read their list, and they only gave
+ * it to the visitor. Skips are only for the visitor's own Swipe.
  */
 export const shareable = (data: UserData): UserData =>
     Object.fromEntries(
         Object.entries(data).filter(
-            ([key, [value]]) => value !== null && !key.startsWith('f:')
+            ([key, [value]]) =>
+                value !== null && !key.startsWith('f:') && !key.startsWith('s:')
         )
     );
 

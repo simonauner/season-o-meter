@@ -19,6 +19,8 @@ export function GET() {
             ratings: seasons.map((season) => roundRating(season.rating)),
             rating: roundRating(show.rating),
             seasons: seasons.map((season) => season.seasonNumber),
+            seasonCount: show.seasons.length,
+            poster: show.poster,
         };
     });
     const movies = getFranchises().map((franchise): SearchEntry => ({
@@ -30,6 +32,7 @@ export function GET() {
         votes: franchise.votes,
         ratings: franchise.movies.map((movie) => roundRating(movie.rating)),
         movieIds: franchise.movies.map((movie) => movie.id),
+        poster: franchise.poster,
     }));
     const entries = [...series, ...movies].sort((a, b) => b.votes - a.votes);
     return Response.json(entries);
