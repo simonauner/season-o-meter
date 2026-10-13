@@ -56,7 +56,9 @@ export function SyncPanel() {
                 <button
                     type="button"
                     className={
-                        pointedTo ? `${css.button} ${css.flash}` : css.button
+                        pointedTo
+                            ? `${css.secondary} ${css.flash}`
+                            : css.secondary
                     }
                     onClick={() => connect()}
                     onAnimationEnd={clearHash}
@@ -92,7 +94,7 @@ export function SyncPanel() {
                 label="Private sync link"
                 shareTitle="Season-o-meter sync link"
             />
-            <div className={`${css.buttons} ${css.ways}`}>
+            <div className={`${css.secondarys} ${css.ways}`}>
                 <button
                     type="button"
                     className={css.secondary}
@@ -180,10 +182,10 @@ export function ConnectPrompt() {
                 {status.secret &&
                     ' This device stops syncing with the list it syncs with now.'}
             </p>
-            <div className={css.buttons}>
+            <div className={css.secondarys}>
                 <button
                     type="button"
-                    className={css.button}
+                    className={css.secondary}
                     onClick={() => connect(secret)}
                 >
                     Connect

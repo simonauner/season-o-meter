@@ -122,8 +122,13 @@
     cursor: pointer;
 }
 
-.secondary:hover {
-    border-color: var(--text-muted);
+.secondary:enabled:hover {
+    border-color: var(--own);
+}
+
+.secondary:disabled {
+    opacity: 0.6;
+    cursor: default;
 }
 
 .secondary:focus-visible {
