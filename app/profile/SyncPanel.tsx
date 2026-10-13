@@ -24,6 +24,48 @@ const PHASES: Record<SyncStatus['phase'], string> = {
     deleted: 'Your synced list has been deleted.',
 };
 
+/** How long ago `time` was, as in "Last synced 5 minutes ago". */
+function ago(time: number, now: number) {
+    const minutes = Math.floor((now - time) / 60_000);
+    if (minutes < 1) return 'just now';
+    if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    return new Date(time).toLocaleString('en', {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+    });
+}
+
+/** The current time, updated often enough for `ago`. */
+function useNow() {
+    const [now, setNow] = useState(() => Date.now());
+    useEffect(() => {
+        const interval = setInterval(() => setNow(Date.now()), 15_000);
+        return () => clearInterval(interval);
+    }, []);
+    return now;
+}
+
+/** When this device last synced, kept current. */
+function SyncedAt({ time }: { time: number }) {
+    const now = useNow();
+    return (
+        <p className={css.syncedAt}>
+            Last synced{' '}
+            <time
+                dateTime={new Date(time).toISOString()}
+                title={new Date(time).toLocaleString('en', {
+                    dateStyle: 'medium',
+                    timeStyle: 'medium',
+                })}
+            >
+                {ago(time, Math.max(now, time))}
+            </time>
+        </p>
+    );
+}
+
 /** The fragment that links to the sync panel, as from the Friends page. */
 const SYNC_HASH = 'sync';
 
@@ -89,6 +131,7 @@ export function SyncPanel() {
                 )}
                 {PHASES[status.phase]}
             </p>
+            {status.syncedAt !== null && <SyncedAt time={status.syncedAt} />}
             <p>
                 To connect another device, open this private link on it, scan
                 the QR code, or get a code on it and enter the code here. Anyone

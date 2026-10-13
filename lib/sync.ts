@@ -38,6 +38,8 @@ type SyncState = {
     changedAt: number;
     /** The `changedAt` that the latest successful sync sent. */
     pushedAt: number;
+    /** When the latest successful sync finished, by this device's clock. */
+    syncedAt?: number;
 };
 
 function readState(): SyncState | null {
@@ -66,11 +68,13 @@ export type SyncStatus = {
     secret: string | null;
     /** `deleted` when sync stopped because the list had been deleted. */
     phase: 'idle' | 'syncing' | 'failed' | 'deleted';
+    /** When this device last synced, if it has. */
+    syncedAt: number | null;
 };
 
 const listeners = new Set<() => void>();
 let phase: SyncStatus['phase'] = 'idle';
-let status: SyncStatus = { secret: null, phase };
+let status: SyncStatus = { secret: null, phase, syncedAt: null };
 
 function notify() {
     listeners.forEach((listener) => listener());
@@ -92,9 +96,15 @@ function subscribe(listener: () => void) {
 }
 
 function getStatus(): SyncStatus {
-    const secret = readState()?.secret ?? null;
-    if (status.secret !== secret || status.phase !== phase) {
-        status = { secret, phase };
+    const state = readState();
+    const secret = state?.secret ?? null;
+    const syncedAt = state?.syncedAt ?? null;
+    if (
+        status.secret !== secret ||
+        status.phase !== phase ||
+        status.syncedAt !== syncedAt
+    ) {
+        status = { secret, phase, syncedAt };
     }
     return status;
 }
@@ -161,6 +171,7 @@ async function run() {
             ...latest,
             cursor: response.cursor,
             pushedAt: state.changedAt,
+            syncedAt: Date.now(),
         });
         setPhase('idle');
     } catch {
