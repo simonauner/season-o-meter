@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { Poster } from '@/components/Poster';
+import { useRatingHint } from '@/components/RatingHint';
 import { SharedPoster } from '@/components/PosterTransition';
 import { formatYears } from '@/lib/format';
 import { popcorn } from '@/lib/popcorn';
@@ -133,7 +134,7 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
         rating: number;
     } | null>(null);
     const scaleLabel = useId();
-    const scale = useRef<HTMLSpanElement>(null);
+    const { ref: scale, className: hint } = useRatingHint<HTMLSpanElement>();
     const commandKey = useCommandKey();
     const undoTip = useTip('swipe-undo-key');
 
@@ -328,12 +329,13 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                     <span id={scaleLabel} className={css.rateLabel}>
                         Seen it? Rate it
                     </span>
-                    <span ref={scale} className={css.scale}>
-                        {RATINGS.map((rating) => (
+                    <span ref={scale} className={`${css.scale} ${hint}`}>
+                        {RATINGS.map((rating, index) => (
                             <button
                                 key={rating}
                                 type="button"
                                 className={css.step}
+                                style={{ '--index': index } as CSSProperties}
                                 aria-label={`${rating} of ${MAX_RATING}`}
                                 data-picked={rating === picked ? '' : undefined}
                                 disabled={!top}

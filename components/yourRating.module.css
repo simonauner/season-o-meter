@@ -129,78 +129,8 @@
     }
 }
 
-/* A wave across the scale for a visitor who hasn't rated anything yet. The
- * steps light up one after another with a gleam passing over them, and it
- * repeats after a pause. */
-.scale[data-hint] .step {
-    position: relative;
-    overflow: hidden;
-    animation: hint 4200ms ease-in-out calc(300ms + var(--index) * 55ms)
-        infinite;
-}
-
-.scale[data-hint] .step::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-        105deg,
-        transparent 25%,
-        rgb(255 255 255 / 0.85) 50%,
-        transparent 75%
-    );
-    transform: translateX(-100%);
-    pointer-events: none;
-    animation: gleam 4200ms linear calc(300ms + var(--index) * 55ms) infinite;
-}
-
-/* Hovering shows the usual preview instead. */
-@media (hover: hover) {
-    .scale[data-hint]:hover .step,
-    .scale[data-hint]:hover .step::after {
-        animation: none;
-    }
-}
-
-@keyframes hint {
-    9%,
-    16% {
-        background: color-mix(in srgb, var(--own) 45%, var(--surface));
-        border-color: var(--own);
-        color: var(--text-primary);
-    }
-
-    27% {
-        background: var(--surface);
-        border-color: var(--border);
-        color: var(--text-secondary);
-    }
-}
-
-@keyframes gleam {
-    0%,
-    9% {
-        transform: translateX(-100%);
-    }
-
-    11.5%,
-    100% {
-        transform: translateX(100%);
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     .step {
         transition: none;
-    }
-
-    /* The whole scale lights up at once instead, only once. */
-    .scale[data-hint] .step {
-        animation-delay: 300ms;
-        animation-iteration-count: 1;
-    }
-
-    .scale[data-hint] .step::after {
-        content: none;
     }
 }

@@ -1,0 +1,69 @@
+/* A wave across a rating scale for a visitor who hasn't rated anything yet.
+ * The steps light up one after another with a gleam passing over them, and it
+ * repeats after a pause. Each step sets --index, its place on the scale. */
+.hint > * {
+    position: relative;
+    overflow: hidden;
+    animation: hint 4200ms ease-in-out calc(300ms + var(--index) * 55ms)
+        infinite;
+}
+
+.hint > *::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 25%,
+        rgb(255 255 255 / 0.85) 50%,
+        transparent 75%
+    );
+    transform: translateX(-100%);
+    pointer-events: none;
+    animation: gleam 4200ms linear calc(300ms + var(--index) * 55ms) infinite;
+}
+
+/* Hovering shows the scale's usual hover instead. */
+@media (hover: hover) {
+    .hint:hover > *,
+    .hint:hover > *::after {
+        animation: none;
+    }
+}
+
+@keyframes hint {
+    9%,
+    16% {
+        background: color-mix(in srgb, var(--own) 45%, var(--surface));
+        border-color: var(--own);
+    }
+
+    27% {
+        background: var(--surface);
+        border-color: var(--border);
+    }
+}
+
+@keyframes gleam {
+    0%,
+    9% {
+        transform: translateX(-100%);
+    }
+
+    11.5%,
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* The whole scale lights up at once instead, only once. */
+    .hint > * {
+        animation-delay: 300ms;
+        animation-iteration-count: 1;
+    }
+
+    .hint > *::after {
+        content: none;
+    }
+}
