@@ -1,0 +1,21 @@
+lib/searchIndex.ts
+  s_c345474170b5ab::t_f787eb11070b3e 23-77
+app/search/SearchResults.tsx
+  s_c345474170b5ab::t_f787eb11070b3e 14,29-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b2bd029eadc684c3d26b3b1e451ddf63a1e0f058",
+  "prompts": {},
+  "sessions": {
+    "s_c345474170b5ab": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee760ec3-91ea-4563-8690-49682f7245b4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
