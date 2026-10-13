@@ -27,6 +27,7 @@ import {
 } from '@/lib/userData';
 import { setValue, useUserData } from '@/lib/userStore';
 import { useSearchIndex } from '@/lib/useSearchIndex';
+import { markTipSeen, type Tip, useTip } from '@/lib/tips';
 import mineCss from '../mine/mine.module.css';
 import css from './swipe.module.css';
 
@@ -180,8 +181,10 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
         }
         if (event.key === 'ArrowLeft') {
             skip();
+            markTipSeen('swipe-skip-key');
         } else if (event.key === 'ArrowRight') {
             save();
+            markTipSeen('swipe-save-key');
         } else if (/^\d$/.test(event.key)) {
             // 0 is 10, the key after 9.
             rate(Number(event.key) || MAX_RATING);
@@ -211,6 +214,20 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
     return (
         <>
             <div className={css.stack}>
+                <KeyTip
+                    tip="swipe-skip-key"
+                    direction="left"
+                    label="Skip"
+                    disabled={!top}
+                    onClick={() => skip()}
+                />
+                <KeyTip
+                    tip="swipe-save-key"
+                    direction="right"
+                    label="Watchlist"
+                    disabled={!top}
+                    onClick={() => save()}
+                />
                 {stack.map(({ entry, place }) => (
                     <Card
                         key={entry.id}
@@ -299,6 +316,50 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                 </p>
             </div>
         </>
+    );
+}
+
+/**
+ * A button beside the cards, on devices with a mouse and keyboard, that shows
+ * which arrow key does the same. It goes away once the key has been used.
+ */
+function KeyTip({
+    tip,
+    direction,
+    label,
+    disabled,
+    onClick,
+}: {
+    tip: Tip;
+    direction: 'left' | 'right';
+    label: string;
+    disabled: boolean;
+    onClick: () => void;
+}) {
+    const shown = useTip(tip);
+    // Not until it's known, so it doesn't flash before going away.
+    if (shown === null) return null;
+    const key = direction === 'left' ? 'ArrowLeft' : 'ArrowRight';
+
+    return (
+        <button
+            type="button"
+            className={css.keyTip}
+            data-direction={direction}
+            data-seen={shown ? undefined : ''}
+            aria-keyshortcuts={key}
+            // Still there while it fades out, but no longer in use.
+            inert={!shown}
+            disabled={disabled}
+            onClick={onClick}
+        >
+            {/* The key itself is told with aria-keyshortcuts. */}
+            <span className={css.keyTipHint} aria-hidden>
+                Try the keyboard
+            </span>
+            <kbd aria-hidden>{direction === 'left' ? '←' : '→'}</kbd>
+            <span>{label}</span>
+        </button>
     );
 }
 

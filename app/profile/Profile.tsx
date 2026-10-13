@@ -7,6 +7,7 @@ import { friendsOf } from '@/lib/friends';
 import type { SearchEntry } from '@/lib/searchIndex';
 import { entryHref } from '@/lib/swipeDeck';
 import { syncAvailable, useSyncStatus } from '@/lib/sync';
+import { resetTips, useSeenTipCount } from '@/lib/tips';
 import { flaggedIds, skipKey, type UserData } from '@/lib/userData';
 import { listItems, rated, watchlist } from '@/lib/userList';
 import { setValue, setValues, useUserData } from '@/lib/userStore';
@@ -42,6 +43,7 @@ export function Profile() {
                         index={index}
                         syncing={secret !== null}
                     />
+                    <TipsPanel />
                 </div>
             )}
         </>
@@ -186,6 +188,43 @@ function OverviewPanel({
                     </>
                 )}
             </ul>
+        </section>
+    );
+}
+
+function TipsPanel() {
+    const seen = useSeenTipCount();
+    const [broughtBack, setBroughtBack] = useState(false);
+
+    const showAgain = () => {
+        resetTips();
+        setBroughtBack(true);
+    };
+
+    return (
+        <section className={mineCss.panel}>
+            <h2>Tips</h2>
+            <p>
+                Tips point out shortcuts, like the arrow keys in{' '}
+                <Link href="/swipe/" className={css.link}>
+                    Swipe
+                </Link>
+                , and go away once you’ve used them. They’re kept in this
+                browser.
+            </p>
+            <button
+                type="button"
+                className={mineCss.button}
+                disabled={!seen}
+                onClick={showAgain}
+            >
+                Show tips again
+            </button>
+            {broughtBack && seen === 0 && (
+                <p className={mineCss.success} role="status">
+                    The tips are back.
+                </p>
+            )}
         </section>
     );
 }
