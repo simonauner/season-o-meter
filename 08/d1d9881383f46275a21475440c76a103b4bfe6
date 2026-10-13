@@ -1,0 +1,25 @@
+lib/footer.ts
+  s_8f1988521a0c6f::t_6a02ce72c8fa63 7-8,14-69
+components/Skyline.tsx
+  s_8f1988521a0c6f::t_2fc391d575ab2b 1-60
+components/Footer.tsx
+  s_8f1988521a0c6f::t_aff537f9ab1828 2,4,19
+components/footer.module.css
+  s_8f1988521a0c6f::t_aff537f9ab1828 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "08d1d9881383f46275a21475440c76a103b4bfe6",
+  "prompts": {},
+  "sessions": {
+    "s_8f1988521a0c6f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c75ea7f6-5422-4df6-9c95-2e8c163565ff",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
