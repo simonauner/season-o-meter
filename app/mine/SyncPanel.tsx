@@ -11,7 +11,7 @@ import {
     type SyncStatus,
 } from '@/lib/sync';
 import { isSecret } from '@/lib/syncProtocol';
-import { clearHash, useHash } from '@/lib/useHash';
+import { clearHash, useHash, usePointedTo } from '@/lib/useHash';
 import { LinkField } from './LinkField';
 import css from './mine.module.css';
 import { CodeForm, CodeOffer } from './PairingCode';
@@ -23,15 +23,35 @@ const PHASES: Record<SyncStatus['phase'], string> = {
     failed: 'Could not reach the sync server. Your changes are kept on this device and sync when it is back.',
 };
 
-export function SyncPanel() {
+/** The fragment that links to the sync panel, as from the Profile page. */
+const SYNC_HASH = 'sync';
+
+export function SyncPanel({
+    listShown,
+}: {
+    /** Until the list above has loaded, the panel isn't where it ends up. */
+    listShown: boolean;
+}) {
     const status = useSyncStatus();
     /** The other way to connect a device that is showing, if any. */
     const [shown, setShown] = useState<'qr' | 'code' | null>(null);
+    const { ref, pointedTo } = usePointedTo<HTMLElement>(
+        SYNC_HASH,
+        listShown && status !== null
+    );
+    const syncing = !!status?.secret;
+
+    // With sync on there's no button to point out, so the fragment can go
+    // once the panel is scrolled to.
+    useEffect(() => {
+        if (pointedTo && syncing) clearHash();
+    }, [pointedTo, syncing]);
+
     if (!syncAvailable || !status) return null;
 
     if (!status.secret) {
         return (
-            <section className={css.panel}>
+            <section ref={ref} className={css.panel}>
                 <h2>Sync your devices</h2>
                 <p>
                     Keep your list in step on your phone, computer and tablet,
@@ -40,8 +60,11 @@ export function SyncPanel() {
                 </p>
                 <button
                     type="button"
-                    className={css.button}
+                    className={
+                        pointedTo ? `${css.button} ${css.flash}` : css.button
+                    }
                     onClick={() => connect()}
+                    onAnimationEnd={clearHash}
                 >
                     Turn on sync
                 </button>
@@ -51,7 +74,7 @@ export function SyncPanel() {
     }
 
     return (
-        <section className={css.panel}>
+        <section ref={ref} className={css.panel}>
             <h2>Sync your devices</h2>
             <p role="status" data-phase={status.phase} className={css.phase}>
                 {status.phase === 'idle' && (
