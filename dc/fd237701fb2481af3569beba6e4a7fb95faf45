@@ -1,0 +1,19 @@
+sync/wrangler.jsonc
+  s_ba6996783d29e8::t_d4d91694baa25b 14-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dcfd237701fb2481af3569beba6e4a7fb95faf45",
+  "prompts": {},
+  "sessions": {
+    "s_ba6996783d29e8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "04fd5ef8-28f6-4589-a134-bda68169cf95",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
