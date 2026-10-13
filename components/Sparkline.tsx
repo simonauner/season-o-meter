@@ -6,9 +6,11 @@ const PAD = 6;
 export function Sparkline({ ratings }: { ratings: number[] }) {
     if (ratings.length < 2) return null;
 
-    const min = Math.min(...ratings);
+    const lowest = Math.min(...ratings);
+    const highest = Math.max(...ratings);
+    const min = lowest;
     // Keep flat-ish shows looking flat instead of exaggerating tiny wobbles.
-    const max = Math.max(...ratings, min + 1);
+    const max = Math.max(highest, min + 1);
 
     const x = (i: number) =>
         PAD + (i * (WIDTH - PAD * 2)) / (ratings.length - 1);
@@ -17,6 +19,18 @@ export function Sparkline({ ratings }: { ratings: number[] }) {
 
     const points = ratings.map((r, i) => `${x(i)},${y(r)}`).join(' ');
     const last = ratings.length - 1;
+
+    // A completely flat line has no peak or dip worth pointing out.
+    const extremes =
+        highest > lowest
+            ? [
+                  { i: ratings.indexOf(highest), color: 'var(--series-high)' },
+                  { i: ratings.indexOf(lowest), color: 'var(--series-low)' },
+              ]
+            : [];
+    // When the last season is the peak or the dip, the end dot takes its colour.
+    const endColor =
+        extremes.find((e) => e.i === last)?.color ?? 'var(--series)';
 
     return (
         <svg
@@ -38,11 +52,24 @@ export function Sparkline({ ratings }: { ratings: number[] }) {
                 strokeLinejoin="round"
                 strokeLinecap="round"
             />
+            {extremes
+                .filter((e) => e.i !== last)
+                .map((e) => (
+                    <circle
+                        key={e.i}
+                        cx={x(e.i)}
+                        cy={y(ratings[e.i])}
+                        r={3}
+                        fill={e.color}
+                        stroke="var(--surface)"
+                        strokeWidth={1.5}
+                    />
+                ))}
             <circle
                 cx={x(last)}
                 cy={y(ratings[last])}
                 r={4}
-                fill="var(--series)"
+                fill={endColor}
                 stroke="var(--surface)"
                 strokeWidth={2}
             />
