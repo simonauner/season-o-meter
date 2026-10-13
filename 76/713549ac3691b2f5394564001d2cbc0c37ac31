@@ -1,0 +1,83 @@
+scripts/build-data.mts
+  s_1989ff354d771a::t_d34dab97ed298a 12-14,81-86,192-291,466
+  s_1989ff354d771a::t_3a0c13288d168c 467
+.github/workflows/deploy.yml
+  s_1989ff354d771a::t_8dedfee7079ae0 37-39
+components/Header.tsx
+  s_1989ff354d771a::t_412c809763f79d 3,43
+app/profile/page.tsx
+  s_1989ff354d771a::t_2ce6d507379086 1-8
+app/swipe/page.tsx
+  s_1989ff354d771a::t_7be33e6221e76c 1-8
+lib/userData.ts
+  s_1989ff354d771a::t_a7cdaad3a8c578 14-15,35-36,56-66,69,90,104-106,111-112
+app/search-index.json/route.ts
+  s_1989ff354d771a::t_31009882b59c18 22-23,35
+lib/types.ts
+  s_1989ff354d771a::t_31009882b59c18 27-28,52-53
+lib/swipeDeck.ts
+  s_1989ff354d771a::t_67f69bab15b37d 1-17,28-34,38-77
+  s_1989ff354d771a::t_8d5d15d77ca1df 35
+  s_1989ff354d771a::t_58f3f3de86e59a 18-24,26-27,36-37
+  s_1989ff354d771a::t_5836a3bc002c05 78
+  s_1989ff354d771a::t_af9296a9e7c179 25
+app/swipe/Swipe.tsx
+  s_1989ff354d771a::t_7d889c64d59917 120
+  s_1989ff354d771a::t_c45a839f6d72d7 208-209,299,336,354,367,378
+  s_1989ff354d771a::t_8d5d15d77ca1df 125-132,183-185,274
+  s_1989ff354d771a::t_5a5a5131dee9fc 1-77,87-119,121-124,133-182,186-207,210-265,276-298,300-335,337-353,355-366,368-377,379-381,383-424
+  s_1989ff354d771a::t_62df5e79f32f8d 266-273,275,382
+  s_1989ff354d771a::t_58f3f3de86e59a 78
+  s_1989ff354d771a::t_48c28673056081 79-86
+components/header.module.css
+  s_1989ff354d771a::t_21aa9c35f3d939 213,220-223,225-227
+  s_1989ff354d771a::t_412c809763f79d 116,156-191,197-212
+  s_1989ff354d771a::t_a7d893dcce655d 224
+  s_1989ff354d771a::t_b5930fb43383b9 214
+app/profile/Profile.tsx
+  s_1989ff354d771a::t_fbd2d719a12cac 10-11,22,33-35,39-44,51-57,91-93,149,153,156,164
+  s_1989ff354d771a::t_546d16f7d9b8dd 38
+  s_1989ff354d771a::t_d404fb9f6c1dc6 1-9,12-21,23-32,36-37,45-50,58-64,66-84,86-90,96-103,105-108,110-148,150-152,154-155,157-163,166-178,181-191
+  s_1989ff354d771a::t_8d5d15d77ca1df 65,85,94-95,104,109,165,179-180
+components/Footer.tsx
+  s_1989ff354d771a::t_521f70bab032c3 51-53,80-92,112-115
+components/Poster.tsx
+  s_1989ff354d771a::t_ed5570732c35f8 28,34-35,60,63-69,83-88
+  s_1989ff354d771a::t_f1a4f6a61eb806 1-27,29-33,36-59,61-62,70-76,78-82,89-102
+  s_1989ff354d771a::t_32c3b40294023a 77
+package.json
+  s_1989ff354d771a::t_44f183bc7ace18 6
+components/NavLinks.tsx
+  s_1989ff354d771a::t_412c809763f79d 29-33,54-69
+  s_1989ff354d771a::t_cb90075be08b6c 70-71
+components/poster.module.css
+  s_1989ff354d771a::t_32c3b40294023a 83-88
+  s_1989ff354d771a::t_716e86c7fc4009 1-82
+app/profile/profile.module.css
+  s_1989ff354d771a::t_fbd2d719a12cac 5-66
+  s_1989ff354d771a::t_546d16f7d9b8dd 1-4
+lib/searchIndex.ts
+  s_1989ff354d771a::t_31009882b59c18 20-21
+app/swipe/swipe.module.css
+  s_1989ff354d771a::t_43672ce0dc5410 1-9,11-19,21-24,28-350
+  s_1989ff354d771a::t_58f3f3de86e59a 10,20,25,27
+  s_1989ff354d771a::t_48c28673056081 26
+README.md
+  s_1989ff354d771a::t_064e3e10a9ddc4 19-22,25-26,30-35,79-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "76713549ac3691b2f5394564001d2cbc0c37ac31",
+  "prompts": {},
+  "sessions": {
+    "s_1989ff354d771a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "15a0e6f2-f6cd-468e-998d-9a5cff27bc22",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
