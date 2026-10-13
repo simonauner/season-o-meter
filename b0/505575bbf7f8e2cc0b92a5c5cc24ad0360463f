@@ -1,0 +1,28 @@
+lib/useStaticJson.ts
+  s_c345474170b5ab::t_f787eb11070b3e 14-18,23,43
+components/Header.tsx
+  s_c345474170b5ab::t_4cb9015334ac78 3,46
+components/SearchBox.tsx
+  s_c345474170b5ab::t_f036159cab2941 1-97,103-224,226-232
+  s_c345474170b5ab::t_9e9f970529f5e7 98-102,225
+components/searchBox.module.css
+  s_c345474170b5ab::t_4cb9015334ac78 1-163
+lib/useSearchIndex.ts
+  s_c345474170b5ab::t_f787eb11070b3e 6-14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b0505575bbf7f8e2cc0b92a5c5cc24ad0360463f",
+  "prompts": {},
+  "sessions": {
+    "s_c345474170b5ab": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ee760ec3-91ea-4563-8690-49682f7245b4",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
