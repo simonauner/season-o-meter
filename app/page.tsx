@@ -9,9 +9,10 @@ import {
     RatedFilterPicker,
 } from '@/components/RatedFilter';
 import { ShowGrid } from '@/components/ShowGrid';
-import { findShowSections } from '@/lib/analysis';
+import { HomeTop, type PeakExample } from '@/components/Welcome';
+import { findShowSections, ratedSeasons } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
-import { forEachMinCount } from '@/lib/minCount';
+import { DEFAULT_MIN_COUNT, forEachMinCount } from '@/lib/minCount';
 import { topOfEachSection } from '@/lib/sections';
 import css from './home.module.css';
 
@@ -37,6 +38,18 @@ export default function Page() {
         )
     );
 
+    // The welcome draws the best-known series that collapsed at the end.
+    const collapsed = sectionsByMinSeasons[DEFAULT_MIN_COUNT.series]
+        .find((section) => section.slug === 'house-of-cards')
+        ?.items.toSorted((a, b) => b.votes - a.votes)[0];
+    const example: PeakExample | undefined = collapsed && {
+        title: collapsed.title,
+        href: `/shows/${collapsed.id}/`,
+        seasons: ratedSeasons(collapsed.seasons).map(
+            ({ seasonNumber, rating }) => ({ seasonNumber, rating })
+        ),
+    };
+
     const variants = forEachMinCount((minSeasons) =>
         sectionsByMinSeasons[minSeasons].map((section) => (
             <HomeSection
@@ -52,11 +65,22 @@ export default function Page() {
 
     return (
         <>
-            <Hero kind="series" label="Featured series" variants={featured} />
-            <PageIntro title="Where did it peak?">
-                How TV series are rated season by season, and where they went
-                downhill.
-            </PageIntro>
+            <HomeTop
+                hero={
+                    <Hero
+                        kind="series"
+                        label="Featured series"
+                        variants={featured}
+                    />
+                }
+                intro={
+                    <PageIntro title="Where did it peak?">
+                        How TV series are rated season by season, and where they
+                        went downhill.
+                    </PageIntro>
+                }
+                example={example}
+            />
             <div className={css.filters}>
                 <MinCountPicker kind="series" />
                 <RatedFilterPicker />

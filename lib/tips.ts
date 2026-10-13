@@ -3,11 +3,13 @@
 import { useSyncExternalStore } from 'react';
 
 /**
- * Tips that point out how something works, like the arrow keys in Swipe.
- * Each goes away once it has been put to use, and can be brought back on the
- * profile page. Kept per browser, as they're about the device being used.
+ * Tips that point out how something works, like the arrow keys in Swipe, and
+ * the welcome on the front page. Each goes away once it has been put to use
+ * or closed, and can be brought back on the profile page. Kept per browser,
+ * as they're about the device being used.
  */
-export type Tip = 'swipe-skip-key' | 'swipe-save-key' | 'swipe-undo-key';
+export type Tip =
+    'swipe-skip-key' | 'swipe-save-key' | 'swipe-undo-key' | 'home-welcome';
 
 const STORAGE_KEY = 'season-o-meter:tips-seen';
 

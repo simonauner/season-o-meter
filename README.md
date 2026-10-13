@@ -70,6 +70,13 @@ the series front page and list pages lets visitors require at least two, three
 or four rated seasons in every section (four by default). Every choice is
 rendered at build time, and the visitor's choice is remembered in the browser.
 
+New visitors get a welcome at the top of the series front page, in place of
+the featured series and the page's heading: a series that peaked and went
+downhill, and what they can do on the site. Closing it swipes it away like a
+card in Swipe, and the featured series is there from the next visit on. It's
+kept with the tips, so it comes back with them from `/profile/`
+([components/Welcome.tsx](components/Welcome.tsx)).
+
 On the series front page, visitors can also show only series they have rated
 (as a whole or any season), or only ones they haven't. That depends on their
 own ratings, so it can't be rendered at build time. Instead, every section's
