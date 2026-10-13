@@ -191,7 +191,8 @@ function ListByRating({
     limit: number;
 }) {
     const { home, sections, failed } = useSectionsByRating(kind, rated, limit);
-    const items = sections?.find((section) => section.slug === slug)?.items;
+    const section = sections?.find((section) => section.slug === slug);
+    const items = section?.items;
 
     if (failed) {
         return <p className={css.status}>Could not load the list.</p>;
@@ -206,7 +207,13 @@ function ListByRating({
             <p className={css.status}>You have rated all of them.</p>
         );
     }
-    return <CardGrid ids={items} home={home} />;
+    return (
+        <CardGrid
+            ids={items}
+            home={home}
+            hideVerdicts={section?.sharedVerdict}
+        />
+    );
 }
 
 function NoneRated({ kind }: { kind: Kind }) {
@@ -218,12 +225,25 @@ function NoneRated({ kind }: { kind: Kind }) {
     );
 }
 
-function CardGrid({ ids, home }: { ids: string[]; home: HomeSections }) {
+function CardGrid({
+    ids,
+    home,
+    hideVerdicts,
+}: {
+    ids: string[];
+    home: HomeSections;
+    hideVerdicts?: boolean;
+}) {
     return (
         <ul className={gridCss.grid}>
             {ids.map((id) => (
                 <li key={id}>
-                    <TrendCard {...home.cards[id]} />
+                    <TrendCard
+                        {...home.cards[id]}
+                        verdict={
+                            hideVerdicts ? undefined : home.cards[id].verdict
+                        }
+                    />
                 </li>
             ))}
         </ul>

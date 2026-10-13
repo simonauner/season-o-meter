@@ -25,6 +25,17 @@ export function franchiseCardProps(franchise: Franchise): TrendCardProps {
     };
 }
 
-export function FranchiseCard({ franchise }: { franchise: Franchise }) {
-    return <TrendCard {...franchiseCardProps(franchise)} />;
+type FranchiseCardProps = {
+    franchise: Franchise;
+    hideVerdict?: boolean;
+};
+
+export function FranchiseCard({ franchise, hideVerdict }: FranchiseCardProps) {
+    const props = franchiseCardProps(franchise);
+    return (
+        <TrendCard
+            {...props}
+            verdict={hideVerdict ? undefined : props.verdict}
+        />
+    );
 }

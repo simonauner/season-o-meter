@@ -27,6 +27,17 @@ export function showCardProps(show: Show): TrendCardProps {
     };
 }
 
-export function ShowCard({ show }: { show: Show }) {
-    return <TrendCard {...showCardProps(show)} />;
+type ShowCardProps = {
+    show: Show;
+    hideVerdict?: boolean;
+};
+
+export function ShowCard({ show, hideVerdict }: ShowCardProps) {
+    const props = showCardProps(show);
+    return (
+        <TrendCard
+            {...props}
+            verdict={hideVerdict ? undefined : props.verdict}
+        />
+    );
 }

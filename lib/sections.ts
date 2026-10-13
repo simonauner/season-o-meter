@@ -2,6 +2,11 @@ export type Section<T> = {
     slug: string;
     title: string;
     description: string;
+    /**
+     * Every item ends up with the same verdict, which the title already
+     * says, so the cards don't repeat it.
+     */
+    sharedVerdict?: boolean;
     items: T[];
 };
 
