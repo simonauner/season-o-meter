@@ -1,0 +1,19 @@
+app/icon.svg
+  s_68ac96a7f03a3b::t_b37067764a5a31 1-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e7358ed8a2ef1a8ae83a06b32cc61c87cd69b6bd",
+  "prompts": {},
+  "sessions": {
+    "s_68ac96a7f03a3b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b7c238e8-baae-4282-be30-2cfd52782be5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
