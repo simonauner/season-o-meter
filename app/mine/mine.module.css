@@ -243,6 +243,12 @@
     color: var(--down);
 }
 
+.panel .syncedAt {
+    margin: 2px 0 0;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
 /* A field on its own line, above another one. */
 .field {
     display: block;
