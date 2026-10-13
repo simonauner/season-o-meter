@@ -73,3 +73,19 @@ export function findSections<T extends { votes: number }>(
         }
     );
 }
+
+/**
+ * The first item of each section that has one, with the section it tops.
+ * An item that tops several sections only comes up once, for the first.
+ */
+export function topOfEachSection<T extends { id: string }>(
+    sections: Section<T>[]
+): { section: Section<T>; item: T }[] {
+    const seen = new Set<string>();
+    return sections.flatMap((section) => {
+        const item = section.items[0];
+        if (!item || seen.has(item.id)) return [];
+        seen.add(item.id);
+        return [{ section, item }];
+    });
+}

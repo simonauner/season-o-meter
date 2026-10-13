@@ -49,7 +49,9 @@ though posters are loaded from TMDB's image server.
    index for client-side search.
 3. [GitHub Actions](.github/workflows/deploy.yml) does both every night and
    deploys to GitHub Pages at <https://seasonometer.com/>. The repository is
-   public, so Actions minutes are free.
+   public, so Actions minutes are free. Pushes and pull requests reuse the
+   data from the latest nightly run instead of fetching it again; a manual
+   run of the workflow fetches it afresh.
 
 The front-page sections ("Slow starters", "Collapsed like a house of cards",
 …) and the verdict for each series are defined in

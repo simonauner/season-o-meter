@@ -2,8 +2,10 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { heroVisibility } from '@/components/Hero';
 import { PageIntro } from '@/components/PageIntro';
 import { friendsOf } from '@/lib/friends';
+import type { Kind } from '@/lib/minCount';
 import type { SearchEntry } from '@/lib/searchIndex';
 import { entryHref } from '@/lib/swipeDeck';
 import { syncAvailable, useSyncStatus } from '@/lib/sync';
@@ -43,6 +45,8 @@ export function Profile() {
                         index={index}
                         syncing={secret !== null}
                     />
+                    <HeroPanel kind="series" />
+                    <HeroPanel kind="movies" />
                     <TipsPanel />
                 </div>
             )}
@@ -188,6 +192,72 @@ function OverviewPanel({
                     </>
                 )}
             </ul>
+        </section>
+    );
+}
+
+const HERO_PAGES: Record<
+    Kind,
+    { heading: string; what: string; page: string; href: string }
+> = {
+    series: {
+        heading: 'Featured series',
+        what: 'series',
+        page: 'Series',
+        href: '/',
+    },
+    movies: {
+        heading: 'Featured movies',
+        what: 'film series',
+        page: 'Movies',
+        href: '/movies/',
+    },
+};
+
+function HeroPanel({ kind }: { kind: Kind }) {
+    const { heading, what, page, href } = HERO_PAGES[kind];
+    const visibility = heroVisibility[kind].useStoredChoice();
+    const [shownAgain, setShownAgain] = useState(false);
+
+    const showAgain = () => {
+        heroVisibility[kind].set('shown');
+        setShownAgain(true);
+    };
+
+    const pageLink = (
+        <Link href={href} className={css.link}>
+            {page}
+        </Link>
+    );
+
+    return (
+        <section className={mineCss.panel}>
+            <h2>{heading}</h2>
+            {visibility === 'hidden' ? (
+                <>
+                    <p>
+                        You’ve hidden the featured {what} at the top of{' '}
+                        {pageLink}.
+                    </p>
+                    <button
+                        type="button"
+                        className={mineCss.button}
+                        onClick={showAgain}
+                    >
+                        Show it again
+                    </button>
+                </>
+            ) : (
+                <p>
+                    A featured {what} is shown at the top of {pageLink}. You can
+                    hide it from its menu and show it again here.
+                </p>
+            )}
+            {shownAgain && visibility === 'shown' && (
+                <p className={mineCss.success} role="status">
+                    It’s back at the top of {pageLink}.
+                </p>
+            )}
         </section>
     );
 }

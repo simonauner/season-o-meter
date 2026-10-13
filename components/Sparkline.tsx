@@ -32,6 +32,18 @@ export function Sparkline({ ratings }: { ratings: number[] }) {
     const points = ratings.map((r, i) => `${x(i)},${y(r)}`).join(' ');
     const last = ratings.length - 1;
 
+    // A completely flat line has no peak or dip worth pointing out.
+    const extremes =
+        highest > lowest
+            ? [
+                  { i: ratings.indexOf(highest), color: 'var(--series-high)' },
+                  { i: ratings.indexOf(lowest), color: 'var(--series-low)' },
+              ]
+            : [];
+    // When the last season is the peak or the dip, the end dot takes its colour.
+    const endColor =
+        extremes.find((e) => e.i === last)?.color ?? 'var(--series)';
+
     return (
         <svg
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
@@ -52,11 +64,24 @@ export function Sparkline({ ratings }: { ratings: number[] }) {
                 strokeLinejoin="round"
                 strokeLinecap="round"
             />
+            {extremes
+                .filter((e) => e.i !== last)
+                .map((e) => (
+                    <circle
+                        key={e.i}
+                        cx={x(e.i)}
+                        cy={y(ratings[e.i])}
+                        r={3}
+                        fill={e.color}
+                        stroke="var(--surface)"
+                        strokeWidth={1.5}
+                    />
+                ))}
             <circle
                 cx={x(last)}
                 cy={y(ratings[last])}
                 r={4}
-                fill="var(--series)"
+                fill={endColor}
                 stroke="var(--surface)"
                 strokeWidth={2}
             />
