@@ -45,8 +45,12 @@
     box-shadow:
         0 1px 2px rgb(0 0 0 / 12%),
         0 12px 32px rgb(0 0 0 / 18%);
-    /* Vertical drags still scroll the page; sideways ones move the card. */
-    touch-action: pan-y;
+    /* The card has every drag to itself. With pan-y, a slow drag drifting
+     * up or down was taken for a scroll, and the browser let go of the card
+     * mid-drag. The page fits on screen, and scrolls from outside the card. */
+    touch-action: none;
+    /* Nor does holding a finger on it open a preview of the poster or title. */
+    -webkit-touch-callout: none;
     cursor: grab;
     transform: translateX(var(--dx)) rotate(var(--tilt));
     transition:
