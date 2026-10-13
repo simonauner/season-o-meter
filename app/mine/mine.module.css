@@ -39,12 +39,16 @@
 
 .linkRow {
     display: flex;
-    flex-wrap: wrap;
     gap: 8px;
 }
 
+.linkRow .button {
+    flex: none;
+    white-space: nowrap;
+}
+
 .link {
-    flex: 1 1 200px;
+    flex: 1 1 0;
     min-width: 0;
     padding: 7px 10px;
     border: 1px solid var(--border);
