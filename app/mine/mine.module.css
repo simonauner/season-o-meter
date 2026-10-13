@@ -227,6 +227,12 @@
     font-weight: 600;
 }
 
+.upToDate {
+    margin-right: 6px;
+    vertical-align: -2px;
+    color: var(--up);
+}
+
 .phase[data-phase='failed'] {
     color: var(--down);
 }
