@@ -1,0 +1,19 @@
+components/RatedFilter.tsx
+  s_bea0200982c2f2::t_eec4c6fd099c3f 28,31-32,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f3e82c579e80e6936272743da88498c16f40de55",
+  "prompts": {},
+  "sessions": {
+    "s_bea0200982c2f2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4c7facbd-dec0-45eb-af33-13c78fbefb1d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
