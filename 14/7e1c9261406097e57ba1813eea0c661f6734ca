@@ -1,0 +1,22 @@
+components/ratingTable.module.css
+  s_da0a73fe597894::t_886f8632ab08ff 84-187
+components/MovieTable.tsx
+  s_da0a73fe597894::t_7a178fc9c50421 69-71
+  s_da0a73fe597894::t_886f8632ab08ff 21,72,79,90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "147e1c9261406097e57ba1813eea0c661f6734ca",
+  "prompts": {},
+  "sessions": {
+    "s_da0a73fe597894": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e42de24-b48a-402d-932d-eddfc7831081",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
