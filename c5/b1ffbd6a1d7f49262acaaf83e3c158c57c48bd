@@ -1,0 +1,48 @@
+app/shows/[id]/page.tsx
+  s_a328f50a81a3e0::t_cee5253d5c7bf7 24,152,154
+  s_a328f50a81a3e0::t_203e205745dda7 5,23,172-175
+  s_a328f50a81a3e0::t_6793f4e00279c3 176
+  s_a328f50a81a3e0::t_f377af0c871443 153
+README.md
+  s_a328f50a81a3e0::t_c895b942cc4b7a 30-33
+  s_a328f50a81a3e0::t_376ccec16a6dd6 28-29
+lib/related.ts
+  s_a328f50a81a3e0::t_6b5f6ddab089f1 6-7,41-42
+  s_a328f50a81a3e0::t_1ad07109e6309c 12-13,21-23,30,33-36,54-55,72-73,79,82-83,87,90-94,96-99,101-104,115-128
+  s_a328f50a81a3e0::t_dbdf2eaff362f7 37,74-75,108-109
+  s_a328f50a81a3e0::t_ac3dd9efc118cd 18-20,24-29,31,38-40,43-53,56-71
+  s_a328f50a81a3e0::t_1027c766033958 15,17,77-78,84-86,88-89,95,100
+  s_a328f50a81a3e0::t_95c64236166144 1-5,8-11,14,76,80-81,105-107,110-114,129
+  s_a328f50a81a3e0::t_5ac9cfec13c74e 32
+  s_a328f50a81a3e0::t_61b891a0518b64 16
+app/movies/[id]/page.tsx
+  s_a328f50a81a3e0::t_203e205745dda7 3,23,160-165
+  s_a328f50a81a3e0::t_f377af0c871443 150
+  s_a328f50a81a3e0::t_cee5253d5c7bf7 24,149,151
+  s_a328f50a81a3e0::t_9c7d426bf1c7a3 166
+lib/summaries.ts
+  s_a328f50a81a3e0::t_aa7de0ec1cbe6c 4,36,38,40-43,54,60,79,81,103-104,106-107
+  s_a328f50a81a3e0::t_c54565691c011c 121
+  s_a328f50a81a3e0::t_1960288cfc7faa 1-3,5-19,24-25,27,29-35,37,39,44-53,55-59,61-70,72-78,80,82-90,92-96,98-102,108,110-112,114-120,122-127,129-132,134-135,137
+  s_a328f50a81a3e0::t_169f8d8c5790f6 20-23,26,71,105,109,113,128,133
+  s_a328f50a81a3e0::t_f377af0c871443 28,91,97,136
+app/detail.module.css
+  s_a328f50a81a3e0::t_5aadf69223f021 129-140
+  s_a328f50a81a3e0::t_cee5253d5c7bf7 121-128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c5b1ffbd6a1d7f49262acaaf83e3c158c57c48bd",
+  "prompts": {},
+  "sessions": {
+    "s_a328f50a81a3e0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9d1604c-8f91-4cf1-a48b-10c51fa8978b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": null
+    }
+  }
+}

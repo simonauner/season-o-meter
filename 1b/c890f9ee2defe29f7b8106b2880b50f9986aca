@@ -1,0 +1,25 @@
+lib/analysis.ts
+  s_a328f50a81a3e0::t_906a851a3692ba 18,64,83-84,86-87,89-103,105-108,111-116,120,122,124-136,147
+lib/franchiseAnalysis.ts
+  s_a328f50a81a3e0::t_906a851a3692ba 18,36,53-54,56-57,59-68,72-80,84-93,95-99,102-107,110-112,122
+lib/verdicts.ts
+  s_a328f50a81a3e0::t_906a851a3692ba 11-30
+lib/related.ts
+  s_a328f50a81a3e0::t_89cbb98e808232 1-2,4,19-25,42-43,48,87-90,92-94,97-122,124,129-130,136-158,160
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1bc890f9ee2defe29f7b8106b2880b50f9986aca",
+  "prompts": {},
+  "sessions": {
+    "s_a328f50a81a3e0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9d1604c-8f91-4cf1-a48b-10c51fa8978b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
