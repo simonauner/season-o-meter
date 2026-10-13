@@ -1,0 +1,23 @@
+lib/popcorn.ts
+  s_26b13c5c7b97a4::t_1b8054cae8d762 1-223
+components/YourRating.tsx
+  s_26b13c5c7b97a4::t_0612e7f57153fb 11,26-31,60-65,94,96-97
+app/swipe/Swipe.tsx
+  s_26b13c5c7b97a4::t_0612e7f57153fb 19,136,194-195,331
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "baf072f1b69454595aaf7e4dacc2608acd01c9a3",
+  "prompts": {},
+  "sessions": {
+    "s_26b13c5c7b97a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bc0bdc80-2576-4232-ae56-50104ed0d2c3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
