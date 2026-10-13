@@ -73,6 +73,30 @@
     cursor: default;
 }
 
+/* Points out the copy button when arriving from a link to it. */
+.flash {
+    animation: flash 0.6s ease-in-out 3;
+}
+
+@keyframes flash {
+    50% {
+        box-shadow: 0 0 0 6px color-mix(in srgb, var(--own) 35%, transparent);
+        transform: scale(1.06);
+    }
+}
+
+@keyframes flash-still {
+    50% {
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--own) 35%, transparent);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flash {
+        animation-name: flash-still;
+    }
+}
+
 .link:focus-visible,
 .button:focus-visible {
     outline: 2px solid var(--accent);

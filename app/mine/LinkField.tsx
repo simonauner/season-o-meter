@@ -8,10 +8,15 @@ export function LinkField({
     link,
     label,
     shareTitle,
+    flash,
+    onFlashed,
 }: {
     link: string | null;
     label: string;
     shareTitle: string;
+    /** Draws the eye to the copy button with a few blinks. */
+    flash?: boolean;
+    onFlashed?: () => void;
 }) {
     const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
@@ -36,9 +41,10 @@ export function LinkField({
             />
             <button
                 type="button"
-                className={css.button}
+                className={flash ? `${css.button} ${css.flash}` : css.button}
                 onClick={copy}
                 disabled={!link}
+                onAnimationEnd={onFlashed}
             >
                 {link !== null && copiedLink === link ? 'Copied' : 'Copy link'}
             </button>
