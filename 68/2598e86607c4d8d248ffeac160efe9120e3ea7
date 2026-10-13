@@ -1,0 +1,23 @@
+components/Sparkline.tsx
+  s_5b209f41f98ac2::t_dc91533f63c37f 9-11,13,23-26,29-34,55-67,72
+  s_5b209f41f98ac2::t_85bb0ea40406b1 27-28
+app/globals.css
+  s_5b209f41f98ac2::t_cfc99c8bd2db9b 15,43
+  s_5b209f41f98ac2::t_85bb0ea40406b1 14,16,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "682598e86607c4d8d248ffeac160efe9120e3ea7",
+  "prompts": {},
+  "sessions": {
+    "s_5b209f41f98ac2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "49a1f2d8-0d83-4006-97e2-6cd3d4fe9c39",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
