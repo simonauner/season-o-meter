@@ -1,0 +1,30 @@
+lib/imaginaryFriend.ts
+  s_8021c59968e3d2::t_4a826c70748c89 1,3-48,50-57
+  s_8021c59968e3d2::t_532656770d63c2 2,49
+lib/friends.ts
+  s_8021c59968e3d2::t_b0a38344082400 58,75-76
+  s_8021c59968e3d2::t_14fe68abeb986c 3-4,54-55,57,59-63,83-89
+app/friends/friends.module.css
+  s_8021c59968e3d2::t_532656770d63c2 231-258
+README.md
+  s_8021c59968e3d2::t_50d9054682da93 106-112
+app/friends/Friends.tsx
+  s_8021c59968e3d2::t_532656770d63c2 15-18,89-110,142-145,495-503
+  s_8021c59968e3d2::t_e37510c7711f3a 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8d3bedee631444852c3a5b304cb5d774aa3194ba",
+  "prompts": {},
+  "sessions": {
+    "s_8021c59968e3d2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f4d5ece7-f891-402f-b931-2722fde9ba74",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
