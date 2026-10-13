@@ -2,10 +2,12 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { ByMinCount, MinCountPicker } from '@/components/MinCountFilter';
 import { PageIntro } from '@/components/PageIntro';
+import { FilteredList, RatedFilterPicker } from '@/components/RatedFilter';
 import { ShowGrid } from '@/components/ShowGrid';
 import { findShowSections, SHOW_SECTION_SLUGS } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
 import { forEachMinCount, type MinCount } from '@/lib/minCount';
+import homeCss from '../../home.module.css';
 import css from './list.module.css';
 
 const SHOWS_PER_LIST = 24;
@@ -47,13 +49,23 @@ export default async function Page({ params }: PageProps<'/lists/[slug]'>) {
                     </PageIntro>
                 ))}
             />
-            <MinCountPicker kind="series" />
+            <div className={homeCss.filters}>
+                <MinCountPicker kind="series" />
+                <RatedFilterPicker />
+            </div>
             <div className={css.list}>
-                <ByMinCount
+                <FilteredList
                     kind="series"
-                    variants={forEachMinCount((minSeasons) => (
-                        <ShowGrid shows={sections[minSeasons].items} />
-                    ))}
+                    slug={slug}
+                    all={
+                        <ByMinCount
+                            kind="series"
+                            variants={forEachMinCount((minSeasons) => (
+                                <ShowGrid shows={sections[minSeasons].items} />
+                            ))}
+                        />
+                    }
+                    limit={SHOWS_PER_LIST}
                 />
             </div>
         </>
