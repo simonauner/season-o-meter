@@ -1,6 +1,7 @@
 import Form from 'next/form';
 import Link from 'next/link';
 import { NavLinks, ProfileLink } from './NavLinks';
+import { StickyHeader } from './StickyHeader';
 import css from './header.module.css';
 
 // Season heights for the logo mark: a series that peaks, then goes downhill.
@@ -32,7 +33,7 @@ function LogoMark() {
 
 export function Header() {
     return (
-        <header className={css.header}>
+        <StickyHeader className={css.header}>
             <div className={css.inner}>
                 <Link href="/" className={css.logo}>
                     <LogoMark />
@@ -65,6 +66,6 @@ export function Header() {
                     />
                 </Form>
             </div>
-        </header>
+        </StickyHeader>
     );
 }
