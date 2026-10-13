@@ -1,0 +1,43 @@
+.reveal[data-reveal='hidden'] {
+    visibility: hidden;
+}
+
+.reveal[data-reveal='in'] > * {
+    animation: rise 480ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* One after the other, from the top. */
+.reveal[data-reveal='in'] > :nth-child(2) {
+    animation-delay: 60ms;
+}
+
+.reveal[data-reveal='in'] > :nth-child(3) {
+    animation-delay: 120ms;
+}
+
+.reveal[data-reveal='in'] > :nth-child(4) {
+    animation-delay: 180ms;
+}
+
+.reveal[data-reveal='in'] > :nth-child(n + 5) {
+    animation-delay: 240ms;
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal[data-reveal='in'] > * {
+        animation-name: fade;
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+}
