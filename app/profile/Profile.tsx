@@ -178,7 +178,7 @@ function OverviewPanel({
                         <li>
                             Sync is {syncing ? 'on' : 'off'}. It’s turned on and
                             off on{' '}
-                            <Link href="/mine/" className={css.link}>
+                            <Link href="/mine/#sync" className={css.link}>
                                 My list
                             </Link>
                             .

@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { PageIntro } from '@/components/PageIntro';
 import { UserLists } from '@/components/UserList';
 import { liveShareLink, useSyncStatus } from '@/lib/sync';
 import { encodeShare, type UserData } from '@/lib/userData';
 import { listItems } from '@/lib/userList';
 import { useUserData } from '@/lib/userStore';
-import { clearHash, useHash } from '@/lib/useHash';
+import { clearHash, usePointedTo } from '@/lib/useHash';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import { LinkField } from './LinkField';
 import css from './mine.module.css';
@@ -49,7 +49,7 @@ export function MyList() {
             )}
 
             <div className={css.panels}>
-                <SyncPanel />
+                <SyncPanel listShown={failed || items !== null} />
                 {data && items && items.length > 0 && (
                     <SharePanel data={data} secret={secret} />
                 )}
@@ -67,8 +67,11 @@ function SharePanel({
     secret: string | null;
 }) {
     const [link, setLink] = useState<string | null>(null);
-    const panel = useRef<HTMLElement>(null);
-    const pointedTo = useHash() === SHARE_HASH && link !== null;
+    // Waits for the link, so there is something to copy when the button flashes.
+    const { ref, pointedTo } = usePointedTo<HTMLElement>(
+        SHARE_HASH,
+        link !== null
+    );
 
     // Kept up to date, so a snapshot link always has the latest ratings.
     useEffect(() => {
@@ -87,21 +90,8 @@ function SharePanel({
         };
     }, [data, secret]);
 
-    // The panel shows up once the list has loaded, too late for the browser
-    // to scroll to it on its own.
-    useEffect(() => {
-        if (pointedTo) {
-            panel.current?.scrollIntoView({
-                behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
-                    ? 'auto'
-                    : 'smooth',
-                block: 'center',
-            });
-        }
-    }, [pointedTo]);
-
     return (
-        <section id={SHARE_HASH} ref={panel} className={css.panel}>
+        <section ref={ref} className={css.panel}>
             <h2>Share with friends</h2>
             <p>
                 {secret

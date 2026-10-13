@@ -425,9 +425,14 @@ function FriendsPanel({ friends }: { friends: Friend[] }) {
         <section className={mineCss.panel}>
             <h2>Your friends</h2>
             <p>
-                {syncing
-                    ? 'Your friends are synced with your other devices.'
-                    : 'Turn on sync on My list to have your friends on your other devices too.'}
+                {syncing ? (
+                    'Your friends are synced with your other devices.'
+                ) : (
+                    <>
+                        Turn on sync on <Link href="/mine/#sync">My list</Link>{' '}
+                        to have your friends on your other devices too.
+                    </>
+                )}
             </p>
             <ul className={css.friends}>
                 {friends.map((friend) => (
