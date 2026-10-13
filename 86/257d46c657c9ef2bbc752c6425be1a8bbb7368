@@ -1,0 +1,42 @@
+app/profile/page.tsx
+  s_a328f50a81a3e0::t_7e25a9c013c228 4-8
+app/page.tsx
+  s_a328f50a81a3e0::t_1459de351ae680 1
+  s_a328f50a81a3e0::t_811328a4a9cf00 20-21
+app/robots.ts
+  s_a328f50a81a3e0::t_e09b87caf4b503 1-11
+app/mine/page.tsx
+  s_a328f50a81a3e0::t_7e25a9c013c228 4-8
+lib/site.ts
+  s_a328f50a81a3e0::t_e784c8ca8f2253 1-2
+app/layout.tsx
+  s_a328f50a81a3e0::t_75e1fdf229cdc6 10,12
+  s_a328f50a81a3e0::t_f28a588403128a 6
+app/search/page.tsx
+  s_a328f50a81a3e0::t_7e25a9c013c228 5-6,8-9
+  s_a328f50a81a3e0::t_7326b241e2f414 7
+README.md
+  s_a328f50a81a3e0::t_ea822a6362cd5b 48-50
+app/sitemap.ts
+  s_a328f50a81a3e0::t_3fa66cbe1c30fe 1-24
+app/swipe/page.tsx
+  s_a328f50a81a3e0::t_7e25a9c013c228 4-8
+app/friends/page.tsx
+  s_a328f50a81a3e0::t_7e25a9c013c228 4-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "86257d46c657c9ef2bbc752c6425be1a8bbb7368",
+  "prompts": {},
+  "sessions": {
+    "s_a328f50a81a3e0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f9d1604c-8f91-4cf1-a48b-10c51fa8978b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
