@@ -1,16 +1,20 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { PageIntro } from '@/components/PageIntro';
 import { UserLists } from '@/components/UserList';
 import { liveShareLink, useSyncStatus } from '@/lib/sync';
 import { encodeShare, type UserData } from '@/lib/userData';
 import { listItems } from '@/lib/userList';
 import { useUserData } from '@/lib/userStore';
+import { clearHash, useHash } from '@/lib/useHash';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import { LinkField } from './LinkField';
 import css from './mine.module.css';
 import { ConnectPrompt, SyncPanel } from './SyncPanel';
+
+/** The fragment that links to the share panel, as from the Friends page. */
+const SHARE_HASH = 'share';
 
 export function MyList() {
     const data = useUserData();
@@ -63,6 +67,8 @@ function SharePanel({
     secret: string | null;
 }) {
     const [link, setLink] = useState<string | null>(null);
+    const panel = useRef<HTMLElement>(null);
+    const pointedTo = useHash() === SHARE_HASH && link !== null;
 
     // Kept up to date, so a snapshot link always has the latest ratings.
     useEffect(() => {
@@ -81,9 +87,22 @@ function SharePanel({
         };
     }, [data, secret]);
 
+    // The panel shows up once the list has loaded, too late for the browser
+    // to scroll to it on its own.
+    useEffect(() => {
+        if (pointedTo) {
+            panel.current?.scrollIntoView({
+                behavior: matchMedia('(prefers-reduced-motion: reduce)').matches
+                    ? 'auto'
+                    : 'smooth',
+                block: 'center',
+            });
+        }
+    }, [pointedTo]);
+
     return (
-        <section className={css.panel}>
-            <h2>Share your list</h2>
+        <section id={SHARE_HASH} ref={panel} className={css.panel}>
+            <h2>Share with friends</h2>
             <p>
                 {secret
                     ? 'Anyone with this link can see your ratings and watchlist, always with your latest changes, and add you as a friend to compare ratings. They can’t change anything.'
@@ -93,6 +112,8 @@ function SharePanel({
                 link={link}
                 label="Link to your list"
                 shareTitle="My Season-o-meter list"
+                flash={pointedTo}
+                onFlashed={clearHash}
             />
         </section>
     );

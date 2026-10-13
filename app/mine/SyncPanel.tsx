@@ -17,8 +17,8 @@ import { CodeForm, CodeOffer } from './PairingCode';
 import { QrCode } from './QrCode';
 
 const PHASES: Record<SyncStatus['phase'], string> = {
-    idle: 'Up to date.',
-    syncing: 'Syncing…',
+    idle: 'Sync is on and up to date.',
+    syncing: 'Sync is on. Syncing…',
     failed: 'Could not reach the sync server. Your changes are kept on this device and sync when it is back.',
 };
 
@@ -51,7 +51,7 @@ export function SyncPanel() {
 
     return (
         <section className={css.panel}>
-            <h2>Sync is on</h2>
+            <h2>Sync your devices</h2>
             <p role="status" data-phase={status.phase} className={css.phase}>
                 {PHASES[status.phase]}
             </p>

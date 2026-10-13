@@ -83,9 +83,9 @@ export function Friends() {
             ) : friends.length === 0 ? (
                 <p className={mineCss.status}>
                     No friends yet. Ask a friend for the link to their list.
-                    They find it under <em>Share your list</em> on their{' '}
-                    <Link href="/mine/">My list</Link>, with sync on. Open it,
-                    or paste it below.
+                    They find it under <em>Share with friends</em> on their{' '}
+                    <Link href="/mine/#share">My list</Link>, with sync on. Open
+                    it, or paste it below.
                 </p>
             ) : (
                 <Comparison data={data} friends={friends} index={index} />

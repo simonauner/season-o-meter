@@ -16,7 +16,7 @@ import css from '../mine/mine.module.css';
 type Problem = 'link' | 'name' | 'own';
 
 const PROBLEMS: Record<Problem, string> = {
-    link: 'That isn’t a link to a synced list. Ask them for the link under Share your list on their My list, with sync on.',
+    link: 'That isn’t a link to a synced list. Ask them for the link under Share with friends on their My list, with sync on.',
     name: 'Give them a name.',
     own: 'That’s your own list.',
 };
