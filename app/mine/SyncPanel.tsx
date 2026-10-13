@@ -1,5 +1,6 @@
 'use client';
 
+import { Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
     connect,
@@ -53,6 +54,14 @@ export function SyncPanel() {
         <section className={css.panel}>
             <h2>Sync your devices</h2>
             <p role="status" data-phase={status.phase} className={css.phase}>
+                {status.phase === 'idle' && (
+                    <Check
+                        className={css.upToDate}
+                        size={16}
+                        strokeWidth={3}
+                        aria-hidden
+                    />
+                )}
                 {PHASES[status.phase]}
             </p>
             <p>

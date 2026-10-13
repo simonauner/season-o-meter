@@ -39,12 +39,16 @@
 
 .linkRow {
     display: flex;
-    flex-wrap: wrap;
     gap: 8px;
 }
 
+.linkRow .button {
+    flex: none;
+    white-space: nowrap;
+}
+
 .link {
-    flex: 1 1 200px;
+    flex: 1 1 0;
     min-width: 0;
     padding: 7px 10px;
     border: 1px solid var(--border);
@@ -225,6 +229,12 @@
     margin-bottom: 0;
     color: var(--text-primary);
     font-weight: 600;
+}
+
+.upToDate {
+    margin-right: 6px;
+    vertical-align: -2px;
+    color: var(--up);
 }
 
 .phase[data-phase='failed'] {
