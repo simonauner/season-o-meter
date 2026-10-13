@@ -15,6 +15,7 @@ import {
     isZigzag,
     pickVerdict,
     RAN_OUT_OF_STEAM,
+    type Shape,
     SAVED_THE_BEST,
     STANDOUT,
     STEADY,
@@ -32,6 +33,7 @@ export type MovieTrend = {
     average: number;
     /** Rating change from the first to the latest movie. */
     change: number;
+    shape: Shape;
     verdict: string;
 };
 
@@ -48,53 +50,66 @@ export function analyzeMovies({ id, movies }: Franchise): MovieTrend | null {
     // The trend over the whole series, so long series aren't judged per movie.
     const fittedChange = slope(ratings) * (movies.length - 1);
 
-    const verdict = pickVerdict(id, verdictOptions());
+    const [shape, options] = verdictOptions();
+    const verdict = pickVerdict(id, options);
 
-    function verdictOptions(): string[] {
-        if (worst.rating >= 8) return FLAWLESS;
+    function verdictOptions(): [Shape, string[]] {
+        if (worst.rating >= 8) return ['flawless', FLAWLESS];
         if (spread < 0.4) {
-            return average < 6
-                ? STEADY_AND_LOW
-                : [
-                      ...STEADY,
-                      'Same procedure as every sequel',
-                      'Sequel-y good',
-                  ];
+            return [
+                'steady',
+                average < 6
+                    ? STEADY_AND_LOW
+                    : [
+                          ...STEADY,
+                          'Same procedure as every sequel',
+                          'Sequel-y good',
+                      ],
+            ];
         }
         if (best === first) {
             return [
-                movies.length === 2
-                    ? 'The sequel fell short'
-                    : 'Never topped the original',
-                "You can't handle the sequel",
-                'Nothing beats the original',
-                'Sequelitis',
+                'original-best',
+                [
+                    movies.length === 2
+                        ? 'The sequel fell short'
+                        : 'Never topped the original',
+                    "You can't handle the sequel",
+                    'Nothing beats the original',
+                    'Sequelitis',
+                ],
             ];
         }
         if (best === last) {
-            return movies.length === 2
-                ? [
-                      'The sequel is better',
-                      'The Empire Strikes Back',
-                      "I'll be back… and better",
-                  ]
-                : [...SAVED_THE_BEST, "I'll be back… and better"];
-        }
-        if (last === worst) return RAN_OUT_OF_STEAM;
-        if (isZigzag(ratings)) return ZIGZAG;
-        if (hasTwinPeaks(ratings)) return TWIN_PEAKS;
-        if (isComeback(ratings)) return COMEBACK;
-        if (spread >= BIG_SPREAD_MIN) return BIG_SPREAD;
-        if (fittedChange <= -0.5) {
             return [
-                `All downhill after ${best.title}`,
-                'I see dead sequels',
-                "Should've quit while ahead",
+                'best-last',
+                movies.length === 2
+                    ? [
+                          'The sequel is better',
+                          'The Empire Strikes Back',
+                          "I'll be back… and better",
+                      ]
+                    : [...SAVED_THE_BEST, "I'll be back… and better"],
             ];
         }
-        if (fittedChange >= 0.5) return BETTER_WITH_AGE;
-        if (hasStandout(ratings)) return STANDOUT;
-        return [`Peaked with ${best.title}`];
+        if (last === worst) return ['worst-last', RAN_OUT_OF_STEAM];
+        if (isZigzag(ratings)) return ['zigzag', ZIGZAG];
+        if (hasTwinPeaks(ratings)) return ['twin-peaks', TWIN_PEAKS];
+        if (isComeback(ratings)) return ['comeback', COMEBACK];
+        if (spread >= BIG_SPREAD_MIN) return ['big-spread', BIG_SPREAD];
+        if (fittedChange <= -0.5) {
+            return [
+                'decline',
+                [
+                    `All downhill after ${best.title}`,
+                    'I see dead sequels',
+                    "Should've quit while ahead",
+                ],
+            ];
+        }
+        if (fittedChange >= 0.5) return ['rise', BETTER_WITH_AGE];
+        if (hasStandout(ratings)) return ['standout', STANDOUT];
+        return ['peaked', [`Peaked with ${best.title}`]];
     }
 
     return {
@@ -104,6 +119,7 @@ export function analyzeMovies({ id, movies }: Franchise): MovieTrend | null {
         last,
         average,
         change: last.rating - first.rating,
+        shape,
         verdict,
     };
 }

@@ -1,4 +1,7 @@
+import { analyzeSeasons } from './analysis';
+import { analyzeMovies } from './franchiseAnalysis';
 import type { Franchise, Show } from './types';
+import type { Shape } from './verdicts';
 
 /*
  * Titles to link to at the bottom of a title's page. Besides giving
@@ -13,7 +16,13 @@ const RELATED_COUNT = 6;
 const votesApart = (a: number, b: number) => Math.abs(Math.log(a / b));
 
 /** How much votes apart (see votesApart) count against genres in common (0–1). */
-const GENRE_PER_VOTES_APART = 0.15;
+const PER_VOTES_APART = 0.1;
+/**
+ * How much the same shape of ratings counts, like ending on the worst
+ * season. Less than a genre in common, so it decides between titles of the
+ * same genres more than it crosses genres.
+ */
+const SAME_SHAPE = 0.25;
 
 /** At most this many of a title's links go to titles that depend on them. */
 const MAX_CHILDREN = 3;
@@ -30,11 +39,13 @@ const linksByList = new WeakMap<object[], Map<object, object[]>>();
  */
 function linksFor<T extends { votes: number }>(
     items: T[],
-    closest: (item: T) => T[]
+    /** Gives the ranking of every other item, closest first, for an item. */
+    makeClosest: () => (item: T) => T[]
 ): Map<T, T[]> {
     const cached = linksByList.get(items);
     if (cached) return cached as Map<T, T[]>;
 
+    const closest = makeClosest();
     const ranked = new Map(items.map((item) => [item, closest(item)]));
     const byVotes = items.toSorted((a, b) => b.votes - a.votes);
     const children = new Map(items.map((item): [T, T[]] => [item, []]));
@@ -73,57 +84,78 @@ function linksFor<T extends { votes: number }>(
     return links;
 }
 
+/** Every item's shape, or none if it has too few ratings for one. */
+const shapesOf = <T>(items: T[], shapeOf: (item: T) => Shape | undefined) =>
+    new Map(items.map((item) => [item, shapeOf(item)]));
+
 /**
- * Series with the same genres, or as many of them as possible, and about
- * as popular. Another series with the same title comes first, like the
- * British and American The Office.
+ * Series with the same genres, or as many of them as possible, the same
+ * shape of ratings, and about as popular. Another series with the same
+ * title comes first, like the British and American The Office.
  */
 export function relatedShows(show: Show, shows: Show[]): Show[] {
-    const closest = (item: Show) => {
-        const genres = new Set(item.genres);
-        // Genres in common, less a little for every doubling in votes apart,
-        // so a close match in popularity can make up for a genre.
-        const score = (other: Show) =>
-            other.genres.filter((genre) => genres.has(genre)).length /
-                new Set([...item.genres, ...other.genres]).size -
-            GENRE_PER_VOTES_APART * votesApart(item.votes, other.votes);
-        return shows
-            .filter((other) => other !== item)
-            .map((other) => ({
-                other,
-                sameTitle: other.title === item.title,
-                score: score(other),
-            }))
-            .sort(
-                (a, b) =>
-                    Number(b.sameTitle) - Number(a.sameTitle) ||
-                    b.score - a.score
-            )
-            .map(({ other }) => other);
+    const makeClosest = () => {
+        const shapes = shapesOf(shows, (item) => analyzeSeasons(item)?.shape);
+        return (item: Show) => {
+            const genres = new Set(item.genres);
+            const shape = shapes.get(item);
+            // Genres in common, more if the ratings have the same shape, and
+            // less a little for every doubling in votes apart.
+            const score = (other: Show) =>
+                other.genres.filter((genre) => genres.has(genre)).length /
+                    new Set([...item.genres, ...other.genres]).size +
+                (shape && shapes.get(other) === shape ? SAME_SHAPE : 0) -
+                PER_VOTES_APART * votesApart(item.votes, other.votes);
+            return shows
+                .filter((other) => other !== item)
+                .map((other) => ({
+                    other,
+                    sameTitle: other.title === item.title,
+                    score: score(other),
+                }))
+                .sort(
+                    (a, b) =>
+                        Number(b.sameTitle) - Number(a.sameTitle) ||
+                        b.score - a.score
+                )
+                .map(({ other }) => other);
+        };
     };
-    return linksFor(shows, closest).get(show) ?? [];
+    return linksFor(shows, makeClosest).get(show) ?? [];
 }
 
 /**
  * Film series with the most movies in common first, like the Marvel
- * Cinematic Universe and Avengers, then the ones closest in popularity.
+ * Cinematic Universe and Avengers, then the ones with the same shape of
+ * ratings and about as popular.
  */
 export function relatedFranchises(
     franchise: Franchise,
     franchises: Franchise[]
 ): Franchise[] {
-    const closest = (item: Franchise) => {
-        const movieIds = new Set(item.movies.map((movie) => movie.id));
-        return franchises
-            .filter((other) => other !== item)
-            .map((other) => ({
-                other,
-                shared: other.movies.filter((movie) => movieIds.has(movie.id))
-                    .length,
-                apart: votesApart(item.votes, other.votes),
-            }))
-            .sort((a, b) => b.shared - a.shared || a.apart - b.apart)
-            .map(({ other }) => other);
+    const makeClosest = () => {
+        const shapes = shapesOf(
+            franchises,
+            (item) => analyzeMovies(item)?.shape
+        );
+        return (item: Franchise) => {
+            const movieIds = new Set(item.movies.map((movie) => movie.id));
+            const shape = shapes.get(item);
+            const score = (other: Franchise) =>
+                (shape && shapes.get(other) === shape ? SAME_SHAPE : 0) -
+                PER_VOTES_APART * votesApart(item.votes, other.votes);
+            return franchises
+                .filter((other) => other !== item)
+                .map((other) => ({
+                    other,
+                    shared: other.movies.filter((movie) =>
+                        movieIds.has(movie.id)
+                    ).length,
+                    score: score(other),
+                }))
+                .sort((a, b) => b.shared - a.shared || b.score - a.score)
+                .map(({ other }) => other);
+        };
     };
-    return linksFor(franchises, closest).get(franchise) ?? [];
+    return linksFor(franchises, makeClosest).get(franchise) ?? [];
 }
