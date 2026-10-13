@@ -1,6 +1,6 @@
-import Form from 'next/form';
 import Link from 'next/link';
 import { NavLinks, ProfileLink } from './NavLinks';
+import { SearchBox } from './SearchBox';
 import { StickyHeader } from './StickyHeader';
 import css from './header.module.css';
 
@@ -43,28 +43,7 @@ export function Header() {
                 </Link>
                 <ProfileLink />
                 <NavLinks />
-                <Form action="/search/" className={css.search} role="search">
-                    <label htmlFor="search" className="visually-hidden">
-                        Search series and movies
-                    </label>
-                    <svg
-                        className={css.searchIcon}
-                        viewBox="0 0 20 20"
-                        aria-hidden="true"
-                        focusable="false"
-                    >
-                        <circle cx="8.5" cy="8.5" r="5.5" />
-                        <path d="m13 13 4 4" />
-                    </svg>
-                    <input
-                        id="search"
-                        name="q"
-                        type="search"
-                        placeholder="Search…"
-                        autoComplete="off"
-                        required
-                    />
-                </Form>
+                <SearchBox />
             </div>
         </StickyHeader>
     );

@@ -11,12 +11,16 @@ const fetchJson = (path: string) =>
         return res.json() as Promise<unknown>;
     });
 
-/** A JSON file generated at build time, like /search-index.json. */
-export function useStaticJson<T>(path: string) {
+/**
+ * A JSON file generated at build time, like /search-index.json. It isn't
+ * fetched until `enabled`, for a file that's only needed once asked for.
+ */
+export function useStaticJson<T>(path: string, enabled = true) {
     const [data, setData] = useState<T | null>(null);
     const [failed, setFailed] = useState(false);
 
     useEffect(() => {
+        if (!enabled) return;
         let live = true;
         let request = requests.get(path);
         if (!request) {
@@ -36,7 +40,7 @@ export function useStaticJson<T>(path: string) {
         return () => {
             live = false;
         };
-    }, [path]);
+    }, [path, enabled]);
 
     return { data, failed };
 }
