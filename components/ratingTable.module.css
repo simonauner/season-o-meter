@@ -84,7 +84,8 @@
 
 /*
  * On phones, a table with cards turns each row into a small card: title and
- * rating on top, release year, votes and your rating below, then the bar.
+ * rating on top, year, votes or rated episodes and your rating below, then
+ * the bar.
  */
 @media (max-width: 639px) {
     .cards thead {
@@ -129,7 +130,8 @@
         border-bottom: none;
     }
 
-    .cards .title {
+    .cards .title,
+    .cards .season {
         grid-area: title;
         align-self: start;
         min-width: 0;
@@ -147,8 +149,13 @@
         font-size: 0.8125rem;
     }
 
+    .cards .season::before {
+        content: 'Season ' / '';
+    }
+
     .cards .year,
-    .cards .votes {
+    .cards .votes,
+    .cards .episodes {
         color: var(--text-secondary);
         font-size: 0.8125rem;
     }
@@ -157,13 +164,18 @@
         grid-area: year;
     }
 
-    .cards .votes {
+    .cards .votes,
+    .cards .episodes {
         grid-area: votes;
         text-align: left !important;
     }
 
     .cards .votes::after {
         content: ' votes';
+    }
+
+    .cards .episodes::after {
+        content: ' episodes rated' / '';
     }
 
     .cards .you {
