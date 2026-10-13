@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { FeaturedShow } from '@/components/FeaturedShow';
 import { Hero } from '@/components/Hero';
 import { HomeSection } from '@/components/HomeSection';
@@ -15,6 +16,8 @@ import { topOfEachSection } from '@/lib/sections';
 import css from './home.module.css';
 
 const SHOWS_PER_SECTION = 6;
+
+export const metadata: Metadata = { alternates: { canonical: '/' } };
 
 export default function Page() {
     const sectionsByMinSeasons = forEachMinCount((minSeasons) =>

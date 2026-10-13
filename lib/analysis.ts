@@ -133,6 +133,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'most-popular',
         title: 'Most popular',
+        searchTitle: 'Most Popular TV Shows, Rated Season by Season',
         description: 'The series with the most ratings on IMDb.',
         minVotes: MIN_VOTES,
         minRatings: 2,
@@ -141,6 +142,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'best-over-time',
         title: 'Best over time',
+        searchTitle: 'Best TV Shows of All Time, by Season Ratings',
         description: (minSeasons) =>
             `Highest average across all seasons, at least ${numberWord(minSeasons)} of them.`,
         minVotes: MIN_VOTES,
@@ -150,6 +152,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'slow-starters',
         title: 'Slow starters',
+        searchTitle: 'TV Shows That Get Better After Season 1',
         description:
             'Began weak but found their footing. Worth getting through season 1.',
         minVotes: MIN_VOTES,
@@ -162,6 +165,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'mid-run-slump',
         title: 'The mid-run slump',
+        searchTitle: 'TV Shows That Got Bad, Then Good Again',
         description: 'Dipped in the middle, then won the audience back.',
         minVotes: MIN_VOTES,
         minRatings: 4,
@@ -181,6 +185,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'house-of-cards',
         title: 'Collapsed like a house of cards',
+        searchTitle: 'TV Shows With the Worst Final Seasons',
         description: 'Ended on a final season far below everything before it.',
         sharedVerdict: true,
         minVotes: MIN_VOTES,
@@ -196,6 +201,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'better-every-season',
         title: 'Better every season',
+        searchTitle: 'TV Shows That Got Better Every Season',
         description: 'Every season rated higher than the one before.',
         sharedVerdict: true,
         minVotes: MIN_VOTES,
@@ -208,6 +214,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
         slug: 'long-goodbye',
         title: 'The long goodbye',
+        searchTitle: 'TV Shows That Slowly Went Downhill',
         description: 'Long-running series on a slow, steady decline.',
         minVotes: MIN_VOTES,
         minRatings: 7,

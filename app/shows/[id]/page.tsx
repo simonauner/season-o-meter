@@ -10,11 +10,13 @@ import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
 import { getShow, getShows } from '@/lib/data';
 import {
     changeTone,
+    distinctTitle,
     formatChange,
     formatRating,
     formatVotes,
     formatYears,
     sentence,
+    yearsInText,
 } from '@/lib/format';
 import { openGraph } from '@/lib/openGraph';
 import type { RatedSeason } from '@/lib/types';
@@ -32,9 +34,18 @@ export async function generateMetadata({
     const show = getShow((await params).id);
     if (!show) return {};
     const trend = analyzeSeasons(show);
+    const name = distinctTitle(show, getShows());
+    const years = yearsInText(show);
+    // Worded for what people search for: "<series> best season",
+    // "<series> seasons ranked".
     return {
-        title: show.title,
-        description: `${show.title} rated season by season.${trend ? ` ${sentence(trend.verdict)}` : ''}`,
+        title: trend
+            ? `${name}: ${ratedSeasons(show.seasons).length} Seasons Ranked, Best to Worst`
+            : `${name} Season Ratings`,
+        description: trend
+            ? `The best season of ${show.title} is Season ${trend.best.seasonNumber} (${formatRating(trend.best.rating)}), and the worst is Season ${trend.worst.seasonNumber} (${formatRating(trend.worst.rating)}). ${sentence(trend.verdict)} Average IMDb episode rating per season${years ? `, ${years}` : ''}.`
+            : `${show.title} rated season by season.`,
+        alternates: { canonical: `/shows/${show.id}/` },
         openGraph: openGraph(
             `/shows/${show.id}/og.png`,
             `Bar chart of ${show.title}'s ratings season by season`

@@ -45,8 +45,9 @@ though posters are loaded from TMDB's image server.
    posters, and the site draws its own from the title and its ratings.
 2. `npm run build` reads that file and exports every page to `out/`:
    a front page with sections for series and one for movies (`/movies/`),
-   a page per series and film series, a list page per section, and a search
-   index for client-side search.
+   a page per series and film series, a list page per section, a search
+   index for client-side search, and a sitemap so search engines find every
+   title's page, most of which no list links to.
 3. [GitHub Actions](.github/workflows/deploy.yml) does both every night and
    deploys to GitHub Pages at <https://seasonometer.com/>. The repository is
    public, so Actions minutes are free. Pushes and pull requests reuse the

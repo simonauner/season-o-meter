@@ -1,6 +1,13 @@
+import { sentence } from './format';
+
 export type Section<T> = {
     slug: string;
     title: string;
+    /**
+     * The page title in search results, in the words people search with,
+     * where the title is playful.
+     */
+    searchTitle: string;
     description: string;
     /**
      * Every item ends up with the same verdict, which the title already
@@ -88,4 +95,17 @@ export function topOfEachSection<T extends { id: string }>(
         seen.add(item.id);
         return [{ section, item }];
     });
+}
+
+const listFormat = new Intl.ListFormat('en', { type: 'conjunction' });
+
+/** A list's description in search results, with the first few on it. */
+export function listDescription(
+    { description, items }: Section<{ title: string }>,
+    count = 3
+) {
+    const top = items.slice(0, count).map((item) => item.title);
+    return top.length > 0
+        ? `${sentence(description)} Top of the list: ${listFormat.format(top)}.`
+        : description;
 }

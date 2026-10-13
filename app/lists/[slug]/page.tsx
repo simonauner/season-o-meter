@@ -7,6 +7,7 @@ import { ShowGrid } from '@/components/ShowGrid';
 import { findShowSections, SHOW_SECTION_SLUGS } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
 import { forEachMinCount, type MinCount } from '@/lib/minCount';
+import { listDescription } from '@/lib/sections';
 import homeCss from '../../home.module.css';
 import css from './list.module.css';
 
@@ -27,9 +28,14 @@ const getSection = (slug: string, minSeasons?: MinCount) =>
 export async function generateMetadata({
     params,
 }: PageProps<'/lists/[slug]'>): Promise<Metadata> {
-    const section = getSection((await params).slug);
+    const { slug } = await params;
+    const section = getSection(slug);
     return section
-        ? { title: section.title, description: section.description }
+        ? {
+              title: section.searchTitle,
+              description: listDescription(section),
+              alternates: { canonical: `/lists/${slug}/` },
+          }
         : {};
 }
 

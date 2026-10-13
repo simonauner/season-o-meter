@@ -10,11 +10,13 @@ import { getFranchise, getFranchises } from '@/lib/data';
 import { analyzeMovies } from '@/lib/franchiseAnalysis';
 import {
     changeTone,
+    distinctTitle,
     formatChange,
     formatRating,
     formatVotes,
     formatYears,
     sentence,
+    yearsInText,
 } from '@/lib/format';
 import { openGraph } from '@/lib/openGraph';
 import type { Movie } from '@/lib/types';
@@ -32,9 +34,18 @@ export async function generateMetadata({
     const franchise = getFranchise((await params).id);
     if (!franchise) return {};
     const trend = analyzeMovies(franchise);
+    const name = distinctTitle(franchise, getFranchises());
+    const years = yearsInText(franchise);
+    // Worded for what people search for: "<series> movies ranked",
+    // "best <series> movie".
     return {
-        title: franchise.title,
-        description: `${franchise.title} rated movie by movie.${trend ? ` ${sentence(trend.verdict)}` : ''}`,
+        title: trend
+            ? `${name}: ${franchise.movies.length} Movies Ranked, Best to Worst`
+            : `${name} Movie Ratings`,
+        description: trend
+            ? `The best movie in ${franchise.title} is ${movieDetail(trend.best)} at ${formatRating(trend.best.rating)}, and the worst is ${movieDetail(trend.worst)} at ${formatRating(trend.worst.rating)}. ${sentence(trend.verdict)} IMDb ratings movie by movie${years ? `, ${years}` : ''}.`
+            : `${franchise.title} rated movie by movie.`,
+        alternates: { canonical: `/movies/${franchise.id}/` },
         openGraph: openGraph(
             `/movies/${franchise.id}/og.png`,
             `Bar chart of ${franchise.title}'s ratings movie by movie`
