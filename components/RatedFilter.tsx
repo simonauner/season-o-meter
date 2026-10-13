@@ -1,9 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useMemo, useState } from 'react';
 import type { HomeSections } from '@/lib/homeSections';
-import type { Kind } from '@/lib/minCount';
+import type { Kind, MinCount } from '@/lib/minCount';
 import { storedChoice } from '@/lib/storedChoice';
 import { ratedIds } from '@/lib/userData';
 import { useUserData } from '@/lib/userStore';
@@ -83,36 +83,67 @@ export function FilteredHomeSections({
 }
 
 /**
- * A list page's items. Until the visitor filters by their own ratings, these
- * are the ones rendered at build time.
+ * A list page's items, a page at a time. Until the visitor filters by their
+ * own ratings or asks for more, these are the first ones, rendered at build
+ * time.
  */
 export function FilteredList({
     kind,
     slug,
     all,
+    totals,
     limit,
 }: {
     kind: Kind;
     slug: string;
     all: ReactNode;
-    /** Items in the list. */
+    /** Items in the whole list, per chosen minimum. */
+    totals: Record<MinCount, number>;
+    /** Items per page. */
     limit: number;
 }) {
     const filter = ratedFilter.useChoice();
-    return filter === 'any' ? (
-        all
-    ) : (
+    const minCount = useMinCount(kind);
+    // Changing a filter starts over from the first page.
+    const filters = `${filter}:${minCount}`;
+    const [more, setMore] = useState({ filters, shown: limit });
+    const shown = more.filters === filters ? more.shown : limit;
+    const showMore = () => setMore({ filters, shown: shown + limit });
+
+    if (filter === 'any' && shown === limit) {
+        return (
+            <>
+                {all}
+                {totals[minCount] > limit && <ShowMore onClick={showMore} />}
+            </>
+        );
+    }
+    return (
         <ListByRating
             kind={kind}
             slug={slug}
-            rated={filter === 'yes'}
-            limit={limit}
+            rated={filter === 'any' ? null : filter === 'yes'}
+            limit={shown}
+            onShowMore={showMore}
+            // Keeps the first page up while the rest of the list loads.
+            loading={filter === 'any' ? all : undefined}
         />
     );
 }
 
-/** Each section's best matches among what the visitor has rated, or not. */
-function useSectionsByRating(kind: Kind, rated: boolean, limit: number) {
+function ShowMore({ onClick }: { onClick: () => void }) {
+    return (
+        <button type="button" className={css.showMore} onClick={onClick}>
+            Show more
+        </button>
+    );
+}
+
+/**
+ * Each section's best matches among what the visitor has rated, or not, or
+ * among everything when `rated` is null.
+ */
+function useSectionsByRating(kind: Kind, rated: boolean | null, limit: number) {
     const minCount = useMinCount(kind);
     const data = useUserData();
     const { data: home, failed } = useStaticJson<HomeSections>(
@@ -126,12 +157,17 @@ function useSectionsByRating(kind: Kind, rated: boolean, limit: number) {
         const isRated = (id: string) =>
             ids.has(id) ||
             (home.movieIds?.[id] ?? []).some((movieId) => ids.has(movieId));
-        return home.sections[minCount].map((section) => ({
-            ...section,
-            items: section.items
-                .filter((id) => isRated(id) === rated)
-                .slice(0, limit),
-        }));
+        return home.sections[minCount].map((section) => {
+            const items =
+                rated === null
+                    ? section.items
+                    : section.items.filter((id) => isRated(id) === rated);
+            return {
+                ...section,
+                total: items.length,
+                items: items.slice(0, limit),
+            };
+        });
     }, [data, home, minCount, rated, limit]);
 
     return { home, sections, failed };
@@ -184,11 +220,16 @@ function ListByRating({
     slug,
     rated,
     limit,
+    onShowMore,
+    loading = <p className={css.status}>Loading…</p>,
 }: {
     kind: Kind;
     slug: string;
-    rated: boolean;
+    rated: boolean | null;
     limit: number;
+    onShowMore: () => void;
+    /** Shown until the list has loaded. */
+    loading?: ReactNode;
 }) {
     const { home, sections, failed } = useSectionsByRating(kind, rated, limit);
     const section = sections?.find((section) => section.slug === slug);
@@ -197,22 +238,26 @@ function ListByRating({
     if (failed) {
         return <p className={css.status}>Could not load the list.</p>;
     }
-    if (!home || !items) {
-        return <p className={css.status}>Loading…</p>;
-    }
+    if (!home || !section || !items) return loading;
     if (items.length === 0) {
-        return rated ? (
-            <NoneRated kind={kind} />
-        ) : (
-            <p className={css.status}>You have rated all of them.</p>
+        if (rated) return <NoneRated kind={kind} />;
+        return (
+            <p className={css.status}>
+                {rated === false
+                    ? 'You have rated all of them.'
+                    : 'Nothing matches.'}
+            </p>
         );
     }
     return (
-        <CardGrid
-            ids={items}
-            home={home}
-            hideVerdicts={section?.sharedVerdict}
-        />
+        <>
+            <CardGrid
+                ids={items}
+                home={home}
+                hideVerdicts={section.sharedVerdict}
+            />
+            {section.total > items.length && <ShowMore onClick={onShowMore} />}
+        </>
     );
 }
 
