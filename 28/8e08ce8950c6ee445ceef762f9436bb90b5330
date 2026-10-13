@@ -1,0 +1,31 @@
+README.md
+  s_0d96b93f7f049e::t_1bb171ccbc885d 154-155
+lib/sync.ts
+  s_0d96b93f7f049e::t_f446d97d20bd57 68,146,150-152,301-310
+  s_0d96b93f7f049e::t_5ce3d4b2c249c9 148-149
+  s_0d96b93f7f049e::t_83805f97668646 67,147
+  s_0d96b93f7f049e::t_ba14304a614b9b 311-312
+lib/syncProtocol.ts
+  s_0d96b93f7f049e::t_1bb171ccbc885d 43-48
+sync/src/index.ts
+  s_0d96b93f7f049e::t_b451a70a366498 26-27,97-101,105-107,153-164,186,294-298,373-375
+app/profile/SyncPanel.tsx
+  s_0d96b93f7f049e::t_83805f97668646 24,54-55
+  s_0d96b93f7f049e::t_21cd684ee59605 52-53,56-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "288e08ce8950c6ee445ceef762f9436bb90b5330",
+  "prompts": {},
+  "sessions": {
+    "s_0d96b93f7f049e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "26ed23a3-eb1c-4502-8de6-c7b447294cf9",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
