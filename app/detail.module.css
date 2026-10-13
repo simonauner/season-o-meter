@@ -2,6 +2,76 @@
     padding-top: 32px;
 }
 
+/* The poster beside the title, and below the actions on narrow screens. */
+.header {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    grid-template-columns: 104px minmax(0, 1fr);
+    grid-template-areas:
+        'poster heading'
+        'actions actions';
+    align-items: end;
+    gap: 20px 16px;
+}
+
+@media (min-width: 640px) {
+    .header {
+        grid-template-columns: 200px minmax(0, 1fr);
+        grid-template-rows: 1fr auto auto;
+        grid-template-areas:
+            'poster .'
+            'poster heading'
+            'poster actions';
+        column-gap: 32px;
+    }
+}
+
+.poster {
+    grid-area: poster;
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: 12px;
+    background: var(--surface-raised);
+    box-shadow:
+        0 1px 2px rgb(0 0 0 / 12%),
+        0 12px 32px rgb(0 0 0 / 18%);
+}
+
+/* The poster again, blurred into a glow of its colours behind the header,
+ * fading out before any of its edges. */
+.backdrop {
+    position: absolute;
+    z-index: -1;
+    inset: -32px auto -24px -16px;
+    width: min(100% + 32px, 760px);
+    opacity: 0.35;
+    filter: blur(48px) saturate(1.8) brightness(1.25);
+    mask-image: radial-gradient(closest-side, #000000 30%, transparent);
+    pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .backdrop {
+        opacity: 0.55;
+        filter: blur(48px) saturate(1.4);
+    }
+}
+
+.heading {
+    grid-area: heading;
+    min-width: 0;
+}
+
+.actions {
+    grid-area: actions;
+}
+
+/* TitleActions spaces itself for sitting under the heading. */
+.actions > * {
+    margin-top: 0;
+}
+
 .header h1 {
     font-size: clamp(1.75rem, 5vw, 2.75rem);
     font-weight: 800;

@@ -15,20 +15,69 @@
     }
 }
 
+/* The poster beside the heading, with the stats and the chart below, or
+ * all side by side on wide screens. */
 .body {
     display: grid;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-    align-items: center;
-    gap: 24px 32px;
+    grid-template-columns: 96px minmax(0, 1fr);
+    grid-template-areas:
+        'poster heading'
+        'details details'
+        'chart chart';
+    align-items: end;
+    gap: 0 20px;
 }
 
-@media (max-width: 760px) {
+@media (min-width: 761px) {
     .body {
-        grid-template-columns: minmax(0, 1fr);
+        grid-template-columns: 150px minmax(0, 1fr);
+        grid-template-areas:
+            'poster heading'
+            'poster details'
+            'chart chart';
+        column-gap: 32px;
     }
 }
 
-.text {
+@media (min-width: 1024px) {
+    .body {
+        grid-template-columns: 150px minmax(0, 2fr) minmax(0, 3fr);
+        grid-template-areas:
+            'poster heading chart'
+            'poster details chart';
+    }
+}
+
+.poster {
+    grid-area: poster;
+    display: block;
+    align-self: start;
+}
+
+@media (min-width: 761px) {
+    .poster {
+        align-self: center;
+    }
+}
+
+.posterImage {
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: 8px;
+    background: var(--surface-raised);
+    box-shadow:
+        0 1px 2px rgb(0 0 0 / 12%),
+        0 8px 24px rgb(0 0 0 / 16%);
+}
+
+.heading {
+    grid-area: heading;
+    min-width: 0;
+}
+
+.details {
+    grid-area: details;
+    align-self: start;
     min-width: 0;
 }
 
@@ -105,7 +154,16 @@
 }
 
 .chart {
+    grid-area: chart;
+    align-self: center;
     min-width: 0;
+    margin-top: 24px;
+}
+
+@media (min-width: 1024px) {
+    .chart {
+        margin-top: 0;
+    }
 }
 
 .menuRoot {

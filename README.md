@@ -20,6 +20,11 @@ Posters come from [TMDB](https://www.themoviedb.org/). This website uses TMDB
 and the TMDB APIs but is not endorsed, certified, or otherwise approved by
 TMDB.
 
+Posters are shown in lists, in Swipe and at the top of each title's page.
+Opening a title from a list or Swipe grows its poster into the one on its
+page, in browsers with view transitions
+([components/PosterTransition.tsx](components/PosterTransition.tsx)).
+
 ## How it works
 
 The site is fully static. There are no API calls when someone visits it,

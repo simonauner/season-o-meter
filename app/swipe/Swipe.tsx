@@ -13,6 +13,7 @@ import {
 } from 'react';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { Poster } from '@/components/Poster';
+import { SharedPoster } from '@/components/PosterTransition';
 import { formatYears } from '@/lib/format';
 import type { SearchEntry } from '@/lib/searchIndex';
 import { storedChoice } from '@/lib/storedChoice';
@@ -422,14 +423,16 @@ function Card({
                 if (leaving && event.target === event.currentTarget) onLeft();
             }}
         >
-            <div className={css.poster}>
-                <Poster
-                    entry={entry}
-                    sizes={POSTER_SIZES}
-                    eager={place !== 'third'}
-                    untitled
-                />
-            </div>
+            <SharedPoster id={entry.id}>
+                <div className={css.poster}>
+                    <Poster
+                        entry={entry}
+                        sizes={POSTER_SIZES}
+                        eager={place !== 'third'}
+                        untitled
+                    />
+                </div>
+            </SharedPoster>
             <div className={css.caption}>
                 <h2>
                     <Link href={entryHref(entry)}>{entry.title}</Link>

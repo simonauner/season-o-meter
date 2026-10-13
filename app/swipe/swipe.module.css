@@ -112,6 +112,9 @@
 .poster {
     position: absolute;
     inset: 0;
+    /* Its own corners, for when it moves on its own to the title's page. */
+    overflow: hidden;
+    border-radius: inherit;
 }
 
 .caption {

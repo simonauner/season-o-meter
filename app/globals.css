@@ -96,3 +96,48 @@ main {
     clip-path: inset(50%);
     white-space: nowrap;
 }
+
+/* Page transitions. A poster grows from a list or Swipe into the one on the
+ * title's page (components/PosterTransition.tsx), while the rest of the page
+ * crossfades. */
+::view-transition {
+    /* Clicks during a transition reach the page rather than the overlay. */
+    pointer-events: none;
+}
+
+::view-transition-group(root) {
+    animation-duration: 220ms;
+}
+
+::view-transition-group(.poster) {
+    z-index: 1;
+    animation-duration: 380ms;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Softens the crossfade from the small image to the big one in flight. */
+::view-transition-image-pair(.poster) {
+    animation-name: poster-blur;
+}
+
+::view-transition-old(.poster),
+::view-transition-new(.poster) {
+    /* Both fill the poster's box as it changes size, as posters are 2:3. */
+    height: 100%;
+    object-fit: cover;
+}
+
+@keyframes poster-blur {
+    35% {
+        filter: blur(2px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation-duration: 0s !important;
+        animation-delay: 0s !important;
+    }
+}

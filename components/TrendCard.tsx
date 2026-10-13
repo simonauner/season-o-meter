@@ -1,5 +1,6 @@
-import Link from 'next/link';
 import { changeTone, formatChange, formatRating } from '@/lib/format';
+import { Poster, type PosterEntry } from './Poster';
+import { PosterLink, PosterScope, SharedPoster } from './PosterTransition';
 import { Sparkline } from './Sparkline';
 import css from './trendCard.module.css';
 
@@ -9,9 +10,8 @@ type Endpoint = {
     rating: number;
 };
 
-export type TrendCardProps = {
+export type TrendCardProps = Omit<PosterEntry, 'ratings'> & {
     href: string;
-    title: string;
     meta: string;
     verdict?: string;
     ratings: number[];
@@ -21,37 +21,51 @@ export type TrendCardProps = {
 
 export function TrendCard({
     href,
-    title,
     meta,
     verdict,
-    ratings,
     trend,
+    ...entry
 }: TrendCardProps) {
     return (
-        <Link href={href} className={css.card}>
-            <div>
-                <h3 className={css.title}>{title}</h3>
-                <p className={css.meta}>{meta}</p>
-                {verdict && <p className={css.verdict}>{verdict}</p>}
-            </div>
-            <div className={css.chart}>
-                <Sparkline ratings={ratings} />
-                {trend && (
-                    <p className={css.change}>
-                        <span>
-                            {trend.first.label}{' '}
-                            <strong>{formatRating(trend.first.rating)}</strong>
-                        </span>
-                        <span className={css[changeTone(trend.change) ?? '']}>
-                            {formatChange(trend.change)}
-                        </span>
-                        <span>
-                            {trend.last.label}{' '}
-                            <strong>{formatRating(trend.last.rating)}</strong>
-                        </span>
-                    </p>
-                )}
-            </div>
-        </Link>
+        <PosterScope>
+            <PosterLink href={href} className={css.card}>
+                <div className={css.top}>
+                    <SharedPoster id={entry.id}>
+                        <div className={css.poster}>
+                            <Poster entry={entry} sizes="56px" untitled />
+                        </div>
+                    </SharedPoster>
+                    <div>
+                        <h3 className={css.title}>{entry.title}</h3>
+                        <p className={css.meta}>{meta}</p>
+                        {verdict && <p className={css.verdict}>{verdict}</p>}
+                    </div>
+                </div>
+                <div className={css.chart}>
+                    <Sparkline ratings={entry.ratings} />
+                    {trend && (
+                        <p className={css.change}>
+                            <span>
+                                {trend.first.label}{' '}
+                                <strong>
+                                    {formatRating(trend.first.rating)}
+                                </strong>
+                            </span>
+                            <span
+                                className={css[changeTone(trend.change) ?? '']}
+                            >
+                                {formatChange(trend.change)}
+                            </span>
+                            <span>
+                                {trend.last.label}{' '}
+                                <strong>
+                                    {formatRating(trend.last.rating)}
+                                </strong>
+                            </span>
+                        </p>
+                    )}
+                </div>
+            </PosterLink>
+        </PosterScope>
     );
 }

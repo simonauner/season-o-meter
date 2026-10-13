@@ -12,8 +12,13 @@ export function franchiseCardProps(franchise: Franchise): TrendCardProps {
     const trend = analyzeMovies(franchise);
 
     return {
-        href: `/movies/${franchise.id}/`,
+        type: 'movies',
+        id: franchise.id,
         title: franchise.title,
+        startYear: franchise.startYear,
+        endYear: franchise.endYear,
+        poster: franchise.poster,
+        href: `/movies/${franchise.id}/`,
         meta: `${formatYears(franchise)} · ${franchise.movies.length} movies · ${formatVotes(franchise.votes)} votes`,
         verdict: trend?.verdict,
         ratings: franchise.movies.map((movie) => movie.rating),
