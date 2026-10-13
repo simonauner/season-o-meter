@@ -98,7 +98,7 @@ export const toBase64Url = (bytes: Uint8Array) => {
         .replace(/=+$/, '');
 };
 
-const fromBase64Url = (text: string) => {
+export const fromBase64Url = (text: string) => {
     const binary = atob(text.replaceAll('-', '+').replaceAll('_', '/'));
     return Uint8Array.from(binary, (char) => char.charCodeAt(0));
 };
