@@ -27,7 +27,7 @@ export function SeasonTable({ showId, seasons, trend }: SeasonTableProps) {
 
     return (
         <div className={css.scroll}>
-            <table className={css.table}>
+            <table className={`${css.table} ${css.cards}`}>
                 <thead>
                     <tr>
                         <th scope="col">Season</th>
@@ -66,14 +66,16 @@ export function SeasonTable({ showId, seasons, trend }: SeasonTableProps) {
 
                         return (
                             <tr key={season.seasonNumber}>
-                                <th scope="row">
+                                <th scope="row" className={css.season}>
                                     {season.seasonNumber}
                                     {tag && (
                                         <span className={css.tag}>{tag}</span>
                                     )}
                                 </th>
-                                <td>{season.year ?? '–'}</td>
-                                <td className={css.num}>
+                                <td className={css.year}>
+                                    {season.year ?? '–'}
+                                </td>
+                                <td className={`${css.num} ${css.episodes}`}>
                                     {season.ratedEpisodeCount}/
                                     {season.episodeCount}
                                 </td>
@@ -83,7 +85,7 @@ export function SeasonTable({ showId, seasons, trend }: SeasonTableProps) {
                                         : formatRating(season.rating)}
                                 </td>
                                 <td
-                                    className={`${css.num} ${
+                                    className={`${css.num} ${css.change} ${
                                         change === null
                                             ? ''
                                             : (css[changeTone(change) ?? ''] ??
@@ -94,7 +96,7 @@ export function SeasonTable({ showId, seasons, trend }: SeasonTableProps) {
                                         ? ''
                                         : formatChange(change)}
                                 </td>
-                                <td className={css.num}>
+                                <td className={`${css.num} ${css.you}`}>
                                     <RatingSelect
                                         storeKey={ratingKey(
                                             showId,
