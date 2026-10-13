@@ -127,6 +127,20 @@ are drawn next to IMDb's in the chart, and everything is listed on
   that syncs. Devices sync when a page opens, when it comes back into view, a
   second after a change and every minute while it's visible
   ([lib/sync.ts](lib/sync.ts)).
+- **Recovery key.** A synced list's secret, written for copying by hand on
+  `/profile/`: 28 characters like `4B4X-EQST-…` that hold the secret and 10
+  bits to check it, so a mistyped key is turned down instead of connecting
+  to a new, empty list ([lib/recoveryKey.ts](lib/recoveryKey.ts)). It can be
+  emailed with a `mailto:` link, which leaves the address to the visitor's
+  own mail app. Entering the key, or the private sync link, in another
+  browser connects it to the list. Creating a key turns on sync.
+- **Danger zone.** `/profile/` can forget the visitor in this browser, which
+  removes everything kept there but leaves a synced list on the server for
+  the recovery key to bring back, or delete their data for good, which
+  deletes the synced list as well. The server then keeps only a note that
+  the list was deleted, so the visitor's other devices stop syncing instead
+  of uploading it again. What's on them stays until it's deleted there too
+  ([lib/deleteEverything.ts](lib/deleteEverything.ts)).
 - **Pairing codes.** A code is two words from lists of 256 short words
   ([lib/pairingWords.ts](lib/pairingWords.ts)), too few combinations to
   protect a secret. So the code doesn't: the secret only goes to the device
