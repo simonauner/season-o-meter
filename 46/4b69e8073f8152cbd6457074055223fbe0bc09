@@ -1,0 +1,48 @@
+app/layout.tsx
+  s_26d97c8be26803::t_cd776b684ebfdd 5,17-20
+  s_26d97c8be26803::t_f4264b865043c5 9-10
+  s_26d97c8be26803::t_b2ce80da64e9f3 21
+README.md
+  s_26d97c8be26803::t_421be3e2253308 28-32
+app/og.png/route.tsx
+  s_26d97c8be26803::t_7945b04b8ae12c 1-7
+lib/openGraph.ts
+  s_26d97c8be26803::t_a561ebef41d311 1-18
+package.json
+  s_26d97c8be26803::t_17faf112cb6446 32
+lib/ogImage.tsx
+  s_26d97c8be26803::t_44427f25843022 63-70
+  s_26d97c8be26803::t_0227f07f92ca2d 6,95-96,116,130-134,137-157,186-187,224,240
+  s_26d97c8be26803::t_beee834f34d259 105-108,110-112
+  s_26d97c8be26803::t_3538cced35c619 1-5,7-62,71-94,97-101,103,109,113-115,117-129,135-136,158-185,188-223,225-239,241-311
+  s_26d97c8be26803::t_9627f3ca4f910b 102,104
+app/shows/[id]/og.png/route.tsx
+  s_26d97c8be26803::t_7945b04b8ae12c 1-26,30-37
+  s_26d97c8be26803::t_20fd9bb0de02cc 27-29
+app/movies/[id]/page.tsx
+  s_26d97c8be26803::t_cd776b684ebfdd 19,38-39,41
+  s_26d97c8be26803::t_44427f25843022 40
+app/movies/[id]/og.png/route.tsx
+  s_26d97c8be26803::t_7945b04b8ae12c 1-34
+app/shows/[id]/page.tsx
+  s_26d97c8be26803::t_44427f25843022 40
+  s_26d97c8be26803::t_cd776b684ebfdd 19,38-39,41
+package-lock.json
+  s_26d97c8be26803::t_8f9e8373daa199 25,3654-3663
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "464b69e8073f8152cbd6457074055223fbe0bc09",
+  "prompts": {},
+  "sessions": {
+    "s_26d97c8be26803": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "381089d8-632c-4b36-ba82-65eb1552a788",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
