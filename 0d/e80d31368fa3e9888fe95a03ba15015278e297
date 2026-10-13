@@ -1,0 +1,35 @@
+components/Featured.tsx
+  s_92e9cd2c7960e5::t_6b64610abbd44b 33
+  s_92e9cd2c7960e5::t_1c029567ba6ed5 1-32,34-92
+components/FeaturedShow.tsx
+  s_92e9cd2c7960e5::t_1c029567ba6ed5 4,13,20-55
+app/page.tsx
+  s_92e9cd2c7960e5::t_51eb33b7aa9f5e 14,24-27,29-31,33-35
+components/Hero.tsx
+  s_92e9cd2c7960e5::t_11c1aa7555f9f6 41-42
+  s_92e9cd2c7960e5::t_fe12a413e583cc 23
+  s_92e9cd2c7960e5::t_51eb33b7aa9f5e 17,19-22,24-26,57,67,72,141
+app/movies/page.tsx
+  s_92e9cd2c7960e5::t_fe12a413e583cc 32
+  s_92e9cd2c7960e5::t_51eb33b7aa9f5e 2,4,15,27,33-49,63
+lib/sections.ts
+  s_92e9cd2c7960e5::t_1c029567ba6ed5 76-91
+components/FeaturedFranchise.tsx
+  s_92e9cd2c7960e5::t_1c029567ba6ed5 1-60
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0de80d31368fa3e9888fe95a03ba15015278e297",
+  "prompts": {},
+  "sessions": {
+    "s_92e9cd2c7960e5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "26875cc8-9ed2-47ac-b4ac-54a26a83e8e3",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
