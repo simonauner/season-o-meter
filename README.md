@@ -103,7 +103,13 @@ are drawn next to IMDb's in the chart, and everything is listed on
   them have rated or not ([lib/compare.ts](lib/compare.ts)). Friends are
   kept with the ratings, so they sync too, but they are left out of share
   links and live links: a friend's link lets anyone read their list, and
-  they only gave it to you ([lib/friends.ts](lib/friends.ts)).
+  they only gave it to you ([lib/friends.ts](lib/friends.ts)). Visitors with
+  no friends yet can bring an imaginary one: Mollgan for those whose browser
+  reads Swedish, and Harvey, Hobbes, Bing Bong, Drop Dead Fred or Mollgan for
+  everyone else. They have no list on the sync server. Their ratings are made
+  up from the visitor's own instead: about half of what the visitor has rated,
+  a little higher or lower, and the same every time
+  ([lib/imaginaryFriend.ts](lib/imaginaryFriend.ts)).
 - **Swipe.** `/swipe/` shows one series or film series at a time, with its
   poster and how many seasons or movies it has, to rate, skip or add to
   the watchlist. Like a dating app, left is no and right is yes: dragging
