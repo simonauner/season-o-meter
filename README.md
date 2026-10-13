@@ -84,6 +84,10 @@ read-only links, so the server never stores a secret
 The site only offers sync when it's built with `NEXT_PUBLIC_SYNC_URL`, which
 the deploy workflow takes from the `SYNC_URL` repository variable.
 
+The deploy workflow also deploys the sync server on every push to `main`.
+That needs a `CLOUDFLARE_API_TOKEN` repository secret with the "Edit
+Cloudflare Workers" permission.
+
 ```bash
 cd sync
 npm install
