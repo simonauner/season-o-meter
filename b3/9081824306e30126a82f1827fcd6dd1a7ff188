@@ -1,0 +1,42 @@
+sync/wrangler.jsonc
+  s_ba6996783d29e8::t_050e51cdf6050d 16-17,24-27
+  s_ba6996783d29e8::t_f4035682239ad2 28
+sync/worker-configuration.d.ts
+  s_ba6996783d29e8::t_050e51cdf6050d 2,6
+sync/src/pairing.ts
+  s_ba6996783d29e8::t_a91df80a7b1489 3-4,27-29,32-43,48,55-57,64-65,82,84-86,88-97,109,112,119,123-127,130-132,135-138,146,149-153,156-160,163-170
+lib/syncProtocol.ts
+  s_ba6996783d29e8::t_050e51cdf6050d 49-51,55,67-68
+README.md
+  s_ba6996783d29e8::t_7ed848d42fcc84 74-75,77-81,91-92,105,108
+app/mine/PairingCode.tsx
+  s_ba6996783d29e8::t_0cb87afda17a6c 65
+  s_ba6996783d29e8::t_b67186eb09e522 86
+  s_ba6996783d29e8::t_ded33084ea898c 7-9,19,29-35,37,51-57,68-73,80-83,85,93-94,119,122,137,140,143
+lib/pairingCode.ts
+  s_ba6996783d29e8::t_7ed848d42fcc84 10-17
+lib/pairingWords.ts
+  s_ba6996783d29e8::t_553e1347b1021d 4-7,18,23-24,45,47-48,63,65,70,77,82,94,127,147,150,159,168,208,216,228,232,252,257,266,284,290,293,295,340,344,356,358,361,363,379,382,384,390,393,407,415-416,426,439,461,478,504
+sync/src/index.ts
+  s_ba6996783d29e8::t_050e51cdf6050d 155,157,161-164,179-180,197,199,203-205,207-214,220-226,254-261,273-277,282-283,288-292
+  s_ba6996783d29e8::t_c6d29d5c536cbc 293
+lib/sync.ts
+  s_ba6996783d29e8::t_ded33084ea898c 226
+  s_ba6996783d29e8::t_1ac9c97fc862ef 203-209,212-225,227-230,234-235,237,239,252-263
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b39081824306e30126a82f1827fcd6dd1a7ff188",
+  "prompts": {},
+  "sessions": {
+    "s_ba6996783d29e8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "04fd5ef8-28f6-4589-a134-bda68169cf95",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
