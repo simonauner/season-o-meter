@@ -7,7 +7,7 @@
 
 .poster {
     object-fit: cover;
-    background: var(--surface-raised);
+    background: var(--surface-raised) center / cover;
     user-select: none;
     -webkit-user-drag: none;
 }
@@ -79,6 +79,13 @@
 
 .peak {
     background: hsl(calc(var(--hue) + 180) 85% 65%);
+}
+
+/* Too small for a label, like a thumbnail in a list. */
+@container (max-width: 120px) {
+    .kind {
+        display: none;
+    }
 }
 
 /* Without a title, the bars sit higher, clear of a caption over the bottom. */

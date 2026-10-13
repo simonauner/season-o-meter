@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { MovieChart } from '@/components/MovieChart';
 import { MovieTable } from '@/components/MovieTable';
+import { Poster, type PosterEntry } from '@/components/Poster';
+import { SharedPoster } from '@/components/PosterTransition';
 import { StatTile } from '@/components/StatTile';
 import { TitleActions } from '@/components/YourRating';
 import { getFranchise, getFranchises } from '@/lib/data';
@@ -34,6 +36,9 @@ export async function generateMetadata({
     };
 }
 
+/** How wide the poster is shown, as in detail.module.css. */
+const POSTER_SIZES = '(max-width: 639px) 104px, 200px';
+
 const movieDetail = (movie: Movie) =>
     `${movie.title}${movie.year ? ` (${movie.year})` : ''}`;
 
@@ -42,23 +47,54 @@ export default async function Page({ params }: PageProps<'/movies/[id]'>) {
     if (!franchise) notFound();
 
     const trend = analyzeMovies(franchise);
+    const poster: PosterEntry = {
+        type: 'movies',
+        id: franchise.id,
+        title: franchise.title,
+        startYear: franchise.startYear,
+        endYear: franchise.endYear,
+        ratings: franchise.movies.map((movie) => movie.rating),
+        poster: franchise.poster,
+    };
 
     return (
         <article className={css.show}>
             <header className={css.header}>
-                <h1>{franchise.title}</h1>
-                <p className={css.meta}>
-                    {formatYears(franchise)} · {franchise.movies.length} movies
-                    ·{' '}
-                    <a
-                        href={`https://www.wikidata.org/wiki/${franchise.id}`}
-                        rel="noreferrer"
-                    >
-                        Wikidata
-                    </a>
-                </p>
-                {trend && <p className={css.verdict}>{trend.verdict}</p>}
-                <TitleActions id={franchise.id} />
+                <div className={css.backdrop} aria-hidden>
+                    <Poster
+                        entry={poster}
+                        sizes={POSTER_SIZES}
+                        eager
+                        untitled
+                    />
+                </div>
+                <SharedPoster id={franchise.id}>
+                    <div className={css.poster}>
+                        <Poster
+                            entry={poster}
+                            sizes={POSTER_SIZES}
+                            eager
+                            untitled
+                        />
+                    </div>
+                </SharedPoster>
+                <div className={css.heading}>
+                    <h1>{franchise.title}</h1>
+                    <p className={css.meta}>
+                        {formatYears(franchise)} · {franchise.movies.length}{' '}
+                        movies ·{' '}
+                        <a
+                            href={`https://www.wikidata.org/wiki/${franchise.id}`}
+                            rel="noreferrer"
+                        >
+                            Wikidata
+                        </a>
+                    </p>
+                    {trend && <p className={css.verdict}>{trend.verdict}</p>}
+                </div>
+                <div className={css.actions}>
+                    <TitleActions id={franchise.id} />
+                </div>
             </header>
 
             {trend && (

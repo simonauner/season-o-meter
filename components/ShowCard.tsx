@@ -8,8 +8,13 @@ export function showCardProps(show: Show): TrendCardProps {
     const trend = analyzeSeasons(show);
 
     return {
-        href: `/shows/${show.id}/`,
+        type: 'series',
+        id: show.id,
         title: show.title,
+        startYear: show.startYear,
+        endYear: show.endYear,
+        poster: show.poster,
+        href: `/shows/${show.id}/`,
         meta: `${formatYears(show)} · ${seasons.length} seasons · ${formatVotes(show.votes)} votes`,
         verdict: trend?.verdict,
         ratings: seasons.map((season) => season.rating),
