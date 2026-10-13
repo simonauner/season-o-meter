@@ -3,9 +3,11 @@
  *
  * A synced list has a secret, which lets devices read and change it, and a
  * list id derived from the secret, which only lets people read it. The server
- * stores lists by id, so it never stores a secret.
+ * stores lists by id, so it never stores a secret. Pairing codes
+ * (lib/pairingCode.ts) pass a secret on encrypted for the receiving device.
  */
 
+import type { Sealed } from './pairingCode';
 import { toBase64Url, type UserData } from './userData';
 
 /** 128 random bits, base64url-encoded. List ids have the same shape. */
@@ -40,3 +42,31 @@ export type SyncResponse = { cursor: number; changes: UserData };
 
 /** GET /v1/lists/<list id>: everything that is set. */
 export type ListResponse = { data: UserData };
+
+/**
+ * POST /v1/pair from a device that wants to connect, with the public key
+ * the secret should be sealed for. `ticket` lets only that device collect
+ * the secret. `expiresIn` is in milliseconds, so device clocks don't matter.
+ * 429 after too many tries, 409 if the device's network has too many codes
+ * waiting, and 503 if everyone together has.
+ */
+export type PairRequest = { publicKey: string };
+
+export type PairResponse = { code: string; ticket: string; expiresIn: number };
+
+/**
+ * POST /v1/pair/approve with `Authorization: Bearer <secret>`, from a device
+ * that syncs: seals the secret for the device waiting with `code`. 404 if no
+ * device is waiting with it, 429 after too many tries.
+ */
+export type ApproveRequest = { code: string };
+
+/**
+ * POST /v1/pair/wait from the waiting device: the sealed secret once the
+ * code has been entered, and null until then. 404 once the code expires.
+ * POST /v1/pair/cancel with the same body forgets the code, once the device
+ * has connected or stops waiting.
+ */
+export type WaitRequest = { ticket: string };
+
+export type WaitResponse = { sealed: Sealed | null };

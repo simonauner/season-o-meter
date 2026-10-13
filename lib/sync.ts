@@ -1,13 +1,19 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import { newPairingKeys, openSecret } from './pairingCode';
 import {
     isSecret,
     listIdFor,
     newSecret,
+    type ApproveRequest,
     type ListResponse,
+    type PairRequest,
+    type PairResponse,
     type SyncRequest,
     type SyncResponse,
+    type WaitRequest,
+    type WaitResponse,
 } from './syncProtocol';
 import { sanitize } from './userData';
 import { getUserData, importData, onLocalChange } from './userStore';
@@ -191,6 +197,97 @@ export function startSync() {
 export function connect(secret = newSecret()) {
     writeState({ secret, cursor: 0, changedAt: Date.now(), pushedAt: 0 });
     return syncNow();
+}
+
+/** A device waiting for a device that syncs to enter its pairing code. */
+export type Pairing = {
+    code: string;
+    ticket: string;
+    /** By this device's clock. */
+    expiresAt: number;
+    privateKey: CryptoKey;
+};
+
+/** Gets a pairing code for this device to show. */
+export async function startPairing(): Promise<
+    Pairing | 'too-many' | 'held' | 'busy' | 'failed'
+> {
+    try {
+        const { privateKey, publicKey } = await newPairingKeys();
+        const request: PairRequest = { publicKey };
+        const res = await fetch(`${SYNC_URL}/v1/pair`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        if (res.status === 429) return 'too-many';
+        if (res.status === 409) return 'held';
+        if (res.status === 503) return 'busy';
+        if (!res.ok) return 'failed';
+        const { code, ticket, expiresIn } = (await res.json()) as PairResponse;
+        return { code, ticket, expiresAt: Date.now() + expiresIn, privateKey };
+    } catch {
+        return 'failed';
+    }
+}
+
+/**
+ * Whether the code has been entered yet, and the list's secret if it has.
+ * Throws if the server can't be reached.
+ */
+export async function collectPairing(
+    pairing: Pairing
+): Promise<'waiting' | 'expired' | { secret: string }> {
+    const request: WaitRequest = { ticket: pairing.ticket };
+    const res = await fetch(`${SYNC_URL}/v1/pair/wait`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+    });
+    if (res.status === 404) return 'expired';
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { sealed } = (await res.json()) as WaitResponse;
+    if (!sealed) return 'waiting';
+    const secret = await openSecret(pairing.privateKey, sealed);
+    if (!isSecret(secret)) throw new Error('Not a secret');
+    return { secret };
+}
+
+/** Tells the server to forget a code. Best effort, even as the page closes. */
+export function cancelPairing(pairing: Pairing) {
+    const request: WaitRequest = { ticket: pairing.ticket };
+    // A beacon is still sent after the page is gone. Plain text keeps it a
+    // simple request, which needs no CORS preflight; the server reads it as
+    // JSON all the same.
+    navigator.sendBeacon(
+        `${SYNC_URL}/v1/pair/cancel`,
+        new Blob([JSON.stringify(request)], { type: 'text/plain' })
+    );
+}
+
+export type ApproveResult = 'approved' | 'unknown' | 'too-many' | 'failed';
+
+/** Connects the device that shows `code` to this device's list. */
+export async function approvePairing(
+    secret: string,
+    code: string
+): Promise<ApproveResult> {
+    try {
+        const request: ApproveRequest = { code };
+        const res = await fetch(`${SYNC_URL}/v1/pair/approve`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${secret}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(request),
+        });
+        if (res.status === 404) return 'unknown';
+        if (res.status === 429) return 'too-many';
+        return res.ok ? 'approved' : 'failed';
+    } catch {
+        return 'failed';
+    }
 }
 
 /** Stops syncing. What's on the device stays. */

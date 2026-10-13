@@ -64,10 +64,22 @@ are drawn next to IMDb's in the chart, and everything is listed on
   change wins per title, season or movie ([lib/userData.ts](lib/userData.ts)).
   That makes imports and syncs safe in any order.
 - **Sync between devices.** Turning on sync on `/mine/` creates a random
-  secret and a private link, `/mine/#sync=<secret>`, that connects other
-  devices. They sync when a page opens, when it comes back into view, a
+  secret. Another device connects in one of three ways: opening the private
+  link `/mine/#sync=<secret>`, scanning a QR code of that link, or getting a
+  pairing code like `brave-otter` on its `/mine/` and entering it on a device
+  that syncs. Devices sync when a page opens, when it comes back into view, a
   second after a change and every minute while it's visible
   ([lib/sync.ts](lib/sync.ts)).
+- **Pairing codes.** A code is two words from lists of 256 short words
+  ([lib/pairingWords.ts](lib/pairingWords.ts)), too few combinations to
+  protect a secret. So the code doesn't: the secret only goes to the device
+  showing the code someone typed, encrypted for a key that only that device
+  has, and codes last ten minutes. Guessing codes could connect a stranger's
+  new device to the guesser's list, so the server keeps guessing slow for
+  everyone together. Holding codes in the hope that someone mistypes theirs
+  into one would get the holder that person's secret, so no two words are
+  one typo apart and nobody can hold more than a few codes
+  ([lib/pairingCode.ts](lib/pairingCode.ts)).
 
 ## Sync server
 
@@ -75,14 +87,30 @@ are drawn next to IMDb's in the chart, and everything is listed on
 list, which keeps the list in SQLite and merges changes with the same rule as
 the site. Lists are stored under a hash of the secret, which is also the id in
 read-only links, so the server never stores a secret
-([lib/syncProtocol.ts](lib/syncProtocol.ts)).
+([lib/syncProtocol.ts](lib/syncProtocol.ts)). One more Durable Object keeps
+the pairing codes that devices are waiting with: at most 1,000 at a time and
+three per network, with at most 60 wrong codes entered a minute in all
+([sync/src/pairing.ts](sync/src/pairing.ts)).
 
 - `POST /v1/sync` with `Authorization: Bearer <secret>` sends a device's
   changes and returns what changed since the device's last sync.
 - `GET /v1/lists/<id>` returns a list for a read-only link.
+- `POST /v1/pair` with `{ "publicKey": "…" }`, from a device that wants to
+  connect, returns a pairing code and a ticket.
+- `POST /v1/pair/approve` with `Authorization: Bearer <secret>` and
+  `{ "code": "…" }`, from a device that syncs, seals the secret for the
+  device waiting with that code, or returns 404.
+- `POST /v1/pair/wait` with `{ "ticket": "…" }` returns the sealed secret
+  once the code has been entered, and `null` until then.
+- `POST /v1/pair/cancel` with `{ "ticket": "…" }` forgets the code.
+
+Getting and entering codes is limited to ten times a minute per IP address
+(per /48 for IPv6), and waiting for or cancelling one to sixty.
 
 The site only offers sync when it's built with `NEXT_PUBLIC_SYNC_URL`, which
-the deploy workflow takes from the `SYNC_URL` repository variable.
+the deploy workflow takes from the `SYNC_URL` repository variable. Deploy the
+worker before the site when the two change together, so the site never calls
+an endpoint that isn't there yet.
 
 The deploy workflow also deploys the sync server on every push to `main`.
 That needs a `CLOUDFLARE_API_TOKEN` repository secret with the "Edit

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
     connect,
     disconnect,
@@ -13,6 +13,8 @@ import { isSecret } from '@/lib/syncProtocol';
 import { clearHash, useHash } from '@/lib/useHash';
 import { LinkField } from './LinkField';
 import css from './mine.module.css';
+import { CodeForm, CodeOffer } from './PairingCode';
+import { QrCode } from './QrCode';
 
 const PHASES: Record<SyncStatus['phase'], string> = {
     idle: 'Up to date.',
@@ -22,6 +24,8 @@ const PHASES: Record<SyncStatus['phase'], string> = {
 
 export function SyncPanel() {
     const status = useSyncStatus();
+    /** The other way to connect a device that is showing, if any. */
+    const [shown, setShown] = useState<'qr' | 'code' | null>(null);
     if (!syncAvailable || !status) return null;
 
     if (!status.secret) {
@@ -30,8 +34,8 @@ export function SyncPanel() {
                 <h2>Sync your devices</h2>
                 <p>
                     Keep your list in step on your phone, computer and tablet,
-                    with no account. You get a private link to open on your
-                    other devices.
+                    with no account. Turn on sync here, then connect your other
+                    devices with a private link, a QR code or a short code.
                 </p>
                 <button
                     type="button"
@@ -40,6 +44,7 @@ export function SyncPanel() {
                 >
                     Turn on sync
                 </button>
+                <CodeOffer />
             </section>
         );
     }
@@ -51,18 +56,50 @@ export function SyncPanel() {
                 {PHASES[status.phase]}
             </p>
             <p>
-                Open this private link on your other devices to connect them.
-                Anyone with it can change your list, so keep it to yourself.
+                To connect another device, open this private link on it, scan
+                the QR code, or get a code on it and enter the code here. Anyone
+                with the link can change your list, so keep it to yourself.
             </p>
             <LinkField
                 link={syncLink(status.secret)}
                 label="Private sync link"
                 shareTitle="Season-o-meter sync link"
             />
+            <div className={`${css.buttons} ${css.ways}`}>
+                <button
+                    type="button"
+                    className={css.secondary}
+                    aria-pressed={shown === 'qr'}
+                    onClick={() => setShown(shown === 'qr' ? null : 'qr')}
+                >
+                    QR code
+                </button>
+                <button
+                    type="button"
+                    className={css.secondary}
+                    aria-pressed={shown === 'code'}
+                    onClick={() => setShown(shown === 'code' ? null : 'code')}
+                >
+                    Enter a code
+                </button>
+            </div>
+            {shown === 'qr' && (
+                <div className={css.reveal}>
+                    <p>Scan it with your other device’s camera.</p>
+                    <QrCode
+                        value={syncLink(status.secret)}
+                        label="QR code for the private sync link"
+                    />
+                </div>
+            )}
+            {shown === 'code' && <CodeForm secret={status.secret} />}
             <button
                 type="button"
-                className={css.secondary}
-                onClick={disconnect}
+                className={`${css.secondary} ${css.stop}`}
+                onClick={() => {
+                    setShown(null);
+                    disconnect();
+                }}
             >
                 Stop syncing on this device
             </button>
