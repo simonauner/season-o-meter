@@ -1,0 +1,22 @@
+components/ratingTable.module.css
+  s_ebcc1f991641dd::t_6a798bf53b913c 87-88,133-134,152-155,157-158,167-168,177-179
+  s_ebcc1f991641dd::t_93911508eb6962 180
+components/SeasonTable.tsx
+  s_ebcc1f991641dd::t_6a798bf53b913c 30,69,75-78,88,99
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "133cb27cb52d6d45b39623285138cb252073cdbd",
+  "prompts": {},
+  "sessions": {
+    "s_ebcc1f991641dd": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "689a2a08-94d3-40c6-b2a3-60034bece565",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
