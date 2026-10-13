@@ -1,0 +1,21 @@
+components/Footer.tsx
+  s_970f46096ec5c3::t_3320e1ff8bc357 99-105
+components/footer.module.css
+  s_970f46096ec5c3::t_79db4736818023 339-346
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "66147d8992d97bf71f9ca826050880f0df820cbb",
+  "prompts": {},
+  "sessions": {
+    "s_970f46096ec5c3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2a8fcb12-a387-42c3-a23b-ae09527cd315",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
