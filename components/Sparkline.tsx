@@ -1,14 +1,28 @@
 const WIDTH = 240;
 const HEIGHT = 56;
 const PAD = 6;
+// Ratings that map to the bottom and top of the chart when placing a series.
+const LOW = 6;
+const HIGH = 10;
 
 /** Small, static season-by-season rating line. */
 export function Sparkline({ ratings }: { ratings: number[] }) {
     if (ratings.length < 2) return null;
 
-    const min = Math.min(...ratings);
+    const lowest = Math.min(...ratings);
+    const highest = Math.max(...ratings);
     // Keep flat-ish shows looking flat instead of exaggerating tiny wobbles.
-    const max = Math.max(...ratings, min + 1);
+    const span = Math.max(highest - lowest, 1);
+    // Zoomed in as above, but slide the window so the line sits as high in the
+    // chart as the series rates: a show around 9 runs near the top, one
+    // around 7 near the bottom.
+    const middle = (lowest + highest) / 2;
+    const level = Math.min(Math.max((middle - LOW) / (HIGH - LOW), 0), 1);
+    const min = Math.min(
+        Math.max(middle - level * span, highest - span),
+        lowest
+    );
+    const max = min + span;
 
     const x = (i: number) =>
         PAD + (i * (WIDTH - PAD * 2)) / (ratings.length - 1);
