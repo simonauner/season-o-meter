@@ -1,0 +1,35 @@
+lib/useHash.ts
+  s_a54aacb8b90e4f::t_6a6e9b80eb66f7 26-29
+  s_a54aacb8b90e4f::t_e13c5ffc355da1 3
+  s_a54aacb8b90e4f::t_fe36c597bc16f6 18-25,30-46
+app/profile/Profile.tsx
+  s_a54aacb8b90e4f::t_cc91f9ae54d319 181
+app/mine/SyncPanel.tsx
+  s_a54aacb8b90e4f::t_3b04e98219fca7 29-34,40
+  s_a54aacb8b90e4f::t_8211187e7461c1 14,26-28,38-39,41-49,54,63-65,67,77
+app/friends/Friends.tsx
+  s_a54aacb8b90e4f::t_cc91f9ae54d319 428-435
+app/mine/MyList.tsx
+  s_a54aacb8b90e4f::t_3b04e98219fca7 52
+  s_a54aacb8b90e4f::t_94c962f62cabd3 3,10,71-74,94
+  s_a54aacb8b90e4f::t_8211187e7461c1 70
+app/mine/mine.module.css
+  s_a54aacb8b90e4f::t_cc91f9ae54d319 82
+  s_a54aacb8b90e4f::t_fc33d232dce78f 36-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "680350b4f2dd436811da90f9f5e8957cd89de424",
+  "prompts": {},
+  "sessions": {
+    "s_a54aacb8b90e4f": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "82a283f9-a3ef-460b-a4b1-8acf00c48f6d",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
