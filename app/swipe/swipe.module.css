@@ -109,6 +109,96 @@
     }
 }
 
+/* Beside the cards, pointing out the arrow keys. Only with a mouse and
+ * keyboard, and room for them. Under the cards, which fly over them. */
+.keyTip {
+    position: absolute;
+    top: 50%;
+    z-index: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--surface);
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 650;
+    cursor: pointer;
+    translate: 0 -50%;
+    transition:
+        opacity 300ms ease,
+        border-color 120ms ease,
+        color 120ms ease;
+}
+
+.keyTip[data-direction='left'] {
+    right: calc(100% + 32px);
+}
+
+.keyTip[data-direction='right'] {
+    left: calc(100% + 32px);
+}
+
+.keyTipHint {
+    max-width: 9ch;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.3;
+    text-align: center;
+}
+
+.keyTip kbd {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 40px;
+    border: 1px solid var(--border);
+    border-bottom-width: 3px;
+    border-radius: 8px;
+    background: var(--surface-raised);
+    color: var(--text-primary);
+    font: inherit;
+    font-size: 1.25rem;
+}
+
+.keyTip:enabled:hover {
+    color: var(--text-primary);
+}
+
+.keyTip[data-direction='left']:enabled:hover {
+    border-color: var(--down);
+}
+
+.keyTip[data-direction='right']:enabled:hover {
+    border-color: var(--up);
+}
+
+.keyTip:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.keyTip:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.keyTip[data-seen] {
+    opacity: 0;
+    pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) and (min-width: 720px) {
+    .keyTip {
+        display: flex;
+    }
+}
+
 .poster {
     position: absolute;
     inset: 0;
@@ -346,7 +436,8 @@
 
 @media (prefers-reduced-motion: reduce) {
     .card,
-    .step {
+    .step,
+    .keyTip {
         transition: none;
     }
 
