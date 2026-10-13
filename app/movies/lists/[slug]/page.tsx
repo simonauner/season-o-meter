@@ -3,12 +3,14 @@ import { notFound } from 'next/navigation';
 import { FranchiseGrid } from '@/components/FranchiseGrid';
 import { ByMinCount, MinCountPicker } from '@/components/MinCountFilter';
 import { PageIntro } from '@/components/PageIntro';
+import { FilteredList, RatedFilterPicker } from '@/components/RatedFilter';
 import { getFranchises } from '@/lib/data';
 import {
     findFranchiseSections,
     FRANCHISE_SECTION_SLUGS,
 } from '@/lib/franchiseAnalysis';
 import { forEachMinCount, type MinCount } from '@/lib/minCount';
+import homeCss from '../../../home.module.css';
 import css from '../../../lists/[slug]/list.module.css';
 
 const FRANCHISES_PER_LIST = 24;
@@ -52,16 +54,28 @@ export default async function Page({
                     </PageIntro>
                 ))}
             />
-            <MinCountPicker kind="movies" />
+            <div className={homeCss.filters}>
+                <MinCountPicker kind="movies" />
+                <RatedFilterPicker />
+            </div>
             <div className={css.list}>
-                <ByMinCount
+                <FilteredList
                     kind="movies"
-                    variants={forEachMinCount((minMovies) => (
-                        <FranchiseGrid
-                            franchises={sections[minMovies].items}
-                            hideVerdicts={sections[minMovies].sharedVerdict}
+                    slug={slug}
+                    all={
+                        <ByMinCount
+                            kind="movies"
+                            variants={forEachMinCount((minMovies) => (
+                                <FranchiseGrid
+                                    franchises={sections[minMovies].items}
+                                    hideVerdicts={
+                                        sections[minMovies].sharedVerdict
+                                    }
+                                />
+                            ))}
                         />
-                    ))}
+                    }
+                    limit={FRANCHISES_PER_LIST}
                 />
             </div>
         </>

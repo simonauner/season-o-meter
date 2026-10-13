@@ -25,10 +25,11 @@ const ratedFilter = storedChoice<RatedFilter>(
     'any'
 );
 
+// Seen is judged by what the visitor has rated.
 const OPTIONS = [
     { value: 'any', label: 'Any' },
-    { value: 'yes', label: 'Yes' },
-    { value: 'no', label: 'No' },
+    { value: 'yes', label: 'Seen' },
+    { value: 'no', label: 'Not seen' },
 ] as const;
 
 const KINDS = {
@@ -51,7 +52,7 @@ const KINDS = {
 export function RatedFilterPicker() {
     return (
         <ChoicePicker
-            label="Rated by you"
+            label="Seen by you"
             options={OPTIONS}
             current={ratedFilter.useStoredChoice()}
             onChange={ratedFilter.set}
@@ -81,20 +82,42 @@ export function FilteredHomeSections({
     );
 }
 
-/** Each section's best matches among what the visitor has rated, or not. */
-function SectionsByRating({
+/**
+ * A list page's items. Until the visitor filters by their own ratings, these
+ * are the ones rendered at build time.
+ */
+export function FilteredList({
     kind,
-    rated,
+    slug,
+    all,
     limit,
 }: {
     kind: Kind;
-    rated: boolean;
+    slug: string;
+    all: ReactNode;
+    /** Items in the list. */
     limit: number;
 }) {
-    const texts = KINDS[kind];
+    const filter = ratedFilter.useChoice();
+    return filter === 'any' ? (
+        all
+    ) : (
+        <ListByRating
+            kind={kind}
+            slug={slug}
+            rated={filter === 'yes'}
+            limit={limit}
+        />
+    );
+}
+
+/** Each section's best matches among what the visitor has rated, or not. */
+function useSectionsByRating(kind: Kind, rated: boolean, limit: number) {
     const minCount = useMinCount(kind);
     const data = useUserData();
-    const { data: home, failed } = useStaticJson<HomeSections>(texts.json);
+    const { data: home, failed } = useStaticJson<HomeSections>(
+        KINDS[kind].json
+    );
 
     const sections = useMemo(() => {
         if (!data || !home) return null;
@@ -111,6 +134,21 @@ function SectionsByRating({
         }));
     }, [data, home, minCount, rated, limit]);
 
+    return { home, sections, failed };
+}
+
+function SectionsByRating({
+    kind,
+    rated,
+    limit,
+}: {
+    kind: Kind;
+    rated: boolean;
+    limit: number;
+}) {
+    const texts = KINDS[kind];
+    const { home, sections, failed } = useSectionsByRating(kind, rated, limit);
+
     if (failed) {
         return <p className={css.status}>Could not load the sections.</p>;
     }
@@ -118,12 +156,7 @@ function SectionsByRating({
         return <p className={css.status}>Loading…</p>;
     }
     if (rated && sections.every((section) => section.items.length === 0)) {
-        return (
-            <p className={css.status}>
-                {texts.noneRated}, or import your IMDb ratings on{' '}
-                <Link href="/mine/">My list</Link>.
-            </p>
-        );
+        return <NoneRated kind={kind} />;
     }
 
     return sections.map((section) => (
@@ -134,13 +167,7 @@ function SectionsByRating({
             href={`${texts.lists}${section.slug}/`}
         >
             {section.items.length > 0 ? (
-                <ul className={gridCss.grid}>
-                    {section.items.map((id) => (
-                        <li key={id}>
-                            <TrendCard {...home.cards[id]} />
-                        </li>
-                    ))}
-                </ul>
+                <CardGrid ids={section.items} home={home} />
             ) : (
                 <p className={css.empty}>
                     {rated
@@ -150,4 +177,75 @@ function SectionsByRating({
             )}
         </HomeSection>
     ));
+}
+
+function ListByRating({
+    kind,
+    slug,
+    rated,
+    limit,
+}: {
+    kind: Kind;
+    slug: string;
+    rated: boolean;
+    limit: number;
+}) {
+    const { home, sections, failed } = useSectionsByRating(kind, rated, limit);
+    const section = sections?.find((section) => section.slug === slug);
+    const items = section?.items;
+
+    if (failed) {
+        return <p className={css.status}>Could not load the list.</p>;
+    }
+    if (!home || !items) {
+        return <p className={css.status}>Loading…</p>;
+    }
+    if (items.length === 0) {
+        return rated ? (
+            <NoneRated kind={kind} />
+        ) : (
+            <p className={css.status}>You have rated all of them.</p>
+        );
+    }
+    return (
+        <CardGrid
+            ids={items}
+            home={home}
+            hideVerdicts={section?.sharedVerdict}
+        />
+    );
+}
+
+function NoneRated({ kind }: { kind: Kind }) {
+    return (
+        <p className={css.status}>
+            {KINDS[kind].noneRated}, or import your IMDb ratings on{' '}
+            <Link href="/mine/">My list</Link>.
+        </p>
+    );
+}
+
+function CardGrid({
+    ids,
+    home,
+    hideVerdicts,
+}: {
+    ids: string[];
+    home: HomeSections;
+    hideVerdicts?: boolean;
+}) {
+    return (
+        <ul className={gridCss.grid}>
+            {ids.map((id) => (
+                <li key={id}>
+                    <TrendCard
+                        {...home.cards[id]}
+                        verdict={
+                            hideVerdicts ? undefined : home.cards[id].verdict
+                        }
+                    />
+                </li>
+            ))}
+        </ul>
+    );
 }
