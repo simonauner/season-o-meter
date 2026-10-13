@@ -1,9 +1,10 @@
 'use client';
 
-import { useId } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import {
     MAX_RATING,
     MIN_RATING,
+    ratedIds,
     ratingKey,
     valueOf,
     watchlistKey,
@@ -29,41 +30,91 @@ function rate(key: string, rating: number | null, from: Element) {
     if (rating === MAX_RATING) popcorn(from);
 }
 
-/** A 1–10 scale. Choosing the current rating again clears it. */
+/**
+ * Whether to run a wave across the scale, to show a visitor who hasn't rated
+ * anything yet where ratings go. It runs once, when the scale is in view, and
+ * stops for good once it has finished or the visitor clicks the scale.
+ */
+function useHint(enabled: boolean) {
+    const data = useUserData();
+    const ref = useRef<HTMLSpanElement>(null);
+    const [state, setState] = useState<'waiting' | 'playing' | 'done'>(
+        'waiting'
+    );
+    const unrated = enabled && data !== null && ratedIds(data).size === 0;
+
+    useEffect(() => {
+        const scale = ref.current;
+        if (!unrated || state !== 'waiting' || !scale) return;
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (!entry.isIntersecting) return;
+                observer.disconnect();
+                setState('playing');
+            },
+            { threshold: 1 }
+        );
+        observer.observe(scale);
+        return () => observer.disconnect();
+    }, [unrated, state]);
+
+    return {
+        ref,
+        playing: unrated && state === 'playing',
+        stop: () => setState('done'),
+    };
+}
+
+/**
+ * A 1–10 scale. Choosing the current rating again clears it. With `hint`, a
+ * visitor who hasn't rated anything yet is shown where the scale is.
+ */
 export function RatingPicker({
     storeKey,
     label,
+    hint = false,
 }: {
     storeKey: string;
     label: string;
+    hint?: boolean;
 }) {
     const { ready, value } = useValue(storeKey);
     const labelId = useId();
+    const { ref, playing, stop } = useHint(hint);
 
     return (
         <div className={css.picker} role="group" aria-labelledby={labelId}>
             <span id={labelId} className={css.label}>
                 {label}
             </span>
-            <span className={css.scale}>
-                {RATINGS.map((rating) => (
+            <span
+                ref={ref}
+                className={css.scale}
+                data-hint={playing ? '' : undefined}
+                onAnimationEnd={(event) => {
+                    if (event.target === event.currentTarget.lastChild) stop();
+                }}
+            >
+                {RATINGS.map((rating, index) => (
                     <button
                         key={rating}
                         type="button"
                         className={css.step}
+                        style={{ '--index': index } as CSSProperties}
                         data-filled={
                             value !== null && rating <= value ? '' : undefined
                         }
                         aria-pressed={rating === value}
                         aria-label={`${rating} of ${MAX_RATING}`}
                         disabled={!ready}
-                        onClick={(event) =>
+                        onClick={(event) => {
+                            stop();
                             rate(
                                 storeKey,
                                 rating === value ? null : rating,
                                 event.currentTarget
-                            )
-                        }
+                            );
+                        }}
                     >
                         {rating}
                     </button>
@@ -130,7 +181,7 @@ export function WatchlistButton({ id }: { id: string }) {
 export function TitleActions({ id }: { id: string }) {
     return (
         <div className={css.actions}>
-            <RatingPicker storeKey={ratingKey(id)} label="Your rating" />
+            <RatingPicker storeKey={ratingKey(id)} label="Your rating" hint />
             <WatchlistButton id={id} />
         </div>
     );
