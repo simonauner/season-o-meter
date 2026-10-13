@@ -33,7 +33,20 @@ jobs:
             - run: npm run typecheck
             - run: npm ci --prefix sync
             - run: npm run typecheck --prefix sync
-            - run: npm run data
+            # The data only changes once a day, so pushes and pull requests
+            # reuse the latest fetched; nightly and manual runs fetch it
+            # afresh. The key never matches; the prefix picks the newest.
+            - id: cached-data
+              if: github.event_name == 'push' || github.event_name == 'pull_request'
+              uses: actions/cache/restore@v6
+              with:
+                  path: data/shows.json
+                  key: data-${{ github.run_id }}
+                  restore-keys: data-
+
+            - id: data
+              if: steps.cached-data.outputs.cache-matched-key == ''
+              run: npm run data
               env:
                   # For posters. They're drawn instead while it's unset.
                   TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
@@ -47,6 +60,14 @@ jobs:
                   PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
                   # The sync server's URL. Sync isn't offered while it's unset.
                   NEXT_PUBLIC_SYNC_URL: ${{ vars.SYNC_URL }}
+
+            # Only once the site has built from it. Not from pull requests,
+            # whose caches would shadow newer ones from main in their branch.
+            - if: steps.data.outcome == 'success' && github.event_name != 'pull_request'
+              uses: actions/cache/save@v6
+              with:
+                  path: data/shows.json
+                  key: data-${{ github.run_id }}
 
             - if: github.event_name != 'pull_request'
               uses: actions/upload-pages-artifact@v5
