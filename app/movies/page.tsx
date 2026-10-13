@@ -9,6 +9,7 @@ import {
     FilteredHomeSections,
     RatedFilterPicker,
 } from '@/components/RatedFilter';
+import { Reveal } from '@/components/Reveal';
 import { getFranchises } from '@/lib/data';
 import { findFranchiseSections } from '@/lib/franchiseAnalysis';
 import { forEachMinCount } from '@/lib/minCount';
@@ -60,7 +61,7 @@ export default function Page() {
     );
 
     return (
-        <>
+        <Reveal>
             <Hero kind="movies" label="Featured movies" variants={featured} />
             <PageIntro title="Did the sequels hold up?">
                 How film series are rated movie by movie, from the original to
@@ -75,6 +76,6 @@ export default function Page() {
                 all={<ByMinCount kind="movies" variants={variants} />}
                 limit={FRANCHISES_PER_SECTION}
             />
-        </>
+        </Reveal>
     );
 }

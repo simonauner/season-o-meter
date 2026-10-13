@@ -66,7 +66,8 @@ function writeState(state: SyncState | null) {
 export type SyncStatus = {
     /** Null when this device doesn't sync. */
     secret: string | null;
-    phase: 'idle' | 'syncing' | 'failed';
+    /** `deleted` when sync stopped because the list had been deleted. */
+    phase: 'idle' | 'syncing' | 'failed' | 'deleted';
     /** When this device last synced, if it has. */
     syncedAt: number | null;
 };
@@ -152,6 +153,13 @@ async function run() {
             },
             body: JSON.stringify(request),
         });
+        if (res.status === 410) {
+            // Deleted from another device. What's on this one stays.
+            if (readState()?.secret !== state.secret) return;
+            writeState(null);
+            setPhase('deleted');
+            return;
+        }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const response = (await res.json()) as SyncResponse;
 
@@ -299,6 +307,18 @@ export async function approvePairing(
     } catch {
         return 'failed';
     }
+}
+
+/**
+ * Deletes a synced list from the server for good. Devices that still sync
+ * with it stop. Throws if the server can't be reached.
+ */
+export async function deleteSyncedList(secret: string) {
+    const res = await fetch(`${SYNC_URL}/v1/sync`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${secret}` },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 }
 
 /** Stops syncing. What's on the device stays. */

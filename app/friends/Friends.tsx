@@ -12,6 +12,11 @@ import {
 } from '@/lib/compare';
 import { formatRating, formatYears } from '@/lib/format';
 import {
+    imaginaryName,
+    isImaginary,
+    newImaginaryId,
+} from '@/lib/imaginaryFriend';
+import {
     friendsOf,
     removeFriend,
     saveFriend,
@@ -81,12 +86,28 @@ export function Friends() {
             ) : !data || !friends || !index ? (
                 <p className={mineCss.status}>Loading…</p>
             ) : friends.length === 0 ? (
-                <p className={mineCss.status}>
-                    No friends yet. Ask a friend for the link to their list.
-                    They find it under <em>Share with friends</em> on their{' '}
-                    <Link href="/mine/#share">My list</Link>, with sync on. Open
-                    it, or paste it below.
-                </p>
+                <>
+                    <p className={mineCss.status}>
+                        No friends yet. Ask a friend for the link to their list.
+                        They find it under <em>Share with friends</em> on their{' '}
+                        <Link href="/mine/#share">My list</Link>, with sync on.
+                        Open it, or paste it below.
+                    </p>
+                    <p className={css.imaginary}>
+                        Nobody to ask?{' '}
+                        <button
+                            type="button"
+                            onClick={() =>
+                                saveFriend(
+                                    newImaginaryId(),
+                                    imaginaryName(navigator.languages)
+                                )
+                            }
+                        >
+                            Bring an imaginary friend
+                        </button>
+                    </p>
+                </>
             ) : (
                 <Comparison data={data} friends={friends} index={index} />
             )}
@@ -118,7 +139,10 @@ function Comparison({
     friends: Friend[];
     index: SearchEntry[];
 }) {
-    const lists = useFriendLists(friends.map((friend) => friend.listId));
+    const lists = useFriendLists(
+        friends.map((friend) => friend.listId),
+        data
+    );
     const [hidden, setHidden] = useState<ReadonlySet<string>>(new Set());
     const [sort, setSort] = useState<{ key: SortKey; descending: boolean }>({
         key: 'average',
@@ -468,12 +492,15 @@ function FriendRow({ friend }: { friend: Friend }) {
                 aria-label={`Name of ${friend.name}`}
                 autoComplete="off"
             />
-            <Link
-                href={`/shared/#list=${friend.listId}`}
-                className={mineCss.secondary}
-            >
-                List
-            </Link>
+            {/* An imaginary friend's list is only in your head. */}
+            {!isImaginary(friend.listId) && (
+                <Link
+                    href={`/shared/#list=${friend.listId}`}
+                    className={mineCss.secondary}
+                >
+                    List
+                </Link>
+            )}
             <button
                 type="button"
                 className={mineCss.secondary}

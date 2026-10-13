@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { imaginaryList, isImaginary } from './imaginaryFriend';
 import { fetchList, useSyncStatus } from './sync';
 import { isListId, listIdFor } from './syncProtocol';
 import { friendKey, MAX_NAME_LENGTH, type UserData } from './userData';
@@ -50,11 +51,16 @@ export type FriendLists = Record<string, UserData | null>;
 
 /**
  * Fetches the lists, again whenever a friend is added. Lists fetched before
- * stay while the rest load.
+ * stay while the rest load. Imaginary friends' lists are made up from the
+ * visitor's own, `own`.
  */
-export function useFriendLists(listIds: string[]) {
-    const [lists, setLists] = useState<FriendLists>({});
-    const key = [...listIds].sort().join(',');
+export function useFriendLists(listIds: string[], own: UserData) {
+    const [fetched, setFetched] = useState<FriendLists>({});
+    const key = listIds
+        .filter((id) => !isImaginary(id))
+        .sort()
+        .join(',');
+    const imaginary = listIds.filter(isImaginary).sort().join(',');
 
     useEffect(() => {
         let live = true;
@@ -66,15 +72,21 @@ export function useFriendLists(listIds: string[]) {
                     () => [id, null] as const
                 )
             )
-        ).then((fetched) => {
-            if (live) setLists(Object.fromEntries(fetched));
+        ).then((results) => {
+            if (live) setFetched(Object.fromEntries(results));
         });
         return () => {
             live = false;
         };
     }, [key]);
 
-    return lists;
+    return useMemo(() => {
+        const lists = { ...fetched };
+        for (const id of imaginary ? imaginary.split(',') : []) {
+            lists[id] = imaginaryList(id, own);
+        }
+        return lists;
+    }, [fetched, imaginary, own]);
 }
 
 /** The id of the visitor's own synced list, or null without sync. */

@@ -6,13 +6,6 @@
     background: var(--surface);
     border: 1px solid var(--border);
     box-shadow: var(--shadow);
-    animation: fade-in 200ms ease;
-}
-
-@keyframes fade-in {
-    from {
-        opacity: 0;
-    }
 }
 
 /* The poster beside the heading, with the stats and the chart below, or
@@ -228,10 +221,4 @@
 .menuItem:focus-visible {
     background: var(--page);
     outline: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .hero {
-        animation: none;
-    }
 }

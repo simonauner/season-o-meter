@@ -8,6 +8,7 @@ import {
     FilteredHomeSections,
     RatedFilterPicker,
 } from '@/components/RatedFilter';
+import { Reveal } from '@/components/Reveal';
 import { ShowGrid } from '@/components/ShowGrid';
 import { HomeTop, type PeakExample } from '@/components/Welcome';
 import { findShowSections, ratedSeasons } from '@/lib/analysis';
@@ -64,7 +65,7 @@ export default function Page() {
     );
 
     return (
-        <>
+        <Reveal>
             <HomeTop
                 hero={
                     <Hero
@@ -90,6 +91,6 @@ export default function Page() {
                 all={<ByMinCount kind="series" variants={variants} />}
                 limit={SHOWS_PER_SECTION}
             />
-        </>
+        </Reveal>
     );
 }

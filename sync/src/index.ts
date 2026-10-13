@@ -23,6 +23,8 @@ export { Pairing } from './pairing';
 const MAX_ENTRIES = 50_000;
 const MAX_BODY_BYTES = 2 * 1024 * 1024;
 
+const DELETED_KEY = 'deleted';
+
 class HttpError extends Error {
     constructor(
         readonly status: number,
@@ -92,9 +94,17 @@ export class SyncList extends DurableObject<Env> {
         );
     }
 
+    /** Whether the list has been deleted, which is kept for good. */
+    private deleted() {
+        return this.ctx.storage.kv.get(DELETED_KEY) !== undefined;
+    }
+
     /** Merges a device's changes and returns what changed since `since`. */
     sync(since: number, changes: UserData): SyncResponse {
         return this.ctx.storage.transactionSync(() => {
+            // Devices that still sync with it would otherwise bring it back.
+            if (this.deleted()) throw new HttpError(410, 'List deleted');
+
             // Tables are only created on the first write, so reading a list
             // that doesn't exist doesn't store anything.
             this.createTable();
@@ -140,6 +150,18 @@ export class SyncList extends DurableObject<Env> {
         });
     }
 
+    /**
+     * Deletes everything in the list. Only a note that it was deleted is
+     * kept, so devices that still sync with it stop instead of filling it
+     * up again.
+     */
+    erase() {
+        this.ctx.storage.transactionSync(() => {
+            this.sql.exec('DROP TABLE IF EXISTS entries');
+            this.ctx.storage.kv.put(DELETED_KEY, true);
+        });
+    }
+
     /** What others may see, for a read-only link. Friends are left out. */
     list(): ListResponse {
         if (this.tableSql() === null) return { data: {} };
@@ -161,7 +183,7 @@ function corsHeaders(request: Request, env: Env): HeadersInit {
     if (!origin || !allowed.includes(origin)) return {};
     return {
         'Access-Control-Allow-Origin': origin,
-        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Authorization, Content-Type',
         'Access-Control-Max-Age': '86400',
         Vary: 'Origin',
@@ -269,6 +291,11 @@ async function handle(request: Request, env: Env): Promise<unknown> {
         );
     }
 
+    if (pathname === '/v1/sync' && request.method === 'DELETE') {
+        await list(env, await listIdFor(secretOf(request))).erase();
+        return {};
+    }
+
     if (pathname === '/v1/pair' && request.method === 'POST') {
         await limitPairing(request, env, 'create');
         const body = (await readJson(request)) as { publicKey?: unknown };
@@ -343,7 +370,9 @@ export default {
                     ? error.status
                     : /Too many entries/.test(String(error))
                       ? 413
-                      : 500;
+                      : /List deleted/.test(String(error))
+                        ? 410
+                        : 500;
             if (status === 500) console.error(error);
             return Response.json(
                 {
