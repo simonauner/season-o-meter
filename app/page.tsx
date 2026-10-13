@@ -11,33 +11,28 @@ import { ShowGrid } from '@/components/ShowGrid';
 import { findShowSections } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
 import { forEachMinCount } from '@/lib/minCount';
+import { topOfEachSection } from '@/lib/sections';
 import css from './home.module.css';
 
 const SHOWS_PER_SECTION = 6;
-
-/** The hero picks one of this many from the top of "Most popular". */
-const FEATURED_CANDIDATES = 3;
 
 export default function Page() {
     const sectionsByMinSeasons = forEachMinCount((minSeasons) =>
         findShowSections(getShows(), SHOWS_PER_SECTION, minSeasons)
     );
 
-    const featured = forEachMinCount((minSeasons) => {
-        const popular = sectionsByMinSeasons[minSeasons].find(
-            (section) => section.slug === 'most-popular'
-        );
-        if (!popular) return [];
-        return popular.items
-            .slice(0, FEATURED_CANDIDATES)
-            .map((show, i) => (
+    // The hero picks one of the series that top a section.
+    const featured = forEachMinCount((minSeasons) =>
+        topOfEachSection(sectionsByMinSeasons[minSeasons]).map(
+            ({ section, item }) => (
                 <FeaturedShow
-                    key={show.id}
-                    show={show}
-                    eyebrow={`No. ${i + 1} in ${popular.title}`}
+                    key={item.id}
+                    show={item}
+                    eyebrow={`No. 1 in ${section.title}`}
                 />
-            ));
-    });
+            )
+        )
+    );
 
     const variants = forEachMinCount((minSeasons) =>
         sectionsByMinSeasons[minSeasons].map((section) => (

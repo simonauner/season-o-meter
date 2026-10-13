@@ -14,13 +14,16 @@ import { storedChoice } from '@/lib/storedChoice';
 import { useMinCount } from './MinCountFilter';
 import css from './hero.module.css';
 
-const visibility = storedChoice(
-    'season-o-meter:hero',
-    ['shown', 'hidden'] as const,
-    'shown'
-);
+const VISIBILITY = ['shown', 'hidden'] as const;
 
-const hide = () => visibility.set('hidden');
+/**
+ * Whether the visitor has hidden the hero on Series or Movies. It's shown
+ * again from Profile.
+ */
+export const heroVisibility = {
+    series: storedChoice('season-o-meter:hero', VISIBILITY, 'shown'),
+    movies: storedChoice('season-o-meter:hero-movies', VISIBILITY, 'shown'),
+};
 
 /** Drawn once per page load, so the pick stays put when the filter changes. */
 let pick: number | null = null;
@@ -35,7 +38,8 @@ const usePick = () =>
 
 /**
  * A featured item, picked at random in the browser from the candidates
- * rendered for the visitor's chosen minimum. The visitor can hide it.
+ * rendered for the visitor's chosen minimum. The visitor can hide it, and
+ * show it again from Profile.
  */
 export function Hero({
     kind,
@@ -50,7 +54,7 @@ export function Hero({
 }) {
     const candidates = variants[useMinCount(kind)];
     // Nothing is drawn until both are known in the browser.
-    const shown = visibility.useStoredChoice();
+    const shown = heroVisibility[kind].useStoredChoice();
     const random = usePick();
 
     if (shown !== 'shown' || random === null || candidates.length === 0) {
@@ -60,12 +64,12 @@ export function Hero({
     return (
         <section className={css.hero} aria-label={label}>
             {candidates[Math.floor(random * candidates.length)]}
-            <HeroMenu />
+            <HeroMenu onHide={() => heroVisibility[kind].set('hidden')} />
         </section>
     );
 }
 
-function HeroMenu() {
+function HeroMenu({ onHide }: { onHide: () => void }) {
     const [open, setOpen] = useState(false);
     const rootRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLButtonElement>(null);
@@ -134,7 +138,7 @@ function HeroMenu() {
                         type="button"
                         role="menuitem"
                         className={css.menuItem}
-                        onClick={hide}
+                        onClick={onHide}
                     >
                         Hide this section
                     </button>
