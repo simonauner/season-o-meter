@@ -6,8 +6,11 @@
             color-mix(in srgb, var(--accent) 22%, transparent),
             transparent 70%
         ),
-        color-mix(in srgb, var(--header) 88%, transparent);
-    backdrop-filter: blur(14px) saturate(160%);
+        var(--header);
+    /* Opaque and without backdrop-filter: Safari on iOS 26 only extends a
+       sticky header's colour up under its toolbar when it can read a solid
+       background colour. With a blurred backdrop it shows the page there
+       instead, scrolling past above the header. */
     color: var(--header-text);
     position: sticky;
     top: 0;
