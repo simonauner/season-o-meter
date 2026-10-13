@@ -1,0 +1,19 @@
+app/mine/mine.module.css
+  s_977d47f66a32cc::t_bb15bb5c8674f3 45-49,51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1d39be7c7c22c7418056f415019f97c4dcfbc323",
+  "prompts": {},
+  "sessions": {
+    "s_977d47f66a32cc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f32c614f-dc5d-4030-a6d5-b51951d616ff",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
