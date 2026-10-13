@@ -23,6 +23,12 @@
     animation: gleam 4200ms linear calc(300ms + var(--index) * 55ms) infinite;
 }
 
+/* Only one wave. */
+.once > *,
+.once > *::after {
+    animation-iteration-count: 1;
+}
+
 /* Hovering shows the scale's usual hover instead. */
 @media (hover: hover) {
     .hint:hover > *,

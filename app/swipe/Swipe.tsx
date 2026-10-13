@@ -134,7 +134,12 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
         rating: number;
     } | null>(null);
     const scaleLabel = useId();
-    const { ref: scale, className: hint } = useRatingHint<HTMLSpanElement>();
+    // Once only, as it would hide the step picked with the arrow keys.
+    const {
+        ref: scale,
+        className: hint,
+        stop: stopHint,
+    } = useRatingHint<HTMLSpanElement>({ repeat: false });
     const commandKey = useCommandKey();
     const undoTip = useTip('swipe-undo-key');
 
@@ -200,6 +205,7 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
     /** Moves the picked rating up or down the scale, or starts picking. */
     const pick = (step: 1 | -1) => {
         if (!top) return;
+        stopHint();
         const rating =
             picked === null
                 ? step > 0

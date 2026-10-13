@@ -7,30 +7,40 @@ import css from './ratingHint.module.css';
 
 /**
  * A wave across a rating scale, to show a visitor who hasn't rated anything
- * yet where ratings go. It starts once the scale is in view and repeats until
- * they rate something. Put `ref` and `className` on the element around the
- * steps, and give each step its place on the scale as `--index`.
+ * yet where ratings go. It starts once the scale is in view and, with
+ * `repeat`, repeats until they rate something or `stop` is called. Put `ref`
+ * and `className` on the element around the steps, and give each step its
+ * place on the scale as `--index`.
  */
-export function useRatingHint<T extends HTMLElement>() {
+export function useRatingHint<T extends HTMLElement>({ repeat = true } = {}) {
     const data = useUserData();
     const ref = useRef<T>(null);
-    const [inView, setInView] = useState(false);
+    const [state, setState] = useState<'waiting' | 'playing' | 'stopped'>(
+        'waiting'
+    );
     const unrated = data !== null && ratedIds(data).size === 0;
 
     useEffect(() => {
         const scale = ref.current;
-        if (!unrated || inView || !scale) return;
+        if (!unrated || state !== 'waiting' || !scale) return;
         const observer = new IntersectionObserver(
             ([entry]) => {
                 if (!entry.isIntersecting) return;
                 observer.disconnect();
-                setInView(true);
+                setState('playing');
             },
             { threshold: 1 }
         );
         observer.observe(scale);
         return () => observer.disconnect();
-    }, [unrated, inView]);
+    }, [unrated, state]);
 
-    return { ref, className: unrated && inView ? css.hint : '' };
+    return {
+        ref,
+        className:
+            unrated && state === 'playing'
+                ? `${css.hint} ${repeat ? '' : css.once}`
+                : '',
+        stop: () => setState('stopped'),
+    };
 }
