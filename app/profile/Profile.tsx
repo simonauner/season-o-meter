@@ -263,12 +263,16 @@ function TipsPanel() {
         <section className={mineCss.panel}>
             <h2>Tips</h2>
             <p>
-                Tips point out shortcuts, like the arrow keys in{' '}
+                Tips point out what you can do here, like the welcome on{' '}
+                <Link href="/" className={css.link}>
+                    Series
+                </Link>{' '}
+                and the arrow keys in{' '}
                 <Link href="/swipe/" className={css.link}>
                     Swipe
                 </Link>
-                , and go away once you’ve used them. They’re kept in this
-                browser.
+                , and go away once you’ve used or closed them. They’re kept in
+                this browser.
             </p>
             <button
                 type="button"
