@@ -25,11 +25,11 @@ const ratedFilter = storedChoice<RatedFilter>(
     'any'
 );
 
-// Seen is judged by what the visitor has rated.
+// Judged by what the visitor has rated.
 const OPTIONS = [
     { value: 'any', label: 'Any' },
-    { value: 'yes', label: 'Seen' },
-    { value: 'no', label: 'Not seen' },
+    { value: 'yes', label: 'Rated' },
+    { value: 'no', label: 'Not rated' },
 ] as const;
 
 const KINDS = {
@@ -52,7 +52,7 @@ const KINDS = {
 export function RatedFilterPicker() {
     return (
         <ChoicePicker
-            label="Seen by you"
+            label="Rated by you"
             options={OPTIONS}
             current={ratedFilter.useStoredChoice()}
             onChange={ratedFilter.set}
