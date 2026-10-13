@@ -54,8 +54,11 @@ const RATINGS = Array.from(
 /** A new order on every visit, kept while moving around the site. */
 const SEED = Math.random();
 
-/** How far a card is dragged before letting go of it skips or saves it. */
-const SWIPE_DISTANCE = 110;
+/**
+ * How far a card is dragged before letting go of it skips or saves it, as a
+ * share of its width, so a narrow card on a short phone needs less.
+ */
+const SWIPE_SHARE = 0.3;
 /** A flick this fast, in px/ms, counts from a shorter distance. */
 const FLICK_SPEED = 0.6;
 const FLICK_DISTANCE = 40;
@@ -457,6 +460,7 @@ function Card({
 }) {
     const [dx, setDx] = useState(0);
     const [dragging, setDragging] = useState(false);
+    const [distance, setDistance] = useState(Infinity);
     const drag = useRef<{
         pointerId: number;
         startX: number;
@@ -494,6 +498,7 @@ function Card({
             // Only now, so a tap on the title still reaches the link.
             event.currentTarget.setPointerCapture(event.pointerId);
             setDragging(true);
+            setDistance(event.currentTarget.offsetWidth * SWIPE_SHARE);
         }
         const elapsed = event.timeStamp - current.lastTime;
         if (elapsed > 0) {
@@ -517,7 +522,7 @@ function Card({
             Math.abs(dx) > FLICK_DISTANCE &&
             Math.abs(current.speed) > FLICK_SPEED &&
             Math.sign(current.speed) === Math.sign(dx);
-        if (Math.abs(dx) > SWIPE_DISTANCE || flicked) {
+        if (Math.abs(dx) > distance || flicked) {
             onSwipe(dx < 0 ? 'left' : 'right', dx);
         }
     };
@@ -530,7 +535,7 @@ function Card({
 
     const leaving = place === 'left' || place === 'right' || place === 'up';
     const offset = leaving ? from : dx;
-    const progress = Math.min(1, Math.abs(dx) / SWIPE_DISTANCE);
+    const progress = Math.min(1, Math.abs(dx) / distance);
 
     return (
         <article
