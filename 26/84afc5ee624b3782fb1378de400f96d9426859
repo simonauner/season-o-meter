@@ -1,0 +1,21 @@
+components/yourRating.module.css
+  s_f3f578aa1e7248::t_9bada4af7ab487 132-134,136-162,166-169,172-189,197,200-204
+components/YourRating.tsx
+  s_f3f578aa1e7248::t_9bada4af7ab487 35-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2684afc5ee624b3782fb1378de400f96d9426859",
+  "prompts": {},
+  "sessions": {
+    "s_f3f578aa1e7248": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "033fbc96-6d42-4ff1-9152-99912c925c3e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
