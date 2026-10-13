@@ -129,8 +129,27 @@
     }
 }
 
+/* A wave across the scale for a visitor who hasn't rated anything yet. */
+.scale[data-hint] .step {
+    animation: hint 1100ms ease-in-out calc(300ms + var(--index) * 55ms);
+}
+
+@keyframes hint {
+    35%,
+    60% {
+        background: color-mix(in srgb, var(--own) 28%, var(--surface));
+        border-color: color-mix(in srgb, var(--own) 50%, var(--border));
+        color: var(--text-primary);
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .step {
         transition: none;
+    }
+
+    /* The whole scale lights up at once instead. */
+    .scale[data-hint] .step {
+        animation-delay: 300ms;
     }
 }
