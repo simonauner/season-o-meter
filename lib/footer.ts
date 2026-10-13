@@ -4,28 +4,69 @@ import type { DataFile } from './types';
 
 const MIN_VOTES = 50_000;
 
-export type SkylineShow = {
+/** A series or film series, drawn as a cluster of bars, one per season or movie. */
+export type SkylineBuilding = {
     href: string;
     title: string;
     ratings: number[];
 };
 
-/** The most popular series, each drawn as a cluster of season bars. */
-export function skylineShows(
-    { shows }: DataFile,
-    count = 16,
-    maxSeasons = 9
-): SkylineShow[] {
-    return shows
-        .map((show) => ({
-            href: `/shows/${show.id}/`,
-            title: show.title,
-            ratings: ratedSeasons(show.seasons)
-                .slice(0, maxSeasons)
-                .map((season) => season.rating),
-        }))
-        .filter(({ ratings }) => ratings.length >= 3)
-        .slice(0, count);
+/**
+ * The most popular series and film series with at least three rated seasons
+ * or movies. The skyline is drawn at random from these.
+ */
+export function skylinePool(
+    { shows, franchises }: DataFile,
+    seriesCount = 48,
+    filmCount = 16,
+    maxBars = 9
+): SkylineBuilding[] {
+    const series = shows.map((show) => ({
+        href: `/shows/${show.id}/`,
+        title: show.title,
+        ratings: ratedSeasons(show.seasons).map((season) => season.rating),
+    }));
+    const films = franchises.map((franchise) => ({
+        href: `/movies/${franchise.id}/`,
+        title: franchise.title,
+        ratings: franchise.movies.map((movie) => movie.rating),
+    }));
+    const tallEnough = ({ ratings }: SkylineBuilding) => ratings.length >= 3;
+
+    return [
+        ...series.filter(tallEnough).slice(0, seriesCount),
+        ...films.filter(tallEnough).slice(0, filmCount),
+    ].map((building) => ({
+        ...building,
+        ratings: building.ratings.slice(0, maxBars),
+    }));
+}
+
+/** A small seeded random number generator (mulberry32). */
+function seededRandom(seed: number) {
+    let state = seed >>> 0;
+    return () => {
+        state = (state + 0x6d2b79f5) >>> 0;
+        let t = Math.imul(state ^ (state >>> 15), state | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 2 ** 32;
+    };
+}
+
+/** `count` buildings from the pool in random order, the same for the same seed. */
+export function drawSkyline(
+    pool: SkylineBuilding[],
+    seed: number,
+    count = 16
+): SkylineBuilding[] {
+    const random = seededRandom(seed);
+    const drawn = [...pool];
+    // Fisher–Yates, stopping once the first `count` are in place.
+    for (let i = 0; i < Math.min(count, drawn.length); i++) {
+        const j = i + Math.floor(random() * (drawn.length - i));
+        [drawn[i], drawn[j]] = [drawn[j], drawn[i]];
+    }
+    return drawn.slice(0, count);
 }
 
 export type Fact = {
