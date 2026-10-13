@@ -60,6 +60,14 @@ are drawn next to IMDb's in the chart, and everything is listed on
   opens it sees the list next to their own ratings, and can import it. With
   sync on, the link instead points at the synced list, so it is always
   current.
+- **Friends.** Opening someone's live link offers to add them as a friend,
+  under a name of your choosing, or the link can be pasted on `/friends/`.
+  That page puts everyone's rating of each series or film series side by
+  side, with an average, sorted by any column, and limited to what all of
+  them have rated or not ([lib/compare.ts](lib/compare.ts)). Friends are
+  kept with the ratings, so they sync too, but they are left out of share
+  links and live links: a friend's link lets anyone read their list, and
+  they only gave it to you ([lib/friends.ts](lib/friends.ts)).
 - **Merging.** Every value is stored with when it was set, and the latest
   change wins per title, season or movie ([lib/userData.ts](lib/userData.ts)).
   That makes imports and syncs safe in any order.
@@ -94,7 +102,8 @@ three per network, with at most 60 wrong codes entered a minute in all
 
 - `POST /v1/sync` with `Authorization: Bearer <secret>` sends a device's
   changes and returns what changed since the device's last sync.
-- `GET /v1/lists/<id>` returns a list for a read-only link.
+- `GET /v1/lists/<id>` returns a list for a read-only link, without its
+  friends.
 - `POST /v1/pair` with `{ "publicKey": "…" }`, from a device that wants to
   connect, returns a pairing code and a ticket.
 - `POST /v1/pair/approve` with `Authorization: Bearer <secret>` and

@@ -11,10 +11,12 @@
  *   movie (IMDb id), 1–10.
  * - `r:<id>/<season>` rates a season of a series, 1–10.
  * - `w:<id>` is 1 when a series or film series is on the watchlist.
+ * - `f:<list id>` is a friend's synced list, to compare ratings with. The
+ *   value is the name the visitor gave them.
  */
 
 /** A value and when it was set (ms since epoch). Null means it was cleared. */
-export type Stamped = [value: number | null, updatedAt: number];
+export type Stamped = [value: number | string | null, updatedAt: number];
 
 export type UserData = Record<string, Stamped>;
 
@@ -26,7 +28,15 @@ export const ratingKey = (id: string, season?: number) =>
 
 export const watchlistKey = (id: string) => `w:${id}`;
 
-export const valueOf = (data: UserData, key: string) => data[key]?.[0] ?? null;
+export const friendKey = (listId: string) => `f:${listId}`;
+
+export const MAX_NAME_LENGTH = 40;
+
+/** A rating or watchlist value, or null if there's none. */
+export const valueOf = (data: UserData, key: string) => {
+    const value = data[key]?.[0];
+    return typeof value === 'number' ? value : null;
+};
 
 /** Ids of everything rated as a whole or in part, e.g. a single season. */
 export function ratedIds(data: UserData) {
@@ -39,12 +49,20 @@ export function ratedIds(data: UserData) {
     return ids;
 }
 
-const KEY_PATTERN = /^(r:(tt\d+(\/\d+)?|Q\d+)|w:(tt|Q)\d+)$/;
+// A list id has the same shape as a secret (lib/syncProtocol.ts).
+const KEY_PATTERN =
+    /^(r:(tt\d+(\/\d+)?|Q\d+)|w:(tt|Q)\d+|f:[A-Za-z0-9_-]{22})$/;
 
 const isRating = (value: unknown): value is number =>
     Number.isInteger(value) &&
     (value as number) >= MIN_RATING &&
     (value as number) <= MAX_RATING;
+
+const isName = (value: unknown): value is string =>
+    typeof value === 'string' &&
+    value === value.trim() &&
+    value.length > 0 &&
+    value.length <= MAX_NAME_LENGTH;
 
 const isStamped = (key: string, stamped: unknown): stamped is Stamped => {
     if (!Array.isArray(stamped) || stamped.length !== 2) return false;
@@ -53,6 +71,7 @@ const isStamped = (key: string, stamped: unknown): stamped is Stamped => {
         return false;
     }
     if (value === null) return true;
+    if (key.startsWith('f:')) return isName(value);
     return key.startsWith('w:') ? value === 1 : isRating(value);
 };
 
@@ -65,6 +84,18 @@ export function sanitize(input: unknown): UserData {
         )
     );
 }
+
+/**
+ * What others may see of a list: everything that is set, except friends. A
+ * friend's list id lets anyone read their list, and they only gave it to
+ * the visitor.
+ */
+export const shareable = (data: UserData): UserData =>
+    Object.fromEntries(
+        Object.entries(data).filter(
+            ([key, [value]]) => value !== null && !key.startsWith('f:')
+        )
+    );
 
 /** Whether `incoming` should replace `current` for the same key. */
 const isNewer = (incoming: Stamped, current: Stamped | undefined) =>
@@ -109,12 +140,9 @@ const transform = (bytes: Uint8Array, stream: TransformStream) =>
         new Blob([bytes.slice()]).stream().pipeThrough(stream)
     ).arrayBuffer();
 
-/** Encodes everything that is set, for a share link. */
+/** Encodes what others may see, for a share link. */
 export async function encodeShare(data: UserData) {
-    const set = Object.fromEntries(
-        Object.entries(data).filter(([, [value]]) => value !== null)
-    );
-    const json = new TextEncoder().encode(JSON.stringify(set));
+    const json = new TextEncoder().encode(JSON.stringify(shareable(data)));
     const compressed = await transform(
         json,
         new CompressionStream('deflate-raw')
@@ -130,7 +158,7 @@ export async function decodeShare(encoded: string): Promise<UserData | null> {
             fromBase64Url(encoded.slice(SHARE_VERSION.length)),
             new DecompressionStream('deflate-raw')
         );
-        return sanitize(JSON.parse(new TextDecoder().decode(json)));
+        return shareable(sanitize(JSON.parse(new TextDecoder().decode(json))));
     } catch {
         return null;
     }

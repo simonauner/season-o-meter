@@ -21,6 +21,11 @@ const LINKS = [
         label: 'My list',
         isActive: (path: string) => /^\/(mine|shared)\//.test(path),
     },
+    {
+        href: '/friends/',
+        label: 'Friends',
+        isActive: (path: string) => path.startsWith('/friends/'),
+    },
 ];
 
 export function NavLinks() {

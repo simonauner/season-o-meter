@@ -1,0 +1,230 @@
+.compare {
+    margin-top: 8px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 24px;
+    margin-bottom: 20px;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.chips button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* On phones, where the column headers are small to tap. */
+.sortControls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.select {
+    margin-left: 4px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text-primary);
+    font: inherit;
+}
+
+@media (min-width: 640px) {
+    .sortControls {
+        display: none;
+    }
+}
+
+/* Scrolls sideways with many friends, keeping the titles in view. */
+.scroll {
+    /* Contains the visually hidden headers, which would widen the page. */
+    position: relative;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+}
+
+.table th,
+.table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--grid);
+    text-align: left;
+    vertical-align: middle;
+}
+
+.table tbody tr:last-child > * {
+    border-bottom: none;
+}
+
+.title {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 9em;
+    background: var(--surface);
+}
+
+.table tbody .title {
+    font-weight: 650;
+}
+
+.title a:hover {
+    text-decoration: underline;
+}
+
+.title span {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+    font-weight: 500;
+}
+
+.table .num {
+    width: 1%;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.table td.num {
+    font-size: 1.0625rem;
+    font-weight: 750;
+}
+
+.sort {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.8125rem;
+    font-weight: 650;
+    cursor: pointer;
+}
+
+.sort:hover {
+    color: var(--text-primary);
+}
+
+.sort:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+[aria-sort] .sort {
+    color: var(--text-primary);
+}
+
+.name {
+    display: inline-block;
+    max-width: 6em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: bottom;
+}
+
+.table .yours {
+    color: var(--own);
+}
+
+.table .average {
+    color: var(--accent);
+}
+
+/* An average of season or movie ratings rather than an overall rating. */
+.partAverage {
+    opacity: 0.75;
+    font-size: 0.9375rem;
+}
+
+/* How many of the seasons or movies it covers, when not all are rated. */
+.partial {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.6875rem;
+    font-weight: 700;
+}
+
+/* A shorter header on phones, e.g. Avg for Average. */
+.narrow {
+    display: none;
+}
+
+@media (max-width: 639px) {
+    .table th,
+    .table td {
+        padding: 10px 6px;
+    }
+
+    .table .title {
+        min-width: 7em;
+        padding-left: 12px;
+    }
+
+    .table tr > :last-child {
+        padding-right: 12px;
+    }
+
+    .name {
+        max-width: 4.5em;
+    }
+
+    .wide {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .narrow {
+        display: inline;
+    }
+}
+
+.friends {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+}
+
+.friends li {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Leaves room for both buttons on phones. */
+.friends input {
+    flex-basis: 8em;
+}

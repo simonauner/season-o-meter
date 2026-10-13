@@ -86,8 +86,8 @@ function SharePanel({
             <h2>Share your list</h2>
             <p>
                 {secret
-                    ? 'Anyone with this link can see your ratings and watchlist, always with your latest changes. They can’t change anything.'
-                    : 'Anyone with this link can see your ratings and watchlist as they are right now. To move your list to another device, open the link there and choose Import.'}
+                    ? 'Anyone with this link can see your ratings and watchlist, always with your latest changes, and add you as a friend to compare ratings. They can’t change anything.'
+                    : 'Anyone with this link can see your ratings and watchlist as they are right now. To move your list to another device, open the link there and choose Import. Turn on sync to get a link friends can compare ratings with.'}
             </p>
             <LinkField
                 link={link}
