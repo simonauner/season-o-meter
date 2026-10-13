@@ -3,13 +3,13 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { SyncAgent } from '@/components/SyncAgent';
 import { openGraph } from '@/lib/openGraph';
+import { SITE_URL } from '@/lib/site';
 import './globals.css';
 
 export const metadata: Metadata = {
-    // Link previews need absolute image URLs.
-    metadataBase: new URL('https://seasonometer.com'),
+    metadataBase: new URL(SITE_URL),
     title: {
-        default: 'Season-o-meter',
+        default: 'Season-o-meter: TV Show Ratings, Season by Season',
         template: '%s · Season-o-meter',
     },
     description:

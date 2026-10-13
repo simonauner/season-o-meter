@@ -18,9 +18,10 @@ import css from '../home.module.css';
 const FRANCHISES_PER_SECTION = 6;
 
 export const metadata: Metadata = {
-    title: 'Movies',
+    title: 'Movie Franchises Ranked, Movie by Movie',
     description:
         'See how film series are rated movie by movie: did the sequels live up to the original?',
+    alternates: { canonical: '/movies/' },
 };
 
 export default function Page() {

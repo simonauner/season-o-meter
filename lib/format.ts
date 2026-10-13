@@ -37,5 +37,23 @@ export const formatYears = ({
     return `${startYear}–${endYear}`;
 };
 
+/** The years in running text: "2008–2013", or "since 2019" while running. */
+export const yearsInText = (title: Pick<Show, 'startYear' | 'endYear'>) =>
+    title.startYear !== null && title.endYear === null
+        ? `since ${title.startYear}`
+        : formatYears(title);
+
+type Titled = { title: string; startYear: number | null };
+
+/**
+ * The title, with the year it started if another one has the same title,
+ * like "The Office (2005)", so search results tell them apart.
+ */
+export const distinctTitle = (item: Titled, all: Titled[]) =>
+    item.startYear !== null &&
+    all.some((other) => other !== item && other.title === item.title)
+        ? `${item.title} (${item.startYear})`
+        : item.title;
+
 export const changeTone = (change: number) =>
     change >= 0.05 ? 'up' : change <= -0.05 ? 'down' : undefined;

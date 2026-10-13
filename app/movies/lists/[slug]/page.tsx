@@ -10,6 +10,7 @@ import {
     FRANCHISE_SECTION_SLUGS,
 } from '@/lib/franchiseAnalysis';
 import { forEachMinCount, type MinCount } from '@/lib/minCount';
+import { listDescription } from '@/lib/sections';
 import homeCss from '../../../home.module.css';
 import css from '../../../lists/[slug]/list.module.css';
 
@@ -30,9 +31,14 @@ const getSection = (slug: string, minMovies?: MinCount) =>
 export async function generateMetadata({
     params,
 }: PageProps<'/movies/lists/[slug]'>): Promise<Metadata> {
-    const section = getSection((await params).slug);
+    const { slug } = await params;
+    const section = getSection(slug);
     return section
-        ? { title: section.title, description: section.description }
+        ? {
+              title: section.searchTitle,
+              description: listDescription(section),
+              alternates: { canonical: `/movies/lists/${slug}/` },
+          }
         : {};
 }
 

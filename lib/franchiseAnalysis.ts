@@ -114,6 +114,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
     {
         slug: 'most-popular',
         title: 'Most popular',
+        searchTitle: 'Most Popular Movie Franchises, Rated Movie by Movie',
         description: 'The film series with the most ratings on IMDb.',
         minVotes: MIN_VOTES,
         minRatings: 2,
@@ -122,6 +123,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
     {
         slug: 'best-over-time',
         title: 'Best over time',
+        searchTitle: 'Best Movie Franchises of All Time',
         description: (minMovies) =>
             `Highest average across all movies, at least ${numberWord(minMovies)} of them.`,
         minVotes: MIN_VOTES,
@@ -131,6 +133,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
     {
         slug: 'better-sequels',
         title: 'Better than the original',
+        searchTitle: 'Sequels Better Than the Original',
         description: 'A sequel came along that beat the first movie.',
         minVotes: MIN_VOTES,
         minRatings: 2,
@@ -142,6 +145,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
     {
         slug: 'original-is-best',
         title: 'Should have stopped at one',
+        searchTitle: 'Movie Franchises Where the Original Is Best',
         description: 'Every sequel fell well short of the original.',
         sharedVerdict: true,
         minVotes: MIN_VOTES,
@@ -154,6 +158,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
     {
         slug: 'back-on-form',
         title: 'Back on form',
+        searchTitle: 'Movie Franchises That Bounced Back',
         description:
             'Lost their way in the middle, then won the audience back.',
         minVotes: MIN_VOTES,
@@ -172,6 +177,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
     {
         slug: 'one-sequel-too-many',
         title: 'One sequel too many',
+        searchTitle: 'Movie Franchises Ruined by the Latest Sequel',
         description: 'The latest movie landed far below everything before it.',
         minVotes: MIN_VOTES,
         minRatings: 3,
@@ -185,6 +191,7 @@ const SECTION_DEFINITIONS: SectionDefinition<Franchise>[] = [
     {
         slug: 'diminishing-returns',
         title: 'Diminishing returns',
+        searchTitle: 'Movie Franchises That Got Worse With Every Sequel',
         description: 'Every movie rated lower than the one before.',
         sharedVerdict: true,
         minVotes: MIN_VOTES,
