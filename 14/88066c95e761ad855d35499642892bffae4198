@@ -1,0 +1,23 @@
+app/swipe/Swipe.tsx
+  s_f3f578aa1e7248::t_0b1198f85e5774 137-142,208
+components/ratingHint.module.css
+  s_f3f578aa1e7248::t_0b1198f85e5774 26-31
+components/RatingHint.tsx
+  s_f3f578aa1e7248::t_0b1198f85e5774 10-13,15,18-20,25,30,36,38-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1488066c95e761ad855d35499642892bffae4198",
+  "prompts": {},
+  "sessions": {
+    "s_f3f578aa1e7248": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "033fbc96-6d42-4ff1-9152-99912c925c3e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
