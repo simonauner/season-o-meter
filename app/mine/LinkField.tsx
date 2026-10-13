@@ -30,6 +30,22 @@ export function LinkField({
         }
     };
 
+    const share = async () => {
+        if (!link) return;
+        try {
+            await navigator.share({ title: shareTitle, url: link });
+        } catch (error) {
+            // Closing the share sheet is no reason to do anything else. Some
+            // browsers never settle a share whose sheet was dismissed and then
+            // turn down every later one, so copy the link instead.
+            if (!(
+                error instanceof DOMException && error.name === 'AbortError'
+            )) {
+                await copy();
+            }
+        }
+    };
+
     return (
         <div className={css.linkRow}>
             <input
@@ -49,15 +65,7 @@ export function LinkField({
                 {link !== null && copiedLink === link ? 'Copied' : 'Copy link'}
             </button>
             {link && 'share' in navigator && (
-                <button
-                    type="button"
-                    className={css.button}
-                    onClick={() =>
-                        navigator
-                            .share({ title: shareTitle, url: link })
-                            .catch(() => {})
-                    }
-                >
+                <button type="button" className={css.button} onClick={share}>
                     Share…
                 </button>
             )}
