@@ -11,7 +11,7 @@ import { clearHash, usePointedTo } from '@/lib/useHash';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import { LinkField } from './LinkField';
 import css from './mine.module.css';
-import { ConnectPrompt, SyncPanel } from './SyncPanel';
+import { ConnectPrompt } from '../profile/SyncPanel';
 
 /** The fragment that links to the share panel, as from the Friends page. */
 const SHARE_HASH = 'share';
@@ -33,6 +33,7 @@ export function MyList() {
                     : 'Your ratings and watchlist are kept in this browser. Nothing leaves it unless you share a link or turn on sync.'}
             </PageIntro>
 
+            {/* Sync links used to open My list, so ones from before still work. */}
             <ConnectPrompt />
 
             {failed ? (
@@ -48,12 +49,11 @@ export function MyList() {
                 <UserLists items={items} owner="Your" />
             )}
 
-            <div className={css.panels}>
-                <SyncPanel listShown={failed || items !== null} />
-                {data && items && items.length > 0 && (
+            {data && items && items.length > 0 && (
+                <div className={css.panels}>
                     <SharePanel data={data} secret={secret} />
-                )}
-            </div>
+                </div>
+            )}
         </>
     );
 }

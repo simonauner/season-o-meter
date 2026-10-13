@@ -429,8 +429,9 @@ function FriendsPanel({ friends }: { friends: Friend[] }) {
                     'Your friends are synced with your other devices.'
                 ) : (
                     <>
-                        Turn on sync on <Link href="/mine/#sync">My list</Link>{' '}
-                        to have your friends on your other devices too.
+                        Turn on sync on{' '}
+                        <Link href="/profile/#sync">Profile</Link> to have your
+                        friends on your other devices too.
                     </>
                 )}
             </p>

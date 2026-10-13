@@ -300,7 +300,7 @@ const siteUrl = (path: string) =>
     `${location.origin}${process.env.NEXT_PUBLIC_BASE_PATH}${path}`;
 
 /** Opening this on another device connects it to the list. */
-export const syncLink = (secret: string) => siteUrl(`/mine/#sync=${secret}`);
+export const syncLink = (secret: string) => siteUrl(`/profile/#sync=${secret}`);
 
 /** A read-only link that always shows the list as it is now. */
 export const liveShareLink = async (secret: string) =>

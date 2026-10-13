@@ -11,7 +11,7 @@ import {
     type ApproveResult,
     type Pairing,
 } from '@/lib/sync';
-import css from './mine.module.css';
+import css from '../mine/mine.module.css';
 
 const EXAMPLE = 'brave-otter';
 
@@ -23,8 +23,8 @@ const minutesAndSeconds = (ms: number) => {
     return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 };
 
-const minePage = () =>
-    `${location.host}${process.env.NEXT_PUBLIC_BASE_PATH}/mine/`;
+const profilePage = () =>
+    `${location.host}${process.env.NEXT_PUBLIC_BASE_PATH}/profile/`;
 
 const START_PROBLEMS = {
     'too-many': 'Too many tries. Wait a minute and try again.',
@@ -154,8 +154,8 @@ export function CodeOffer() {
     return (
         <div className={css.codeForm}>
             <p>
-                On the device that syncs, go to <strong>{minePage()}</strong>,
-                choose <em>Enter a code</em> and type:
+                On the device that syncs, go to <strong>{profilePage()}</strong>
+                , choose <em>Enter a code</em> and type:
             </p>
             <output className={css.code} aria-label="Pairing code">
                 {offer.pairing.code}
@@ -211,7 +211,7 @@ export function CodeForm({ secret }: { secret: string }) {
     return (
         <form className={css.reveal} onSubmit={submit}>
             <label htmlFor="pairing-code" className={css.label}>
-                On the other device, go to <strong>{minePage()}</strong> and
+                On the other device, go to <strong>{profilePage()}</strong> and
                 choose <em>Get a code</em>. Then enter the code here.
             </label>
             <div className={css.linkRow}>

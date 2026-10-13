@@ -1,5 +1,14 @@
 .panels {
+    grid-template-columns: minmax(0, 1fr);
     margin-top: 0;
+}
+
+/* One panel above the other, as wide as two of the three columns the other
+   pages' panels have. */
+@media (min-width: 1024px) {
+    .panels {
+        max-width: calc((100% - 2 * 16px) / 3 * 2 + 16px);
+    }
 }
 
 .link {
