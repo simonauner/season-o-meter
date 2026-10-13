@@ -77,10 +77,12 @@ are drawn next to IMDb's in the chart, and everything is listed on
   links and live links: a friend's link lets anyone read their list, and
   they only gave it to you ([lib/friends.ts](lib/friends.ts)).
 - **Swipe.** `/swipe/` shows one series or film series at a time, with its
-  poster and how many seasons or movies it has, to rate or skip. Skipping
-  is a button, an arrow key or dragging the card aside; ratings are a tap
-  or a number key. It favours popular titles, the ones visitors are most
-  likely to have seen, but in a new order every visit
+  poster and how many seasons or movies it has, to rate, skip or add to
+  the watchlist. Like a dating app, left is no and right is yes: dragging
+  the card left, pressing ← or the Skip button skips it, and dragging it
+  right or pressing → adds it to the watchlist. Ratings are a tap or a
+  number key. It favours popular titles, the ones visitors are most likely
+  to have seen, but in a new order every visit
   ([lib/swipeDeck.ts](lib/swipeDeck.ts)). Anything rated, skipped or on the
   watchlist doesn't come up again. Skips are kept with the ratings, so they
   sync, but are left out of share links and live links. `/profile/` lists

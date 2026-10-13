@@ -17,7 +17,13 @@ import { formatYears } from '@/lib/format';
 import type { SearchEntry } from '@/lib/searchIndex';
 import { storedChoice } from '@/lib/storedChoice';
 import { deckOrder, entryHref, partsLabel, remaining } from '@/lib/swipeDeck';
-import { MAX_RATING, MIN_RATING, ratingKey, skipKey } from '@/lib/userData';
+import {
+    MAX_RATING,
+    MIN_RATING,
+    ratingKey,
+    skipKey,
+    watchlistKey,
+} from '@/lib/userData';
 import { setValue, useUserData } from '@/lib/userStore';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import mineCss from '../mine/mine.module.css';
@@ -45,9 +51,9 @@ const RATINGS = Array.from(
 /** A new order on every visit, kept while moving around the site. */
 const SEED = Math.random();
 
-/** How far a card is dragged before letting go of it skips it. */
+/** How far a card is dragged before letting go of it skips or saves it. */
 const SWIPE_DISTANCE = 110;
-/** A flick this fast, in px/ms, skips from a shorter distance. */
+/** A flick this fast, in px/ms, counts from a shorter distance. */
 const FLICK_SPEED = 0.6;
 const FLICK_DISTANCE = 40;
 /** Movement before a press counts as a drag rather than a tap. */
@@ -120,18 +126,28 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
         setHistory((actions) => [...actions.slice(-19), { key, message }]);
     };
 
-    const skip = (direction: Direction, from = 0) => {
+    const skip = (from = 0) => {
+        if (top) {
+            act(top, skipKey(top.id), 1, 'left', from, `Skipped ${top.title}.`);
+        }
+    };
+
+    const save = (from = 0) => {
         if (top) {
             act(
                 top,
-                skipKey(top.id),
+                watchlistKey(top.id),
                 1,
-                direction,
+                'right',
                 from,
-                `Skipped ${top.title}.`
+                `Added ${top.title} to your watchlist.`
             );
         }
     };
+
+    /** Like a dating app: left is no, right is yes. */
+    const swipe = (direction: 'left' | 'right', from = 0) =>
+        direction === 'left' ? skip(from) : save(from);
 
     const rate = (rating: number) => {
         if (top) {
@@ -161,8 +177,10 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
         ) {
             return;
         }
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-            skip(event.key === 'ArrowLeft' ? 'left' : 'right');
+        if (event.key === 'ArrowLeft') {
+            skip();
+        } else if (event.key === 'ArrowRight') {
+            save();
         } else if (/^\d$/.test(event.key)) {
             // 0 is 10, the key after 9.
             rate(Number(event.key) || MAX_RATING);
@@ -198,7 +216,7 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                         entry={entry}
                         place={place}
                         from={place === leaving?.direction ? leaving.from : 0}
-                        onSkip={skip}
+                        onSwipe={swipe}
                         onLeft={() => setLeaving(null)}
                     />
                 ))}
@@ -206,7 +224,8 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                     <div className={css.empty}>
                         <p>
                             <strong>That’s everything.</strong> You’ve rated,
-                            skipped or saved every one of them.
+                            skipped or added every one of them to your
+                            watchlist.
                         </p>
                         <p>
                             Skipped ones can be brought back on your{' '}
@@ -245,7 +264,7 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                     type="button"
                     className={css.skip}
                     disabled={!top}
-                    onClick={() => skip('left')}
+                    onClick={() => skip()}
                 >
                     Skip
                 </button>
@@ -264,15 +283,18 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                 </div>
 
                 <p className={css.hint}>
-                    {deck.length.toLocaleString('en')} to go
                     <span className={css.touchHint}>
-                        {' '}
-                        · Swipe the card away to skip
+                        Swipe left to skip, right to add to your watchlist.
                     </span>
                     <span className={css.keyHint}>
-                        {' '}
-                        · Drag the card or press ← → to skip, 1–9 and 0 to rate
-                    </span>
+                        Drag left or press ← to skip, drag right or press → to
+                        add to your watchlist, press 1–9 and 0 to rate.
+                    </span>{' '}
+                    Skipped ones can be brought back on your{' '}
+                    <Link href="/profile/">Profile</Link>.
+                </p>
+                <p className={css.hint}>
+                    {deck.length.toLocaleString('en')} to go
                 </p>
             </div>
         </>
@@ -285,14 +307,14 @@ function Card({
     entry,
     place,
     from,
-    onSkip,
+    onSwipe,
     onLeft,
 }: {
     entry: SearchEntry;
     place: Place;
     /** How far it was dragged when it was let go, for leaving from there. */
     from: number;
-    onSkip: (direction: Direction, from: number) => void;
+    onSwipe: (direction: 'left' | 'right', from: number) => void;
     onLeft: () => void;
 }) {
     const [dx, setDx] = useState(0);
@@ -358,7 +380,7 @@ function Card({
             Math.abs(current.speed) > FLICK_SPEED &&
             Math.sign(current.speed) === Math.sign(dx);
         if (Math.abs(dx) > SWIPE_DISTANCE || flicked) {
-            onSkip(dx < 0 ? 'left' : 'right', dx);
+            onSwipe(dx < 0 ? 'left' : 'right', dx);
         }
     };
 
@@ -370,6 +392,7 @@ function Card({
 
     const leaving = place === 'left' || place === 'right' || place === 'up';
     const offset = leaving ? from : dx;
+    const progress = Math.min(1, Math.abs(dx) / SWIPE_DISTANCE);
 
     return (
         <article
@@ -380,7 +403,8 @@ function Card({
                 {
                     '--dx': `${offset}px`,
                     '--tilt': `${offset / 20}deg`,
-                    '--progress': Math.min(1, Math.abs(dx) / SWIPE_DISTANCE),
+                    '--skip-progress': dx < 0 ? progress : 0,
+                    '--save-progress': dx > 0 ? progress : 0,
                 } as CSSProperties
             }
             inert={!isTop}
@@ -416,8 +440,11 @@ function Card({
                         .join(' · ')}
                 </p>
             </div>
-            <span className={css.stamp} aria-hidden>
+            <span className={css.stamp} data-stamp="skip" aria-hidden>
                 Skip
+            </span>
+            <span className={css.stamp} data-stamp="save" aria-hidden>
+                Watchlist
             </span>
         </article>
     );
