@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { parsePairingCode } from '@/lib/pairingCode';
 import {
     approvePairing,
@@ -28,6 +28,7 @@ const minePage = () =>
 
 const START_PROBLEMS = {
     'too-many': 'Too many tries. Wait a minute and try again.',
+    held: 'Too many codes are waiting on your network. Cancel one on another device, or wait up to ten minutes.',
     busy: 'Too many devices are waiting for a code right now. Try again in a few minutes.',
     failed: 'Could not reach the sync server.',
     expired: 'The code has expired.',
@@ -45,10 +46,23 @@ export function CodeOffer() {
     const [offer, setOffer] = useState<Offer>({ phase: 'idle' });
     const [now, setNow] = useState(() => Date.now());
     const pairing = offer.phase === 'waiting' ? offer.pairing : null;
+    const mounted = useRef(true);
+
+    useEffect(() => {
+        mounted.current = true;
+        return () => {
+            mounted.current = false;
+        };
+    }, []);
 
     const start = async () => {
         setOffer({ phase: 'loading' });
         const started = await startPairing();
+        // Gone in the meantime, for example because sync was turned on.
+        if (!mounted.current) {
+            if (typeof started !== 'string') cancelPairing(started);
+            return;
+        }
         setNow(Date.now());
         setOffer(
             typeof started === 'string'
@@ -85,12 +99,16 @@ export function CodeOffer() {
         const clock = setInterval(tick, 1000);
         // Background tabs check less often, so check at once on return.
         document.addEventListener('visibilitychange', check);
+        // Effects aren't cleaned up when the page is reloaded or closed.
+        const leave = () => cancelPairing(pairing);
+        window.addEventListener('pagehide', leave);
         return () => {
             live = false;
             clearInterval(timer);
             clearInterval(clock);
             document.removeEventListener('visibilitychange', check);
-            // Connected, cancelled, expired or left: the code isn't needed.
+            window.removeEventListener('pagehide', leave);
+            // Connected, cancelled or expired: the code isn't needed.
             cancelPairing(pairing);
         };
     }, [pairing]);

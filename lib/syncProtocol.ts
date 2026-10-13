@@ -47,8 +47,8 @@ export type ListResponse = { data: UserData };
  * POST /v1/pair from a device that wants to connect, with the public key
  * the secret should be sealed for. `ticket` lets only that device collect
  * the secret. `expiresIn` is in milliseconds, so device clocks don't matter.
- * 429 if the device's network has too many codes waiting, 503 if everyone
- * has.
+ * 429 after too many tries, 409 if the device's network has too many codes
+ * waiting, and 503 if everyone together has.
  */
 export type PairRequest = { publicKey: string };
 

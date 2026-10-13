@@ -105,7 +105,7 @@ three per network, with at most 60 wrong codes entered a minute in all
 - `POST /v1/pair/cancel` with `{ "ticket": "…" }` forgets the code.
 
 Getting and entering codes is limited to ten times a minute per IP address
-(per /48 for IPv6), and waiting for one to sixty.
+(per /48 for IPv6), and waiting for or cancelling one to sixty.
 
 The site only offers sync when it's built with `NEXT_PUBLIC_SYNC_URL`, which
 the deploy workflow takes from the `SYNC_URL` repository variable. Deploy the

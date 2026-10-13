@@ -207,10 +207,12 @@ function clientKey(request: Request) {
 async function limitPairing(
     request: Request,
     env: Env,
-    action: 'create' | 'approve' | 'wait'
+    action: 'create' | 'approve' | 'wait' | 'cancel'
 ) {
     const limiter =
-        action === 'wait' ? env.PAIRING_WAIT_LIMITER : env.PAIRING_LIMITER;
+        action === 'wait' || action === 'cancel'
+            ? env.PAIRING_WAIT_LIMITER
+            : env.PAIRING_LIMITER;
     const { success } = await limiter.limit({
         key: `${action}:${clientKey(request)}`,
     });
@@ -258,7 +260,9 @@ async function handle(request: Request, env: Env): Promise<unknown> {
         if (created === 'full') {
             throw new HttpError(503, 'Too many devices waiting');
         }
-        if (created === 'too-many') throw new HttpError(429, 'Too many tries');
+        if (created === 'held') {
+            throw new HttpError(409, 'Too many codes waiting from here');
+        }
         return created;
     }
 
@@ -286,7 +290,7 @@ async function handle(request: Request, env: Env): Promise<unknown> {
     }
 
     if (pathname === '/v1/pair/cancel' && request.method === 'POST') {
-        await limitPairing(request, env, 'wait');
+        await limitPairing(request, env, 'cancel');
         await pairing(env).cancel(await ticketOf(request));
         return {};
     }

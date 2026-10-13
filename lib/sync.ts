@@ -210,7 +210,7 @@ export type Pairing = {
 
 /** Gets a pairing code for this device to show. */
 export async function startPairing(): Promise<
-    Pairing | 'too-many' | 'busy' | 'failed'
+    Pairing | 'too-many' | 'held' | 'busy' | 'failed'
 > {
     try {
         const { privateKey, publicKey } = await newPairingKeys();
@@ -221,6 +221,7 @@ export async function startPairing(): Promise<
             body: JSON.stringify(request),
         });
         if (res.status === 429) return 'too-many';
+        if (res.status === 409) return 'held';
         if (res.status === 503) return 'busy';
         if (!res.ok) return 'failed';
         const { code, ticket, expiresIn } = (await res.json()) as PairResponse;
@@ -255,12 +256,13 @@ export async function collectPairing(
 /** Tells the server to forget a code. Best effort, even as the page closes. */
 export function cancelPairing(pairing: Pairing) {
     const request: WaitRequest = { ticket: pairing.ticket };
-    fetch(`${SYNC_URL}/v1/pair/cancel`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(request),
-        keepalive: true,
-    }).catch(() => {});
+    // A beacon is still sent after the page is gone. Plain text keeps it a
+    // simple request, which needs no CORS preflight; the server reads it as
+    // JSON all the same.
+    navigator.sendBeacon(
+        `${SYNC_URL}/v1/pair/cancel`,
+        new Blob([JSON.stringify(request)], { type: 'text/plain' })
+    );
 }
 
 export type ApproveResult = 'approved' | 'unknown' | 'too-many' | 'failed';

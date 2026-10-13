@@ -39,7 +39,7 @@ const MAX_WAITING_PER_CLIENT = 3;
  */
 const MAX_WRONG_PER_MINUTE = 60;
 
-export type CreateResult = PairResponse | 'full' | 'too-many';
+export type CreateResult = PairResponse | 'full' | 'held';
 export type ApproveResult = 'approved' | 'unknown' | 'too-many';
 
 type Row = {
@@ -93,7 +93,7 @@ export class Pairing extends DurableObject<Env> {
         this.sweep();
         if (this.count('') >= MAX_WAITING) return 'full';
         if (this.count('WHERE client = ?', client) >= MAX_WAITING_PER_CLIENT) {
-            return 'too-many';
+            return 'held';
         }
 
         let code = newPairingCode();
@@ -133,7 +133,10 @@ export class Pairing extends DurableObject<Env> {
             )
             .toArray();
         if (!row) {
-            this.wrong.count++;
+            if (++this.wrong.count === MAX_WRONG_PER_MINUTE) {
+                // Visible in the worker's logs, in case it happens a lot.
+                console.warn('Pairing: too many wrong codes this minute');
+            }
             return 'unknown';
         }
         const sealed = await sealSecret(row.public_key, secret);
