@@ -9,6 +9,10 @@ const NUMBER_WORDS: Record<number, string> = {
 /** Small numbers in words, as in "at least three of them". */
 export const numberWord = (n: number) => NUMBER_WORDS[n] ?? String(n);
 
+/** Ends the text with a full stop unless it already ends a sentence. */
+export const sentence = (text: string) =>
+    /[.!?…]$/.test(text) ? text : `${text}.`;
+
 export const formatRating = (rating: number) => rating.toFixed(1);
 
 export const formatChange = (change: number) => {
