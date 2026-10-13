@@ -16,6 +16,7 @@ import { setValue, setValues, useUserData } from '@/lib/userStore';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import mineCss from '../mine/mine.module.css';
 import css from './profile.module.css';
+import { ConnectPrompt, SyncPanel } from './SyncPanel';
 
 const count = (n: number, noun: string) =>
     `${n.toLocaleString('en')} ${noun}${n === 1 ? '' : 's'}`;
@@ -33,6 +34,8 @@ export function Profile() {
                     : 'Everything here is kept in this browser.'}
             </PageIntro>
 
+            <ConnectPrompt />
+
             {failed ? (
                 <p className={mineCss.status}>Could not load your profile.</p>
             ) : !data || !index ? (
@@ -40,11 +43,8 @@ export function Profile() {
             ) : (
                 <div className={`${mineCss.panels} ${css.panels}`}>
                     <SkippedPanel data={data} index={index} />
-                    <OverviewPanel
-                        data={data}
-                        index={index}
-                        syncing={secret !== null}
-                    />
+                    <OverviewPanel data={data} index={index} />
+                    <SyncPanel />
                     <HeroPanel kind="series" />
                     <HeroPanel kind="movies" />
                     <TipsPanel />
@@ -153,11 +153,9 @@ function SkippedList({ entries }: { entries: SearchEntry[] }) {
 function OverviewPanel({
     data,
     index,
-    syncing,
 }: {
     data: UserData;
     index: SearchEntry[];
-    syncing: boolean;
 }) {
     const items = useMemo(() => listItems(data, index), [data, index]);
     const friends = friendsOf(data).length;
@@ -174,22 +172,12 @@ function OverviewPanel({
                     </Link>
                 </li>
                 {syncAvailable && (
-                    <>
-                        <li>
-                            {count(friends, 'friend')} to compare ratings with.{' '}
-                            <Link href="/friends/" className={css.link}>
-                                Friends
-                            </Link>
-                        </li>
-                        <li>
-                            Sync is {syncing ? 'on' : 'off'}. It’s turned on and
-                            off on{' '}
-                            <Link href="/mine/#sync" className={css.link}>
-                                My list
-                            </Link>
-                            .
-                        </li>
-                    </>
+                    <li>
+                        {count(friends, 'friend')} to compare ratings with.{' '}
+                        <Link href="/friends/" className={css.link}>
+                            Friends
+                        </Link>
+                    </li>
                 )}
             </ul>
         </section>

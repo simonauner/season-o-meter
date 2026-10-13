@@ -113,10 +113,10 @@ are drawn next to IMDb's in the chart, and everything is listed on
 - **Merging.** Every value is stored with when it was set, and the latest
   change wins per title, season or movie ([lib/userData.ts](lib/userData.ts)).
   That makes imports and syncs safe in any order.
-- **Sync between devices.** Turning on sync on `/mine/` creates a random
+- **Sync between devices.** Turning on sync on `/profile/` creates a random
   secret. Another device connects in one of three ways: opening the private
-  link `/mine/#sync=<secret>`, scanning a QR code of that link, or getting a
-  pairing code like `brave-otter` on its `/mine/` and entering it on a device
+  link `/profile/#sync=<secret>`, scanning a QR code of that link, or getting a
+  pairing code like `brave-otter` on its `/profile/` and entering it on a device
   that syncs. Devices sync when a page opens, when it comes back into view, a
   second after a change and every minute while it's visible
   ([lib/sync.ts](lib/sync.ts)).

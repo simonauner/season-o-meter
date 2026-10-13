@@ -12,8 +12,8 @@ import {
 } from '@/lib/sync';
 import { isSecret } from '@/lib/syncProtocol';
 import { clearHash, useHash, usePointedTo } from '@/lib/useHash';
-import { LinkField } from './LinkField';
-import css from './mine.module.css';
+import { LinkField } from '../mine/LinkField';
+import css from '../mine/mine.module.css';
 import { CodeForm, CodeOffer } from './PairingCode';
 import { QrCode } from './QrCode';
 
@@ -23,21 +23,16 @@ const PHASES: Record<SyncStatus['phase'], string> = {
     failed: 'Could not reach the sync server. Your changes are kept on this device and sync when it is back.',
 };
 
-/** The fragment that links to the sync panel, as from the Profile page. */
+/** The fragment that links to the sync panel, as from the Friends page. */
 const SYNC_HASH = 'sync';
 
-export function SyncPanel({
-    listShown,
-}: {
-    /** Until the list above has loaded, the panel isn't where it ends up. */
-    listShown: boolean;
-}) {
+export function SyncPanel() {
     const status = useSyncStatus();
     /** The other way to connect a device that is showing, if any. */
     const [shown, setShown] = useState<'qr' | 'code' | null>(null);
     const { ref, pointedTo } = usePointedTo<HTMLElement>(
         SYNC_HASH,
-        listShown && status !== null
+        status !== null
     );
     const syncing = !!status?.secret;
 
