@@ -25,6 +25,11 @@ Opening a title from a list or Swipe grows its poster into the one on its
 page, in browsers with view transitions
 ([components/PosterTransition.tsx](components/PosterTransition.tsx)).
 
+Shared links show a preview image: for a series or film series, its verdict
+and a bar per season or movie, and for every other page, the site's own.
+They're drawn at build time, one `og.png` next to each title's page
+([lib/ogImage.tsx](lib/ogImage.tsx)).
+
 ## How it works
 
 The site is fully static. There are no API calls when someone visits it,

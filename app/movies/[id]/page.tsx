@@ -16,6 +16,7 @@ import {
     formatYears,
     sentence,
 } from '@/lib/format';
+import { openGraph } from '@/lib/openGraph';
 import type { Movie } from '@/lib/types';
 import css from '../../detail.module.css';
 
@@ -34,6 +35,10 @@ export async function generateMetadata({
     return {
         title: franchise.title,
         description: `${franchise.title} rated movie by movie.${trend ? ` ${sentence(trend.verdict)}` : ''}`,
+        openGraph: openGraph(
+            `/movies/${franchise.id}/og.png`,
+            `Bar chart of ${franchise.title}'s ratings movie by movie`
+        ),
     };
 }
 

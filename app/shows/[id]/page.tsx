@@ -16,6 +16,7 @@ import {
     formatYears,
     sentence,
 } from '@/lib/format';
+import { openGraph } from '@/lib/openGraph';
 import type { RatedSeason } from '@/lib/types';
 import css from '../../detail.module.css';
 
@@ -34,6 +35,10 @@ export async function generateMetadata({
     return {
         title: show.title,
         description: `${show.title} rated season by season.${trend ? ` ${sentence(trend.verdict)}` : ''}`,
+        openGraph: openGraph(
+            `/shows/${show.id}/og.png`,
+            `Bar chart of ${show.title}'s ratings season by season`
+        ),
     };
 }
 
