@@ -4,7 +4,9 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { parsePairingCode } from '@/lib/pairingCode';
 import {
     approvePairing,
-    checkPairing,
+    cancelPairing,
+    collectPairing,
+    connect,
     startPairing,
     type ApproveResult,
     type Pairing,
@@ -14,7 +16,7 @@ import css from './mine.module.css';
 const EXAMPLE = 'brave-otter';
 
 /** How often a waiting device asks whether its code has been entered. */
-const CHECK_INTERVAL_MS = 2000;
+const CHECK_INTERVAL_MS = 3000;
 
 const minutesAndSeconds = (ms: number) => {
     const seconds = Math.ceil(ms / 1000);
@@ -24,8 +26,15 @@ const minutesAndSeconds = (ms: number) => {
 const minePage = () =>
     `${location.host}${process.env.NEXT_PUBLIC_BASE_PATH}/mine/`;
 
+const START_PROBLEMS = {
+    'too-many': 'Too many tries. Wait a minute and try again.',
+    busy: 'Too many devices are waiting for a code right now. Try again in a few minutes.',
+    failed: 'Could not reach the sync server.',
+    expired: 'The code has expired.',
+};
+
 type Offer =
-    | { phase: 'idle' | 'loading' | 'failed' | 'expired' }
+    | { phase: 'idle' | 'loading' | keyof typeof START_PROBLEMS }
     | { phase: 'waiting'; pairing: Pairing };
 
 /**
@@ -39,13 +48,13 @@ export function CodeOffer() {
 
     const start = async () => {
         setOffer({ phase: 'loading' });
-        try {
-            const started = await startPairing();
-            setNow(Date.now());
-            setOffer({ phase: 'waiting', pairing: started });
-        } catch {
-            setOffer({ phase: 'failed' });
-        }
+        const started = await startPairing();
+        setNow(Date.now());
+        setOffer(
+            typeof started === 'string'
+                ? { phase: started }
+                : { phase: 'waiting', pairing: started }
+        );
     };
 
     useEffect(() => {
@@ -53,29 +62,36 @@ export function CodeOffer() {
         let live = true;
         let checking = false;
         const check = async () => {
-            if (checking || document.visibilityState !== 'visible') return;
+            if (checking) return;
             checking = true;
             try {
-                // When it connects, the panel switches to showing that sync
-                // is on, so only expiry needs handling here.
-                const result = await checkPairing(pairing);
-                if (live && result === 'expired') {
-                    setOffer({ phase: 'expired' });
-                }
+                const result = await collectPairing(pairing);
+                if (!live) return;
+                if (result === 'expired') setOffer({ phase: 'expired' });
+                // The panel then switches to showing that sync is on, which
+                // unmounts this and forgets the code.
+                else if (result !== 'waiting') connect(result.secret);
             } catch {
                 // Tried again on the next tick.
             } finally {
                 checking = false;
             }
         };
+        const tick = () => {
+            setNow(Date.now());
+            if (Date.now() >= pairing.expiresAt) setOffer({ phase: 'expired' });
+        };
         const timer = setInterval(check, CHECK_INTERVAL_MS);
-        const clock = setInterval(() => setNow(Date.now()), 1000);
+        const clock = setInterval(tick, 1000);
+        // Background tabs check less often, so check at once on return.
         document.addEventListener('visibilitychange', check);
         return () => {
             live = false;
             clearInterval(timer);
             clearInterval(clock);
             document.removeEventListener('visibilitychange', check);
+            // Connected, cancelled, expired or left: the code isn't needed.
+            cancelPairing(pairing);
         };
     }, [pairing]);
 
@@ -100,22 +116,16 @@ export function CodeOffer() {
         );
     }
 
-    if (!pairing) {
+    if (offer.phase !== 'waiting') {
         return (
             <div className={css.codeForm}>
-                <p>
-                    {offer.phase === 'failed'
-                        ? 'Could not reach the sync server.'
-                        : 'The code has expired.'}
-                </p>
+                <p role="alert">{START_PROBLEMS[offer.phase]}</p>
                 <button type="button" className={css.secondary} onClick={start}>
                     Get a new code
                 </button>
             </div>
         );
     }
-
-    const left = pairing.expiresAt - now;
 
     return (
         <div className={css.codeForm}>
@@ -124,14 +134,13 @@ export function CodeOffer() {
                 choose <em>Enter a code</em> and type:
             </p>
             <output className={css.code} aria-label="Pairing code">
-                {pairing.code}
+                {offer.pairing.code}
             </output>
             <p className={css.expiry} role="status">
-                {left > 0
-                    ? `Waiting for the code to be entered. Expires in ${minutesAndSeconds(left)}.`
-                    : 'Expiring…'}
+                Waiting for the code to be entered.
             </p>
             <p className={css.expiry}>
+                Expires in {minutesAndSeconds(offer.pairing.expiresAt - now)}.
                 What you have rated on this device is then added to the list.
             </p>
             <button

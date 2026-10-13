@@ -152,11 +152,16 @@ async function readJson(request: Request): Promise<unknown> {
     const text = await request.text();
     if (text.length > MAX_BODY_BYTES)
         throw new HttpError(413, 'Body too large');
+    let body: unknown;
     try {
-        return JSON.parse(text);
+        body = JSON.parse(text);
     } catch {
         throw new HttpError(400, 'Body is not JSON');
     }
+    if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+        throw new HttpError(400, 'Body is not a JSON object');
+    }
+    return body;
 }
 
 const list = (env: Env, listId: string) =>
@@ -171,8 +176,8 @@ function secretOf(request: Request) {
 }
 
 /**
- * Who a rate limit counts: an IPv4 address, or an IPv6 /64, since anyone
- * with IPv6 usually has a whole /64 of addresses to pick from.
+ * Who a rate limit counts: an IPv4 address, or an IPv6 /48, since anyone
+ * with IPv6 can have up to a /48 of addresses to pick from, even for free.
  */
 function clientKey(request: Request) {
     const ip = request.headers.get('CF-Connecting-IP') ?? 'unknown';
@@ -189,20 +194,34 @@ function clientKey(request: Request) {
                   ...after,
               ];
     return `${groups
-        .slice(0, 4)
+        .slice(0, 3)
         .map((group) => parseInt(group, 16).toString(16))
-        .join(':')}::/64`;
+        .join(':')}::/48`;
 }
 
 /**
- * Limits pairing requests per client, which keeps anyone from guessing
- * codes or holding many of them.
+ * Limits pairing requests per client: getting and entering codes tightly,
+ * which keeps anyone from guessing codes or holding many of them, and
+ * waiting for one loosely, since waiting devices ask every few seconds.
  */
-async function limitPairing(request: Request, env: Env, action: string) {
-    const { success } = await env.PAIRING_LIMITER.limit({
+async function limitPairing(
+    request: Request,
+    env: Env,
+    action: 'create' | 'approve' | 'wait'
+) {
+    const limiter =
+        action === 'wait' ? env.PAIRING_WAIT_LIMITER : env.PAIRING_LIMITER;
+    const { success } = await limiter.limit({
         key: `${action}:${clientKey(request)}`,
     });
     if (!success) throw new HttpError(429, 'Too many tries');
+}
+
+/** A waiting device's ticket from a request body. */
+async function ticketOf(request: Request) {
+    const body = (await readJson(request)) as { ticket?: unknown };
+    if (!isSecret(body.ticket)) throw new HttpError(404, 'No such code');
+    return body.ticket;
 }
 
 async function handle(request: Request, env: Env): Promise<unknown> {
@@ -232,8 +251,14 @@ async function handle(request: Request, env: Env): Promise<unknown> {
         if (!(await canSealFor(body.publicKey))) {
             throw new HttpError(400, 'Missing public key');
         }
-        const created = await pairing(env).create(body.publicKey as string);
-        if (!created) throw new HttpError(503, 'Too many devices waiting');
+        const created = await pairing(env).create(
+            body.publicKey as string,
+            clientKey(request)
+        );
+        if (created === 'full') {
+            throw new HttpError(503, 'Too many devices waiting');
+        }
+        if (created === 'too-many') throw new HttpError(429, 'Too many tries');
         return created;
     }
 
@@ -245,19 +270,25 @@ async function handle(request: Request, env: Env): Promise<unknown> {
             typeof body.code === 'string' && body.code.length <= 100
                 ? parsePairingCode(body.code)
                 : null;
-        if (!code || !(await pairing(env).approve(code, secret))) {
-            throw new HttpError(404, 'No such code');
-        }
+        const approved = code
+            ? await pairing(env).approve(code, secret)
+            : 'unknown';
+        if (approved === 'unknown') throw new HttpError(404, 'No such code');
+        if (approved === 'too-many') throw new HttpError(429, 'Too many tries');
         return {};
     }
 
     if (pathname === '/v1/pair/wait' && request.method === 'POST') {
-        const body = (await readJson(request)) as { ticket?: unknown };
-        const waiting = isSecret(body.ticket)
-            ? await pairing(env).wait(body.ticket)
-            : null;
+        await limitPairing(request, env, 'wait');
+        const waiting = await pairing(env).wait(await ticketOf(request));
         if (!waiting) throw new HttpError(404, 'No such code');
         return waiting;
+    }
+
+    if (pathname === '/v1/pair/cancel' && request.method === 'POST') {
+        await limitPairing(request, env, 'wait');
+        await pairing(env).cancel(await ticketOf(request));
+        return {};
     }
 
     const match = /^\/v1\/lists\/([^/]+)$/.exec(pathname);

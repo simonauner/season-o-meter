@@ -200,28 +200,43 @@ export function connect(secret = newSecret()) {
 }
 
 /** A device waiting for a device that syncs to enter its pairing code. */
-export type Pairing = PairResponse & { privateKey: CryptoKey };
+export type Pairing = {
+    code: string;
+    ticket: string;
+    /** By this device's clock. */
+    expiresAt: number;
+    privateKey: CryptoKey;
+};
 
 /** Gets a pairing code for this device to show. */
-export async function startPairing(): Promise<Pairing> {
-    const { privateKey, publicKey } = await newPairingKeys();
-    const request: PairRequest = { publicKey };
-    const res = await fetch(`${SYNC_URL}/v1/pair`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(request),
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return { ...((await res.json()) as PairResponse), privateKey };
+export async function startPairing(): Promise<
+    Pairing | 'too-many' | 'busy' | 'failed'
+> {
+    try {
+        const { privateKey, publicKey } = await newPairingKeys();
+        const request: PairRequest = { publicKey };
+        const res = await fetch(`${SYNC_URL}/v1/pair`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(request),
+        });
+        if (res.status === 429) return 'too-many';
+        if (res.status === 503) return 'busy';
+        if (!res.ok) return 'failed';
+        const { code, ticket, expiresIn } = (await res.json()) as PairResponse;
+        return { code, ticket, expiresAt: Date.now() + expiresIn, privateKey };
+    } catch {
+        return 'failed';
+    }
 }
 
 /**
- * Checks whether the code has been entered, and connects this device to
- * the list if it has.
+ * Whether the code has been entered yet, and the list's secret if it has.
+ * Throws if the server can't be reached.
  */
-export async function checkPairing(
+export async function collectPairing(
     pairing: Pairing
-): Promise<'waiting' | 'connected' | 'expired'> {
+): Promise<'waiting' | 'expired' | { secret: string }> {
     const request: WaitRequest = { ticket: pairing.ticket };
     const res = await fetch(`${SYNC_URL}/v1/pair/wait`, {
         method: 'POST',
@@ -234,8 +249,18 @@ export async function checkPairing(
     if (!sealed) return 'waiting';
     const secret = await openSecret(pairing.privateKey, sealed);
     if (!isSecret(secret)) throw new Error('Not a secret');
-    await connect(secret);
-    return 'connected';
+    return { secret };
+}
+
+/** Tells the server to forget a code. Best effort, even as the page closes. */
+export function cancelPairing(pairing: Pairing) {
+    const request: WaitRequest = { ticket: pairing.ticket };
+    fetch(`${SYNC_URL}/v1/pair/cancel`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(request),
+        keepalive: true,
+    }).catch(() => {});
 }
 
 export type ApproveResult = 'approved' | 'unknown' | 'too-many' | 'failed';

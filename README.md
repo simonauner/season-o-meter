@@ -71,11 +71,14 @@ are drawn next to IMDb's in the chart, and everything is listed on
   second after a change and every minute while it's visible
   ([lib/sync.ts](lib/sync.ts)).
 - **Pairing codes.** A code is two words from lists of 256 short words
-  ([lib/pairingWords.ts](lib/pairingWords.ts)), far too few combinations to
-  protect anything. So the code doesn't: the secret only goes to the device
+  ([lib/pairingWords.ts](lib/pairingWords.ts)), too few combinations to
+  protect a secret. So the code doesn't: the secret only goes to the device
   showing the code someone typed, encrypted for a key that only that device
-  has. Guessing a code at most connects a stranger's new device to the
-  guesser's own list. Codes last ten minutes
+  has, and codes last ten minutes. Guessing codes could connect a stranger's
+  new device to the guesser's list, so the server keeps guessing slow for
+  everyone together. Holding codes in the hope that someone mistypes theirs
+  into one would get the holder that person's secret, so no two words are
+  one typo apart and nobody can hold more than a few codes
   ([lib/pairingCode.ts](lib/pairingCode.ts)).
 
 ## Sync server
@@ -85,7 +88,8 @@ list, which keeps the list in SQLite and merges changes with the same rule as
 the site. Lists are stored under a hash of the secret, which is also the id in
 read-only links, so the server never stores a secret
 ([lib/syncProtocol.ts](lib/syncProtocol.ts)). One more Durable Object keeps
-the pairing codes that devices are waiting with, at most 1,000 at a time
+the pairing codes that devices are waiting with: at most 1,000 at a time and
+three per network, with at most 60 wrong codes entered a minute in all
 ([sync/src/pairing.ts](sync/src/pairing.ts)).
 
 - `POST /v1/sync` with `Authorization: Bearer <secret>` sends a device's
@@ -98,9 +102,10 @@ the pairing codes that devices are waiting with, at most 1,000 at a time
   device waiting with that code, or returns 404.
 - `POST /v1/pair/wait` with `{ "ticket": "…" }` returns the sealed secret
   once the code has been entered, and `null` until then.
+- `POST /v1/pair/cancel` with `{ "ticket": "…" }` forgets the code.
 
 Getting and entering codes is limited to ten times a minute per IP address
-(per /64 for IPv6).
+(per /48 for IPv6), and waiting for one to sixty.
 
 The site only offers sync when it's built with `NEXT_PUBLIC_SYNC_URL`, which
 the deploy workflow takes from the `SYNC_URL` repository variable. Deploy the

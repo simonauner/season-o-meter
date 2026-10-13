@@ -7,8 +7,14 @@
  * There are only 256 × 256 codes, so the code can't protect the secret on
  * its own. The secret only goes where someone typed the code, and it goes
  * encrypted for a key that only the waiting device has (`newPairingKeys`).
- * Guessing a code at most connects a stranger's new device to the guesser's
- * own list. Codes last ten minutes.
+ * Codes last ten minutes. What's left to guard against:
+ *
+ * - Guessing codes on a device that syncs, which connects a stranger's
+ *   waiting device to the guesser's list. The server keeps guessing slow
+ *   for everyone together (sync/src/pairing.ts).
+ * - Holding codes in the hope that someone mistypes theirs into one, which
+ *   would send their secret to the holder. No two words are one typo apart
+ *   (lib/pairingWords.ts), and the server caps how many codes anyone holds.
  */
 
 import { ADJECTIVES, NOUNS } from './pairingWords';

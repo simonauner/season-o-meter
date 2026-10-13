@@ -46,11 +46,13 @@ export type ListResponse = { data: UserData };
 /**
  * POST /v1/pair from a device that wants to connect, with the public key
  * the secret should be sealed for. `ticket` lets only that device collect
- * the secret. `expiresAt` is in milliseconds.
+ * the secret. `expiresIn` is in milliseconds, so device clocks don't matter.
+ * 429 if the device's network has too many codes waiting, 503 if everyone
+ * has.
  */
 export type PairRequest = { publicKey: string };
 
-export type PairResponse = { code: string; ticket: string; expiresAt: number };
+export type PairResponse = { code: string; ticket: string; expiresIn: number };
 
 /**
  * POST /v1/pair/approve with `Authorization: Bearer <secret>`, from a device
@@ -62,6 +64,8 @@ export type ApproveRequest = { code: string };
 /**
  * POST /v1/pair/wait from the waiting device: the sealed secret once the
  * code has been entered, and null until then. 404 once the code expires.
+ * POST /v1/pair/cancel with the same body forgets the code, once the device
+ * has connected or stops waiting.
  */
 export type WaitRequest = { ticket: string };
 
