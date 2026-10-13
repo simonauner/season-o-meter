@@ -1,0 +1,23 @@
+README.md
+  s_26d97c8be26803::t_0d47c23e9f74a0 52-54
+.github/workflows/deploy.yml
+  s_26d97c8be26803::t_3e7c09f78cbc93 64-71
+  s_26d97c8be26803::t_8a5eb4d64d4b13 36,39-49
+  s_26d97c8be26803::t_e3fc8b093245a1 37-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "284926dc0806173cc382c9bf63d73aba32f635e8",
+  "prompts": {},
+  "sessions": {
+    "s_26d97c8be26803": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "381089d8-632c-4b36-ba82-65eb1552a788",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
