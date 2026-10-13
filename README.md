@@ -151,6 +151,8 @@ three per network, with at most 60 wrong codes entered a minute in all
 
 - `POST /v1/sync` with `Authorization: Bearer <secret>` sends a device's
   changes and returns what changed since the device's last sync.
+- `DELETE /v1/sync` with `Authorization: Bearer <secret>` deletes the list.
+  Syncing with it after that returns 410.
 - `GET /v1/lists/<id>` returns a list for a read-only link, without its
   friends.
 - `POST /v1/pair` with `{ "publicKey": "…" }`, from a device that wants to
