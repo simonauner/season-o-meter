@@ -1,0 +1,23 @@
+components/YourRating.tsx
+  s_f3f578aa1e7248::t_a5320e956640ac 7,33-71,75,79,83,90-98,103,184
+  s_f3f578aa1e7248::t_3a871f0d209ad9 110-111,116-117
+  s_f3f578aa1e7248::t_3561bea3aec20c 3
+components/yourRating.module.css
+  s_f3f578aa1e7248::t_a5320e956640ac 132-145,150-154
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "1ea4a1ce58f6f69f85581a81cf1a38c10a1911fa",
+  "prompts": {},
+  "sessions": {
+    "s_f3f578aa1e7248": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "033fbc96-6d42-4ff1-9152-99912c925c3e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
