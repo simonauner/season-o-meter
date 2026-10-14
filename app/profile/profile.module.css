@@ -139,3 +139,8 @@
     background: var(--down);
     color: var(--page);
 }
+
+/* Stays red on hover, over the outlined buttons' own hover. */
+.danger .confirm:enabled:hover {
+    border-color: var(--down);
+}

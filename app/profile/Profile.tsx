@@ -387,7 +387,7 @@ function DangerZonePanel({ secret }: { secret: string | null }) {
                             <div className={mineCss.buttons}>
                                 <button
                                     type="button"
-                                    className={`${mineCss.filled} ${css.confirm}`}
+                                    className={`${mineCss.outlined} ${css.confirm}`}
                                     disabled={busy}
                                     onClick={() => remove(removal)}
                                 >

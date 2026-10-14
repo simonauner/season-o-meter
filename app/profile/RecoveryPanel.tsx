@@ -55,7 +55,7 @@ export function RecoveryPanel() {
                     </p>
                     <button
                         type="button"
-                        className={mineCss.filled}
+                        className={`${mineCss.outlined} ${mineCss.tonal}`}
                         onClick={() => connect()}
                     >
                         Create a recovery key
@@ -90,7 +90,11 @@ function KeyShown({ secret }: { secret: string }) {
             </p>
             <output className={`${mineCss.code} ${css.key}`}>{key}</output>
             <div className={`${mineCss.buttons} ${css.keyButtons}`}>
-                <button type="button" className={mineCss.filled} onClick={copy}>
+                <button
+                    type="button"
+                    className={`${mineCss.outlined} ${mineCss.tonal}`}
+                    onClick={copy}
+                >
                     {copied === key ? 'Copied' : 'Copy key'}
                 </button>
                 <a href={mailLink(secret)} className={mineCss.outlined}>
@@ -162,7 +166,7 @@ function KeyForm({ status }: { status: SyncStatus }) {
                 />
                 <button
                     type="submit"
-                    className={mineCss.filled}
+                    className={`${mineCss.outlined} ${mineCss.tonal}`}
                     disabled={busy || !input.trim()}
                 >
                     {busy ? 'Restoring…' : 'Restore'}
