@@ -1,0 +1,26 @@
+app/shared/SharedList.tsx
+  s_c3c89dd62c77a4::t_4f0a89b0faebf9 100
+app/friends/AddFriend.tsx
+  s_c3c89dd62c77a4::t_1b216027094b4d 110-114
+app/mine/LinkField.tsx
+  s_c3c89dd62c77a4::t_1b216027094b4d 72-76
+  s_c3c89dd62c77a4::t_5401dbf393c120 60-64
+app/mine/mine.module.css
+  s_c3c89dd62c77a4::t_4f0a89b0faebf9 47,121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "736bc17c64bcc208d37af94866a7597439fac6a7",
+  "prompts": {},
+  "sessions": {
+    "s_c3c89dd62c77a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "99c7bf8c-def6-4783-bb23-9007a497f593",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
