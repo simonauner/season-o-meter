@@ -26,17 +26,18 @@ export default function Page() {
         findShowSections(getShows(), SHOWS_PER_SECTION, minSeasons)
     );
 
-    // The hero picks one of the series that top a section.
+    // The hero picks one of the series that top a section, with a curve to
+    // draw.
     const featured = forEachMinCount((minSeasons) =>
-        topOfEachSection(sectionsByMinSeasons[minSeasons]).map(
-            ({ section, item }) => (
+        topOfEachSection(sectionsByMinSeasons[minSeasons])
+            .filter(({ item }) => ratedSeasons(item.seasons).length >= 2)
+            .map(({ section, item }) => (
                 <FeaturedShow
                     key={item.id}
                     show={item}
                     eyebrow={`No. 1 in ${section.title}`}
                 />
-            )
-        )
+            ))
     );
 
     // The welcome draws the best-known series that collapsed at the end.

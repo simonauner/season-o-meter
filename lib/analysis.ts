@@ -150,6 +150,8 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
 }
 
 const MIN_VOTES = 50_000;
+/** About as many as a season of network TV. */
+const MAX_EPISODES_IN_A_SEASON = 26;
 
 const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
     {
@@ -248,6 +250,22 @@ const SECTION_DEFINITIONS: SectionDefinition<Show>[] = [
             );
             return decline >= 0.8 && steepestDrop <= 1 ? decline : null;
         },
+    },
+    {
+        slug: 'one-season-wonders',
+        title: 'One season wonders',
+        searchTitle: 'Best Miniseries and One-Season TV Shows',
+        description: 'Ended after a single season. No curve, just a rating.',
+        ownMinimum: true,
+        minVotes: MIN_VOTES,
+        minRatings: 1,
+        maxRatings: 1,
+        // IMDb lists some long anime, like One Piece, as one season.
+        filter: (show) =>
+            hasEnded(show) &&
+            show.seasons.length === 1 &&
+            show.seasons[0].episodeCount <= MAX_EPISODES_IN_A_SEASON,
+        score: (_, show) => show.rating,
     },
 ];
 

@@ -171,22 +171,54 @@ function Bars({ bars }: { bars: OgBar[] }) {
     );
 }
 
+/** One rating, big, for a series with nothing to compare it with. */
+function BigRating({ rating, label }: { rating: number; label: string }) {
+    return (
+        <div
+            style={{
+                display: 'flex',
+                flex: 1,
+                alignItems: 'flex-end',
+                gap: 20,
+            }}
+        >
+            <span
+                style={{
+                    fontSize: 168,
+                    fontWeight: 700,
+                    lineHeight: 0.85,
+                    letterSpacing: '-0.03em',
+                    color: ACCENT,
+                }}
+            >
+                {formatRating(rating)}
+            </span>
+            <span style={{ fontSize: 34, color: MUTED }}>{label}</span>
+        </div>
+    );
+}
+
 /** Shrinks long titles so they still fit on two lines. */
 const titleSize = (title: string) =>
     title.length > 40 ? 52 : title.length > 24 ? 62 : 76;
 
-/** A link preview for a series or film series: its verdict and ratings. */
+/**
+ * A link preview for a series or film series: its verdict and ratings, or
+ * its one rating when there's only one.
+ */
 export function titleImage({
     title,
     meta,
     verdict,
     bars,
+    single,
 }: {
     title: string;
     /** Shown under the title, like ["TV series", "2008–2013", "5 seasons"]. */
     meta: string[];
     verdict?: string;
     bars: OgBar[];
+    single?: { rating: number; label: string };
 }) {
     return render(
         <div
@@ -237,7 +269,7 @@ export function titleImage({
                     </span>
                 )}
             </div>
-            <Bars bars={bars} />
+            {single ? <BigRating {...single} /> : <Bars bars={bars} />}
         </div>
     );
 }

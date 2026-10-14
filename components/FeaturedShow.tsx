@@ -1,5 +1,5 @@
 import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
-import { formatRating, formatVotes, formatYears } from '@/lib/format';
+import { countOf, formatRating, formatVotes, formatYears } from '@/lib/format';
 import type { Show } from '@/lib/types';
 import { Featured } from './Featured';
 import { SeasonChart } from './SeasonChart';
@@ -29,7 +29,7 @@ export function FeaturedShow({
                 poster: show.poster,
             }}
             eyebrow={eyebrow}
-            meta={`${formatYears(show)} · ${seasons.length} seasons · ${formatVotes(show.votes)} votes`}
+            meta={`${formatYears(show)} · ${countOf(seasons.length, 'season')} · ${formatVotes(show.votes)} votes`}
             verdict={trend?.verdict}
             stats={
                 trend && [

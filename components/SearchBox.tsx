@@ -12,7 +12,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { formatYears } from '@/lib/format';
+import { countOf, formatYears } from '@/lib/format';
 import { search } from '@/lib/searchIndex';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import { Poster } from './Poster';
@@ -21,7 +21,7 @@ import css from './searchBox.module.css';
 
 const MAX_SUGGESTIONS = 6;
 
-const PARTS = { series: 'seasons', movies: 'movies' } as const;
+const PARTS = { series: 'season', movies: 'movie' } as const;
 
 const searchHref = (query: string) =>
     `/search/?q=${encodeURIComponent(query.trim())}`;
@@ -213,8 +213,10 @@ export function SearchBox() {
                                         <strong>{entry.title}</strong>
                                         <span>
                                             {formatYears(entry)} ·{' '}
-                                            {entry.ratings.length}{' '}
-                                            {PARTS[entry.type]}
+                                            {countOf(
+                                                entry.ratings.length,
+                                                PARTS[entry.type]
+                                            )}
                                         </span>
                                     </span>
                                     <span className={css.spark}>

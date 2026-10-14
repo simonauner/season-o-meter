@@ -397,10 +397,12 @@ async function main() {
                 };
             });
 
-        // A single season has no curve to look at.
-        if (seasons.filter((season) => season.rating !== null).length < 2) {
-            continue;
-        }
+        // A series with one season has no curve, but its page still says
+        // how that season is rated. One with more needs two to draw it.
+        const ratedCount = seasons.filter(
+            (season) => season.rating !== null
+        ).length;
+        if (ratedCount < Math.min(2, seasons.length)) continue;
 
         const { rating, votes } = ratings.get(id)!;
         shows.push({ ...info, rating, votes, seasons });
