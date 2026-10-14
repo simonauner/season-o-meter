@@ -1,0 +1,19 @@
+app/shows/[id]/page.tsx
+  s_914bbd2e1bd9d5::t_713e9f1d2cfe45 127,132
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "db3dc7da83e430d3dbbad36c702588a97b5608ae",
+  "prompts": {},
+  "sessions": {
+    "s_914bbd2e1bd9d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "228080c6-72fa-43fa-bcb2-4056c0ddeea5",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
