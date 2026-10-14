@@ -51,6 +51,23 @@ export default function Page() {
         ),
     };
 
+    // And the best-rated of the most popular, to start a watchlist with.
+    const picks = getShows()
+        .filter((show) => show.id !== collapsed?.id)
+        .toSorted((a, b) => b.votes - a.votes)
+        .slice(0, 20)
+        .toSorted((a, b) => b.rating - a.rating)
+        .slice(0, 3)
+        .map((show) => ({
+            type: 'series' as const,
+            id: show.id,
+            title: show.title,
+            startYear: show.startYear,
+            endYear: show.endYear,
+            ratings: ratedSeasons(show.seasons).map(({ rating }) => rating),
+            poster: show.poster,
+        }));
+
     const variants = forEachMinCount((minSeasons) =>
         sectionsByMinSeasons[minSeasons].map((section) => (
             <HomeSection
@@ -81,6 +98,7 @@ export default function Page() {
                     </PageIntro>
                 }
                 example={example}
+                picks={picks}
             />
             <div className={css.filters}>
                 <MinCountPicker kind="series" />
