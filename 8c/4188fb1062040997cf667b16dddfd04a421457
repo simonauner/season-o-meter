@@ -1,0 +1,26 @@
+lib/useStaticJson.ts
+  s_92bf294eca7bf6::t_764370416663ae 8-13,15-23,30-34
+components/RatedFilter.tsx
+  s_92bf294eca7bf6::t_a8ab2cfc0badce 116-124
+  s_92bf294eca7bf6::t_d2748ec24ce273 4-5,54-57
+  s_92bf294eca7bf6::t_59976436ac5a39 58
+lib/historyState.ts
+  s_92bf294eca7bf6::t_99f14bec4c7023 5-13,15,17,19-30
+  s_92bf294eca7bf6::t_bebed227d3e7e3 1-4,14,16,18,31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8c4188fb1062040997cf667b16dddfd04a421457",
+  "prompts": {},
+  "sessions": {
+    "s_92bf294eca7bf6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f11edb60-38e0-4d92-ba9f-7806120ad59b",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
