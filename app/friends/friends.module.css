@@ -19,11 +19,6 @@
     font-size: 0.875rem;
 }
 
-.chips button:disabled {
-    opacity: 0.6;
-    cursor: default;
-}
-
 /* On phones, where the column headers are small to tap. */
 .sortControls {
     display: flex;

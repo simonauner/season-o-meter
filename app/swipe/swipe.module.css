@@ -364,28 +364,19 @@
 .skip {
     justify-self: center;
     min-width: 180px;
-    padding: 10px 24px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: var(--surface);
-    color: var(--text-primary);
-    font: inherit;
-    font-weight: 700;
-    cursor: pointer;
 }
 
-.skip:enabled:hover {
+/* Red on hover, for no. */
+.controls .skip:hover:not(:disabled) {
     border-color: var(--down);
 }
 
-.step:disabled,
-.skip:disabled {
+.step:disabled {
     opacity: 0.5;
     cursor: default;
 }
 
 .step:focus-visible,
-.skip:focus-visible,
 .undo:focus-visible,
 .hint a:focus-visible {
     outline: 2px solid var(--accent);

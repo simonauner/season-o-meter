@@ -124,18 +124,3 @@
 .danger .warning {
     font-weight: 650;
 }
-
-.danger .delete {
-    border-color: var(--down);
-    color: var(--down);
-}
-
-.danger .delete:hover {
-    background: color-mix(in srgb, var(--down) 8%, var(--surface));
-}
-
-.danger .confirm {
-    border-color: var(--down);
-    background: var(--down);
-    color: var(--page);
-}

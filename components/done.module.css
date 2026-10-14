@@ -1,0 +1,91 @@
+/* In a row of buttons, a long text wraps next to them rather than going
+   under them, until there's less room than this. */
+.done {
+    display: inline-flex;
+    flex: 1 1 12em;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-primary);
+    font-size: 0.9375rem;
+    font-weight: 600;
+}
+
+.done > .icon {
+    color: var(--up);
+}
+
+.done a {
+    text-decoration: underline;
+}
+
+.icon {
+    position: relative;
+    display: inline-block;
+    flex: none;
+    width: 1.2em;
+    height: 1.2em;
+}
+
+.icon svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* The check pops in with a glow, and a gleam passes over it. */
+.gleam {
+    animation: pop 600ms ease-out;
+}
+
+.shine {
+    position: absolute;
+    inset: 0;
+    color: color-mix(in srgb, currentColor 25%, white);
+    mask-image: linear-gradient(
+        105deg,
+        transparent 40%,
+        #000 50%,
+        transparent 60%
+    );
+    mask-size: 300% 100%;
+    mask-repeat: no-repeat;
+    animation: shine 700ms ease-in-out 200ms both;
+}
+
+@keyframes pop {
+    0% {
+        transform: scale(0.75);
+        opacity: 0;
+    }
+
+    45% {
+        transform: scale(1.06);
+        opacity: 1;
+        filter: drop-shadow(0 0 4px currentColor);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* From where the band is past the left edge to past the right one. */
+@keyframes shine {
+    from {
+        mask-position: 100% 0;
+    }
+
+    to {
+        mask-position: 0% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gleam {
+        animation: none;
+    }
+
+    .shine {
+        display: none;
+    }
+}

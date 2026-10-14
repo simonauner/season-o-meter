@@ -12,6 +12,7 @@ import {
     useState,
     useSyncExternalStore,
 } from 'react';
+import { Button } from '@/components/Button';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { Poster } from '@/components/Poster';
 import { useRatingHint } from '@/components/RatingHint';
@@ -353,14 +354,14 @@ function Deck({ deck }: { deck: SearchEntry[] }) {
                     </span>
                 </div>
 
-                <button
-                    type="button"
+                <Button
+                    size="large"
                     className={css.skip}
                     disabled={!top}
                     onClick={() => skip()}
                 >
                     Skip
-                </button>
+                </Button>
 
                 <div className={css.feedback}>
                     <p aria-live="polite">

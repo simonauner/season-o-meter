@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import { Button } from '@/components/Button';
+import { Done } from '@/components/Done';
 import { PageIntro } from '@/components/PageIntro';
 import { UserLists } from '@/components/UserList';
 import { fetchList, syncAvailable } from '@/lib/sync';
@@ -37,6 +39,8 @@ export function SharedList() {
     const own = useUserData();
     const { index, failed } = useSearchIndex();
     const [imported, setImported] = useState<number | null>(null);
+    /** Each import gleams again. */
+    const [imports, setImports] = useState(0);
 
     useEffect(() => {
         if (hash === null) return;
@@ -95,22 +99,25 @@ export function SharedList() {
                             have a rating or watchlist entry for the same thing,
                             the most recent change wins.
                         </p>
-                        <button
-                            type="button"
-                            className={css.button}
-                            disabled={!own}
-                            onClick={() => setImported(importData(shared))}
-                        >
-                            Import into my list
-                        </button>
-                        {imported !== null && (
-                            <p className={css.result} role="status">
-                                {imported === 0
-                                    ? 'Your list already had everything.'
-                                    : `${imported} ratings and watchlist entries were added or updated.`}{' '}
-                                <Link href="/mine/">See my list</Link>
-                            </p>
-                        )}
+                        <div className={css.buttons}>
+                            <Button
+                                disabled={!own}
+                                onClick={() => {
+                                    setImported(importData(shared));
+                                    setImports((n) => n + 1);
+                                }}
+                            >
+                                Import into my list
+                            </Button>
+                            {imported !== null && (
+                                <Done key={imports}>
+                                    {imported === 0
+                                        ? 'Your list already had everything.'
+                                        : `${imported} ratings and watchlist entries were added or updated.`}{' '}
+                                    <Link href="/mine/">See my list</Link>
+                                </Done>
+                            )}
+                        </div>
                     </section>
                 </div>
             )}

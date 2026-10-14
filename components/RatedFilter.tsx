@@ -8,6 +8,7 @@ import { storedChoice } from '@/lib/storedChoice';
 import { ratedIds } from '@/lib/userData';
 import { useUserData } from '@/lib/userStore';
 import { useStaticJson } from '@/lib/useStaticJson';
+import { Button } from './Button';
 import { ChoicePicker } from './ChoicePicker';
 import { HomeSection } from './HomeSection';
 import { useMinCount } from './MinCountFilter';
@@ -133,9 +134,9 @@ export function FilteredList({
 
 function ShowMore({ onClick }: { onClick: () => void }) {
     return (
-        <button type="button" className={css.showMore} onClick={onClick}>
+        <Button size="large" className={css.showMore} onClick={onClick}>
             Show more
-        </button>
+        </Button>
     );
 }
 
