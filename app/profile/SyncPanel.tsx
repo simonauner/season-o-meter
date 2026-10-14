@@ -94,7 +94,7 @@ export function SyncPanel() {
                 label="Private sync link"
                 shareTitle="Season-o-meter sync link"
             />
-            <div className={`${css.secondarys} ${css.ways}`}>
+            <div className={`${css.buttons} ${css.ways}`}>
                 <button
                     type="button"
                     className={css.secondary}
@@ -182,7 +182,7 @@ export function ConnectPrompt() {
                 {status.secret &&
                     ' This device stops syncing with the list it syncs with now.'}
             </p>
-            <div className={css.secondarys}>
+            <div className={css.buttons}>
                 <button
                     type="button"
                     className={css.secondary}
