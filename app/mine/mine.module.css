@@ -79,6 +79,39 @@
     cursor: default;
 }
 
+/* Next to the title, while the share panel is out of view. */
+.jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px 6px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--own);
+    font-size: 0.875rem;
+    font-weight: 650;
+}
+
+.jump svg {
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.jump:hover {
+    border-color: var(--own);
+}
+
+.jump:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
 /* Points out a panel's button when arriving from a link to the panel. */
 .flash {
     animation: flash 0.6s ease-in-out 3;
