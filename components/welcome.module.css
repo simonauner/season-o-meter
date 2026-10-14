@@ -319,7 +319,7 @@
     }
 }
 
-.features li {
+.features > li {
     display: flex;
     animation: welcome-in 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
     animation-delay: calc(200ms + var(--i) * 80ms);
@@ -331,7 +331,8 @@
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
         'icon title'
-        'icon text';
+        'icon text'
+        'icon picks';
     gap: 2px 14px;
     width: 100%;
     padding: 14px 16px;
@@ -347,7 +348,8 @@
         grid-template-areas:
             'icon'
             'title'
-            'text';
+            'text'
+            'picks';
         gap: 4px;
         padding: 18px;
     }
@@ -386,9 +388,88 @@ a.feature:hover {
     font-size: 0.875rem;
 }
 
+/* Posters to tap onto the watchlist, under the card's text. */
+.picks {
+    grid-area: picks;
+    margin-top: 10px;
+}
+
+.pickList {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pick {
+    position: relative;
+    display: block;
+    width: 52px;
+    aspect-ratio: 2 / 3;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 6px;
+    background: rgb(255 255 255 / 8%);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+    cursor: pointer;
+    transition: transform 150ms ease;
+}
+
+.pick:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.pick[aria-pressed='true'] {
+    box-shadow:
+        0 0 0 2px var(--own),
+        0 2px 8px rgb(0 0 0 / 30%);
+}
+
+.pick:focus-visible,
+.pickLink:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.pickBadge {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 65%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 30%);
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pick[aria-pressed='true'] .pickBadge {
+    background: var(--own);
+    box-shadow: none;
+    animation: pop 250ms cubic-bezier(0.3, 1.6, 0.6, 1);
+}
+
+.pickLink {
+    display: inline-block;
+    margin-top: 8px;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgb(255 255 255 / 35%);
+    text-underline-offset: 3px;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .welcome,
-    .features li,
+    .features > li,
     .line,
     .area,
     .point,

@@ -14,6 +14,9 @@ import {
 } from 'react';
 import { formatRating } from '@/lib/format';
 import { markTipSeen, useTip } from '@/lib/tips';
+import { valueOf, watchlistKey } from '@/lib/userData';
+import { setValue, useUserData } from '@/lib/userStore';
+import { Poster, type PosterEntry } from './Poster';
 import css from './welcome.module.css';
 
 /** A series that peaked and went downhill, drawn in the welcome. */
@@ -34,11 +37,14 @@ export function HomeTop({
     hero,
     intro,
     example,
+    picks,
 }: {
     hero: ReactNode;
     /** The page's heading, which the welcome has in its place. */
     intro: ReactNode;
     example?: PeakExample;
+    /** Series to start a watchlist with, right in the welcome. */
+    picks: PosterEntry[];
 }) {
     // Null until read in the browser, when the pre-rendered page has the
     // featured series and heading.
@@ -98,6 +104,7 @@ export function HomeTop({
                 {welcome && (
                     <Welcome
                         example={example}
+                        picks={picks}
                         leaving={leaving !== null}
                         onClose={close}
                         onAnimationEnd={onAnimationEnd}
@@ -127,8 +134,9 @@ const FEATURES = [
     {
         icon: Bookmark,
         title: 'Keep a watchlist',
-        text: 'Save what to watch next, all in one place. No account needed.',
+        text: 'Save what to watch next, no account needed. Start with one of the best:',
         href: '/mine/',
+        withPicks: true,
     },
     {
         icon: Users,
@@ -146,11 +154,13 @@ const FEATURES = [
 
 function Welcome({
     example,
+    picks,
     leaving,
     onClose,
     onAnimationEnd,
 }: {
     example?: PeakExample;
+    picks: PosterEntry[];
     leaving: boolean;
     onClose: () => void;
     onAnimationEnd: (event: AnimationEvent) => void;
@@ -188,31 +198,88 @@ function Welcome({
                 {example && <PeakChart example={example} />}
             </div>
             <ul className={css.features}>
-                {FEATURES.map(({ icon: Icon, title, text, href }, i) => {
-                    const content = (
-                        <>
-                            <span className={css.icon}>
-                                <Icon size={18} aria-hidden="true" />
-                            </span>
-                            <span className={css.featureTitle}>{title}</span>
-                            <span className={css.featureText}>{text}</span>
-                        </>
-                    );
-                    const to = href ?? example?.href;
+                {FEATURES.map(
+                    ({ icon: Icon, title, text, href, withPicks }, i) => {
+                        const content = (
+                            <>
+                                <span className={css.icon}>
+                                    <Icon size={18} aria-hidden="true" />
+                                </span>
+                                <span className={css.featureTitle}>
+                                    {title}
+                                </span>
+                                <span className={css.featureText}>{text}</span>
+                            </>
+                        );
+                        const to = href ?? example?.href;
+                        return (
+                            <li
+                                key={title}
+                                style={{ '--i': i } as CSSProperties}
+                            >
+                                {withPicks && picks.length > 0 ? (
+                                    <div className={css.feature}>
+                                        {content}
+                                        <WatchlistPicks picks={picks} />
+                                    </div>
+                                ) : to ? (
+                                    <Link href={to} className={css.feature}>
+                                        {content}
+                                    </Link>
+                                ) : (
+                                    <div className={css.feature}>{content}</div>
+                                )}
+                            </li>
+                        );
+                    }
+                )}
+            </ul>
+        </section>
+    );
+}
+
+/**
+ * A few series to put on the watchlist with a tap, so it doesn't start out
+ * empty, and a way to it once something is on it.
+ */
+function WatchlistPicks({ picks }: { picks: PosterEntry[] }) {
+    const data = useUserData();
+    const saved = picks.filter(
+        (pick) => data && valueOf(data, watchlistKey(pick.id)) === 1
+    ).length;
+
+    return (
+        <div className={css.picks}>
+            <ul className={css.pickList}>
+                {picks.map((pick) => {
+                    const key = watchlistKey(pick.id);
+                    const on = data !== null && valueOf(data, key) === 1;
                     return (
-                        <li key={title} style={{ '--i': i } as CSSProperties}>
-                            {to ? (
-                                <Link href={to} className={css.feature}>
-                                    {content}
-                                </Link>
-                            ) : (
-                                <div className={css.feature}>{content}</div>
-                            )}
+                        <li key={pick.id}>
+                            <button
+                                type="button"
+                                className={css.pick}
+                                aria-pressed={on}
+                                aria-label={`Watchlist: ${pick.title}`}
+                                title={pick.title}
+                                disabled={data === null}
+                                onClick={() => setValue(key, on ? null : 1)}
+                            >
+                                <Poster entry={pick} sizes="64px" untitled />
+                                <span className={css.pickBadge} aria-hidden>
+                                    {on ? '✓' : '+'}
+                                </span>
+                            </button>
                         </li>
                     );
                 })}
             </ul>
-        </section>
+            {saved > 0 && (
+                <Link href="/mine/" className={css.pickLink}>
+                    {saved === 1 ? 'Saved' : `${saved} saved`}. See your list →
+                </Link>
+            )}
+        </div>
     );
 }
 
