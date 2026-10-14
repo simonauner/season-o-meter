@@ -24,10 +24,15 @@ export function MyList() {
         () => (data && index ? listItems(data, index) : null),
         [data, index]
     );
+    const [panels, setPanels] = useState<HTMLDivElement | null>(null);
+    const shareInView = useInView(panels);
 
     return (
         <>
-            <PageIntro title="My list">
+            <PageIntro
+                title="My list"
+                action={panels && shareInView === false && <ShareJump />}
+            >
                 {secret
                     ? 'Your ratings and watchlist are kept in this browser and synced with your other devices.'
                     : 'Your ratings and watchlist are kept in this browser. Nothing leaves it unless you share a link or turn on sync.'}
@@ -50,11 +55,51 @@ export function MyList() {
             )}
 
             {data && items && items.length > 0 && (
-                <div className={css.panels}>
+                <div ref={setPanels} className={css.panels}>
                     <SharePanel data={data} secret={secret} />
                 </div>
             )}
         </>
+    );
+}
+
+/** Whether an element is at least partly on screen, or null until known. */
+function useInView(element: Element | null) {
+    const [inView, setInView] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        if (!element) return;
+        const observer = new IntersectionObserver(([entry]) =>
+            setInView(entry.isIntersecting)
+        );
+        observer.observe(element);
+        return () => {
+            observer.disconnect();
+            setInView(null);
+        };
+    }, [element]);
+
+    return inView;
+}
+
+/** Takes a long list down to the share panel, which then points out its button. */
+function ShareJump() {
+    return (
+        <a
+            href={`#${SHARE_HASH}`}
+            className={css.jump}
+            onClick={(event) => {
+                event.preventDefault();
+                // The panel clears the fragment again, so leave no history entry.
+                location.replace(`#${SHARE_HASH}`);
+            }}
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 15V4M7.5 8.5 12 4l4.5 4.5" />
+                <path d="M8 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6a1.5 1.5 0 0 0-1.5-1.5H16" />
+            </svg>
+            Share
+        </a>
     );
 }
 
