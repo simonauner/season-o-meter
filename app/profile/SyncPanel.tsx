@@ -57,8 +57,8 @@ export function SyncPanel() {
                     type="button"
                     className={
                         pointedTo
-                            ? `${css.secondary} ${css.flash}`
-                            : css.secondary
+                            ? `${css.outlined} ${css.flash}`
+                            : css.outlined
                     }
                     onClick={() => connect()}
                     onAnimationEnd={clearHash}
@@ -97,7 +97,7 @@ export function SyncPanel() {
             <div className={`${css.buttons} ${css.ways}`}>
                 <button
                     type="button"
-                    className={css.secondary}
+                    className={css.outlined}
                     aria-pressed={shown === 'qr'}
                     onClick={() => setShown(shown === 'qr' ? null : 'qr')}
                 >
@@ -105,7 +105,7 @@ export function SyncPanel() {
                 </button>
                 <button
                     type="button"
-                    className={css.secondary}
+                    className={css.outlined}
                     aria-pressed={shown === 'code'}
                     onClick={() => setShown(shown === 'code' ? null : 'code')}
                 >
@@ -124,7 +124,7 @@ export function SyncPanel() {
             {shown === 'code' && <CodeForm secret={status.secret} />}
             <button
                 type="button"
-                className={`${css.secondary} ${css.stop}`}
+                className={`${css.outlined} ${css.stop}`}
                 onClick={() => {
                     setShown(null);
                     disconnect();
@@ -163,7 +163,7 @@ export function ConnectPrompt() {
                 <p>Check that the whole link was copied.</p>
                 <button
                     type="button"
-                    className={css.secondary}
+                    className={css.outlined}
                     onClick={clearHash}
                 >
                     OK
@@ -185,14 +185,14 @@ export function ConnectPrompt() {
             <div className={css.buttons}>
                 <button
                     type="button"
-                    className={`${css.secondary} ${css.primary}`}
+                    className={`${css.outlined} ${css.tonal}`}
                     onClick={() => connect(secret)}
                 >
                     Connect
                 </button>
                 <button
                     type="button"
-                    className={css.secondary}
+                    className={css.outlined}
                     onClick={clearHash}
                 >
                     Not now

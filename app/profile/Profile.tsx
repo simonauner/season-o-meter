@@ -102,7 +102,7 @@ function SkippedPanel({
                     </p>
                     <button
                         type="button"
-                        className={mineCss.secondary}
+                        className={mineCss.outlined}
                         onClick={bringAllBack}
                     >
                         Bring them all back
@@ -138,7 +138,7 @@ function SkippedList({ entries }: { entries: SearchEntry[] }) {
                         </span>
                         <button
                             type="button"
-                            className={mineCss.secondary}
+                            className={mineCss.outlined}
                             onClick={() => setValue(skipKey(entry.id), null)}
                         >
                             Bring back
@@ -229,7 +229,7 @@ function HeroPanel({ kind }: { kind: Kind }) {
                     </p>
                     <button
                         type="button"
-                        className={mineCss.secondary}
+                        className={mineCss.outlined}
                         onClick={showAgain}
                     >
                         Show it again
@@ -276,7 +276,7 @@ function TipsPanel() {
             </p>
             <button
                 type="button"
-                className={mineCss.secondary}
+                className={mineCss.outlined}
                 disabled={!seen}
                 onClick={showAgain}
             >

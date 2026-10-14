@@ -128,7 +128,7 @@ export function CodeOffer() {
                 </p>
                 <button
                     type="button"
-                    className={css.secondary}
+                    className={css.outlined}
                     onClick={start}
                     disabled={offer.phase === 'loading'}
                 >
@@ -144,7 +144,7 @@ export function CodeOffer() {
         return (
             <div className={css.codeForm}>
                 <p role="alert">{START_PROBLEMS[offer.phase]}</p>
-                <button type="button" className={css.secondary} onClick={start}>
+                <button type="button" className={css.outlined} onClick={start}>
                     Get a new code
                 </button>
             </div>
@@ -169,7 +169,7 @@ export function CodeOffer() {
             </p>
             <button
                 type="button"
-                className={css.secondary}
+                className={css.outlined}
                 onClick={() => setOffer({ phase: 'idle' })}
             >
                 Cancel
@@ -228,7 +228,7 @@ export function CodeForm({ secret }: { secret: string }) {
                     enterKeyHint="go"
                     aria-describedby={result ? 'pairing-result' : undefined}
                 />
-                <button type="submit" className={css.secondary} disabled={busy}>
+                <button type="submit" className={css.outlined} disabled={busy}>
                     {busy ? 'Connecting…' : 'Connect'}
                 </button>
             </div>

@@ -57,7 +57,7 @@ export function LinkField({
             />
             <button
                 type="button"
-                className={flash ? `${css.button} ${css.flash}` : css.button}
+                className={flash ? `${css.filled} ${css.flash}` : css.filled}
                 onClick={copy}
                 disabled={!link}
                 onAnimationEnd={onFlashed}
@@ -65,7 +65,7 @@ export function LinkField({
                 {link !== null && copiedLink === link ? 'Copied' : 'Copy link'}
             </button>
             {link && 'share' in navigator && (
-                <button type="button" className={css.button} onClick={share}>
+                <button type="button" className={css.filled} onClick={share}>
                     Share…
                 </button>
             )}

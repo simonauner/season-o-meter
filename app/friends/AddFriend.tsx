@@ -107,7 +107,7 @@ export function AddFriendForm({ listId }: { listId?: string }) {
                     enterKeyHint="done"
                     aria-describedby={message}
                 />
-                <button type="submit" className={css.button} disabled={!data}>
+                <button type="submit" className={css.filled} disabled={!data}>
                     Add friend
                 </button>
             </div>
