@@ -136,6 +136,16 @@
     outline-offset: 2px;
 }
 
+/* The main choice, next to a secondary one. Used together with .secondary. */
+.primary {
+    border-color: var(--own);
+    background: color-mix(in srgb, var(--own) 22%, var(--surface));
+}
+
+.primary:enabled:hover {
+    background: color-mix(in srgb, var(--own) 32%, var(--surface));
+}
+
 .secondary[aria-pressed='true'] {
     border-color: var(--own);
     color: var(--own);

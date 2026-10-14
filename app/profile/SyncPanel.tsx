@@ -185,7 +185,7 @@ export function ConnectPrompt() {
             <div className={css.buttons}>
                 <button
                     type="button"
-                    className={css.secondary}
+                    className={`${css.secondary} ${css.primary}`}
                     onClick={() => connect(secret)}
                 >
                     Connect
