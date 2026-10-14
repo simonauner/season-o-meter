@@ -1,0 +1,57 @@
+components/FeaturedShow.tsx
+  s_204d94930a4449::t_e1e390278a4dd6 2
+  s_204d94930a4449::t_1b7be2a6e1bd4f 32
+lib/format.ts
+  s_204d94930a4449::t_211094cdc7acae 60-63
+app/search/SearchResults.tsx
+  s_204d94930a4449::t_03b85aee93ba5d 10,53-54,60,62-65,87
+  s_204d94930a4449::t_e1e390278a4dd6 76-79,89-90
+  s_204d94930a4449::t_d5f966a2e405ac 22-23
+README.md
+  s_204d94930a4449::t_e1e390278a4dd6 12-13,71-73
+app/lists/[slug]/page.tsx
+  s_204d94930a4449::t_27ff6930ec0b27 64-66
+  s_204d94930a4449::t_99c05e3f1d3776 9-13
+app/page.tsx
+  s_204d94930a4449::t_51d15949b5587f 29-30,32-34
+  s_204d94930a4449::t_e1e390278a4dd6 40
+components/SearchBox.tsx
+  s_204d94930a4449::t_03b85aee93ba5d 15
+  s_204d94930a4449::t_d5f966a2e405ac 24,216-219
+lib/sections.ts
+  s_204d94930a4449::t_bbe350c2cc9ec0 17-21,32,64-66
+scripts/build-data.mts
+  s_204d94930a4449::t_ff194143d6fc2a 400-405
+app/shows/[id]/og.png/route.tsx
+  s_204d94930a4449::t_f1439e6a823f12 4,28,36-39
+lib/ogImage.tsx
+  s_204d94930a4449::t_f1439e6a823f12 174-200,205-208,214,221,272
+components/TrendCard.tsx
+  s_204d94930a4449::t_1b7be2a6e1bd4f 21-22,30,51-58
+components/ShowCard.tsx
+  s_204d94930a4449::t_1b7be2a6e1bd4f 2,18,32-35
+app/shows/[id]/page.tsx
+  s_204d94930a4449::t_d5f966a2e405ac 83
+  s_204d94930a4449::t_fc1c6c6fb025a1 14,26,43-54,66,78-82,84,91,144-160,162-164,206
+  s_204d94930a4449::t_e1e390278a4dd6 161
+lib/analysis.ts
+  s_204d94930a4449::t_907fced100efa0 153-154
+  s_204d94930a4449::t_bbe350c2cc9ec0 259
+  s_204d94930a4449::t_87f94e78c5e76b 254-258,260-269
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bb457811b4fc8c56a00328164ddc701d902e2db6",
+  "prompts": {},
+  "sessions": {
+    "s_204d94930a4449": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a41a1edb-5d58-472a-9b98-4639e464f153",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
