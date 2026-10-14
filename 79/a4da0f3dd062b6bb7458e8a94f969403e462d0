@@ -1,0 +1,19 @@
+app/profile/SyncPanel.tsx
+  s_c3c89dd62c77a4::t_0800853e8684f6 97,185
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "79a4da0f3dd062b6bb7458e8a94f969403e462d0",
+  "prompts": {},
+  "sessions": {
+    "s_c3c89dd62c77a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "99c7bf8c-def6-4783-bb23-9007a497f593",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
