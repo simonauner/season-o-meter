@@ -97,7 +97,7 @@ export function SharedList() {
                         </p>
                         <button
                             type="button"
-                            className={css.button}
+                            className={css.filled}
                             disabled={!own}
                             onClick={() => setImported(importData(shared))}
                         >

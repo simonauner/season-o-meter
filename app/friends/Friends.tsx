@@ -230,7 +230,7 @@ function Comparison({
                             <button
                                 key={friend.listId}
                                 type="button"
-                                className={mineCss.secondary}
+                                className={mineCss.outlined}
                                 aria-pressed={
                                     list ? !hidden.has(friend.listId) : false
                                 }
@@ -269,7 +269,7 @@ function Comparison({
                     </label>
                     <button
                         type="button"
-                        className={mineCss.secondary}
+                        className={mineCss.outlined}
                         onClick={() =>
                             setSort({
                                 key: sortKey,
@@ -496,14 +496,14 @@ function FriendRow({ friend }: { friend: Friend }) {
             {!isImaginary(friend.listId) && (
                 <Link
                     href={`/shared/#list=${friend.listId}`}
-                    className={mineCss.secondary}
+                    className={mineCss.outlined}
                 >
                     List
                 </Link>
             )}
             <button
                 type="button"
-                className={mineCss.secondary}
+                className={mineCss.outlined}
                 onClick={() => removeFriend(friend.listId)}
             >
                 Remove
