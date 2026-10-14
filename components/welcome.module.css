@@ -332,7 +332,8 @@
     grid-template-areas:
         'icon title'
         'icon text'
-        'icon picks';
+        'icon picks'
+        'icon open';
     gap: 2px 14px;
     width: 100%;
     padding: 14px 16px;
@@ -349,7 +350,11 @@
             'icon'
             'title'
             'text'
-            'picks';
+            'picks'
+            'open';
+        /* Titles line up across the row however tall the cards are, and
+           Open sits at the bottom. */
+        grid-template-rows: repeat(4, auto) 1fr;
         gap: 4px;
         padding: 18px;
     }
@@ -386,6 +391,20 @@ a.feature:hover {
 .featureText {
     grid-area: text;
     font-size: 0.875rem;
+}
+
+/* Where a card links to, at its bottom. */
+.open {
+    grid-area: open;
+    align-self: end;
+    margin-top: 10px;
+    color: var(--welcome-accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+a.feature:hover .open {
+    text-decoration: underline;
 }
 
 /* Posters to tap onto the watchlist, under the card's text. */
