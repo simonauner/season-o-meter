@@ -1,0 +1,26 @@
+app/mine/mine.module.css
+  s_6c8ce46ed21495::t_c6c9d205c90f10 82-114
+app/mine/MyList.tsx
+  s_6c8ce46ed21495::t_c6c9d205c90f10 27-28,32-35,58,66-102,104
+  s_6c8ce46ed21495::t_ced33f8ca4aacd 103,105
+components/PageIntro.tsx
+  s_6c8ce46ed21495::t_b5dcf83489d1b0 6,10-11,16-23
+components/pageIntro.module.css
+  s_6c8ce46ed21495::t_b5dcf83489d1b0 5-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "61a5bb45939e8ca3408ac5abc26de3b072f6bb0d",
+  "prompts": {},
+  "sessions": {
+    "s_6c8ce46ed21495": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b26bc606-3a1a-49e4-9039-6f7949c23e58",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
