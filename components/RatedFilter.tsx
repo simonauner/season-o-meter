@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo } from 'react';
+import { setHistoryState, useHistoryState } from '@/lib/historyState';
 import type { HomeSections } from '@/lib/homeSections';
 import type { Kind, MinCount } from '@/lib/minCount';
 import { storedChoice } from '@/lib/storedChoice';
@@ -49,6 +50,11 @@ const KINDS = {
         noneInSection: 'None of the film series you have rated.',
     },
 } satisfies Record<Kind, Record<string, string>>;
+
+/** How many of a list's items are shown, and with which filters. */
+type Shown = { filters: string; shown: number };
+
+const SHOWN_KEY = 'season-o-meter:shown';
 
 export function RatedFilterPicker() {
     return (
@@ -107,9 +113,15 @@ export function FilteredList({
     const minCount = useMinCount(kind);
     // Changing a filter starts over from the first page.
     const filters = `${filter}:${minCount}`;
-    const [more, setMore] = useState({ filters, shown: limit });
-    const shown = more.filters === filters ? more.shown : limit;
-    const showMore = () => setMore({ filters, shown: shown + limit });
+    // Kept with the page in the history, so that coming back from a title
+    // still shows it.
+    const more = useHistoryState(SHOWN_KEY) as Shown | null;
+    const shown = more?.filters === filters ? more.shown : limit;
+    const showMore = () =>
+        setHistoryState(SHOWN_KEY, {
+            filters,
+            shown: shown + limit,
+        } satisfies Shown);
 
     if (filter === 'any' && shown === limit) {
         return (
