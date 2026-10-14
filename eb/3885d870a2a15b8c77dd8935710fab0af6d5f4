@@ -1,0 +1,33 @@
+app/profile/SyncPanel.tsx
+  s_c3c89dd62c77a4::t_81ce4003ebf4eb 60-61,100,108,127,166,188,195
+app/friends/Friends.tsx
+  s_c3c89dd62c77a4::t_81ce4003ebf4eb 209,248,473,479
+app/profile/PairingCode.tsx
+  s_c3c89dd62c77a4::t_81ce4003ebf4eb 131,147,172,231
+app/mine/LinkField.tsx
+  s_c3c89dd62c77a4::t_81ce4003ebf4eb 60,68
+app/friends/AddFriend.tsx
+  s_c3c89dd62c77a4::t_81ce4003ebf4eb 110
+app/mine/mine.module.css
+  s_c3c89dd62c77a4::t_d93435d9ea733b 47,64,77,107,112,125,129,134,139-140,145,149
+app/shared/SharedList.tsx
+  s_c3c89dd62c77a4::t_81ce4003ebf4eb 100
+app/profile/Profile.tsx
+  s_c3c89dd62c77a4::t_81ce4003ebf4eb 105,141,232,279
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "eb3885d870a2a15b8c77dd8935710fab0af6d5f4",
+  "prompts": {},
+  "sessions": {
+    "s_c3c89dd62c77a4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "99c7bf8c-def6-4783-bb23-9007a497f593",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
