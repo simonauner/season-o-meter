@@ -402,6 +402,14 @@ async function main() {
         const ratedCount = seasons.filter(
             (season) => season.rating !== null
         ).length;
+        // IMDb lists the next season as soon as an episode of it is
+        // announced. Until it airs, a series with one rated season is a
+        // series with one season.
+        if (ratedCount === 1) {
+            seasons.splice(
+                seasons.findLastIndex((season) => season.rating !== null) + 1
+            );
+        }
         if (ratedCount < Math.min(2, seasons.length)) continue;
 
         const { rating, votes } = ratings.get(id)!;
