@@ -225,6 +225,12 @@ function Welcome({
                                 ) : to ? (
                                     <Link href={to} className={css.feature}>
                                         {content}
+                                        <span
+                                            className={css.open}
+                                            aria-hidden="true"
+                                        >
+                                            Open →
+                                        </span>
                                     </Link>
                                 ) : (
                                     <div className={css.feature}>{content}</div>
