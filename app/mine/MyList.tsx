@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { ButtonLink } from '@/components/Button';
 import { PageIntro } from '@/components/PageIntro';
 import { UserLists } from '@/components/UserList';
 import { liveShareLink, useSyncStatus } from '@/lib/sync';
@@ -85,8 +86,9 @@ function useInView(element: Element | null) {
 /** Takes a long list down to the share panel, which then points out its button. */
 function ShareJump() {
     return (
-        <a
+        <ButtonLink
             href={`#${SHARE_HASH}`}
+            size="small"
             className={css.jump}
             onClick={(event) => {
                 event.preventDefault();
@@ -99,7 +101,7 @@ function ShareJump() {
                 <path d="M8 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6a1.5 1.5 0 0 0-1.5-1.5H16" />
             </svg>
             Share
-        </a>
+        </ButtonLink>
     );
 }
 

@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { type FormEvent, useId, useState } from 'react';
+import { Button } from '@/components/Button';
+import { Done } from '@/components/Done';
 import {
     cleanName,
     friendsOf,
@@ -33,6 +35,8 @@ export function AddFriendForm({ listId }: { listId?: string }) {
     const [name, setName] = useState('');
     const [problem, setProblem] = useState<Problem | null>(null);
     const [added, setAdded] = useState<string | null>(null);
+    /** Each friend added gleams again. */
+    const [adds, setAdds] = useState(0);
 
     const existing =
         listId && data
@@ -42,11 +46,15 @@ export function AddFriendForm({ listId }: { listId?: string }) {
     if (listId && listId === ownListId) return null;
 
     if (existing) {
-        return (
-            <p className={css.result}>
+        const text = (
+            <>
                 You’ve added them as <strong>{existing.name}</strong>.{' '}
                 <Link href="/friends/">Compare ratings</Link>
-            </p>
+            </>
+        );
+        // Just added here, so it's said as done.
+        return (
+            <p className={css.result}>{added ? <Done>{text}</Done> : text}</p>
         );
     }
 
@@ -66,6 +74,7 @@ export function AddFriendForm({ listId }: { listId?: string }) {
         if (found || !friendId || !cleaned) return;
         saveFriend(friendId, cleaned);
         setAdded(cleaned);
+        setAdds((n) => n + 1);
         setLink('');
         setName('');
     };
@@ -96,33 +105,25 @@ export function AddFriendForm({ listId }: { listId?: string }) {
             <label htmlFor={`${id}-name`} className={css.label}>
                 Their name
             </label>
-            <div className={css.linkRow}>
-                <input
-                    id={`${id}-name`}
-                    className={css.link}
-                    value={name}
-                    onChange={(event) => setName(event.target.value)}
-                    maxLength={MAX_NAME_LENGTH}
-                    autoComplete="off"
-                    enterKeyHint="done"
-                    aria-describedby={message}
-                />
-                <button
-                    type="submit"
-                    className={`${css.outlined} ${css.tonal}`}
-                    disabled={!data}
-                >
+            <input
+                id={`${id}-name`}
+                className={`${css.link} ${css.overButtons}`}
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                maxLength={MAX_NAME_LENGTH}
+                autoComplete="off"
+                enterKeyHint="done"
+                aria-describedby={message}
+            />
+            <div className={css.buttons}>
+                <Button type="submit" variant="tonal" disabled={!data}>
                     Add friend
-                </button>
+                </Button>
+                {added && !listId && <Done key={adds}>Added {added}.</Done>}
             </div>
             {problem && (
                 <p id={message} role="alert" className={css.problem}>
                     {PROBLEMS[problem]}
-                </p>
-            )}
-            {added && !listId && (
-                <p role="status" className={css.success}>
-                    Added {added}.
                 </p>
             )}
         </form>

@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { Button, ButtonLink } from '@/components/Button';
+import { Done } from '@/components/Done';
 import { recoveryKey, secretFromInput } from '@/lib/recoveryKey';
 import {
     connect,
@@ -53,13 +55,9 @@ export function RecoveryPanel() {
                         them. Creating one turns on sync, which keeps a copy of
                         your list on the sync server.
                     </p>
-                    <button
-                        type="button"
-                        className={`${mineCss.outlined} ${mineCss.tonal}`}
-                        onClick={() => connect()}
-                    >
+                    <Button onClick={() => connect()}>
                         Create a recovery key
-                    </button>
+                    </Button>
                 </>
             )}
             <KeyForm status={status} />
@@ -70,11 +68,14 @@ export function RecoveryPanel() {
 function KeyShown({ secret }: { secret: string }) {
     const key = recoveryKey(secret);
     const [copied, setCopied] = useState<string | null>(null);
+    /** Each copy gleams again. */
+    const [copies, setCopies] = useState(0);
 
     const copy = async () => {
         try {
             await navigator.clipboard.writeText(key);
             setCopied(key);
+            setCopies((n) => n + 1);
         } catch {
             // The key is still there to copy by hand.
         }
@@ -89,17 +90,13 @@ function KeyShown({ secret }: { secret: string }) {
                 with it can see and change your list.
             </p>
             <output className={`${mineCss.code} ${css.key}`}>{key}</output>
+            {/* What copying says comes after the buttons, so nothing moves. */}
             <div className={`${mineCss.buttons} ${css.keyButtons}`}>
-                <button
-                    type="button"
-                    className={`${mineCss.outlined} ${mineCss.tonal}`}
-                    onClick={copy}
-                >
-                    {copied === key ? 'Copied' : 'Copy key'}
-                </button>
-                <a href={mailLink(secret)} className={mineCss.outlined}>
-                    Email it to me
-                </a>
+                <ButtonLink href={mailLink(secret)}>Email it to me</ButtonLink>
+                <Button variant="tonal" onClick={copy}>
+                    Copy key
+                </Button>
+                {copied === key && <Done key={copies}>Copied</Done>}
             </div>
         </>
     );
@@ -140,7 +137,10 @@ function KeyForm({ status }: { status: SyncStatus }) {
                   : result === 'restored'
                     ? 'Your list is back in this browser.'
                     : null;
-    const good = result === 'restored' && status.phase !== 'deleted';
+    const good =
+        result === 'restored' &&
+        status.phase !== 'deleted' &&
+        status.phase !== 'failed';
 
     return (
         <form className={css.keyForm} onSubmit={submit}>
@@ -150,33 +150,36 @@ function KeyForm({ status }: { status: SyncStatus }) {
                 {status.secret &&
                     ' This browser then stops syncing with its current list, so save its key first.'}
             </label>
-            <div className={mineCss.linkRow}>
-                <input
-                    id="recovery-key"
-                    className={mineCss.link}
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
-                    placeholder="XXXX-XXXX-…"
-                    autoComplete="off"
-                    autoCapitalize="characters"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    enterKeyHint="go"
-                    aria-describedby={message ? 'recovery-result' : undefined}
-                />
-                <button
+            <input
+                id="recovery-key"
+                className={`${mineCss.link} ${mineCss.overButtons}`}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                placeholder="XXXX-XXXX-…"
+                autoComplete="off"
+                autoCapitalize="characters"
+                autoCorrect="off"
+                spellCheck={false}
+                enterKeyHint="go"
+                aria-describedby={
+                    message && !good ? 'recovery-result' : undefined
+                }
+            />
+            <div className={mineCss.buttons}>
+                <Button
                     type="submit"
-                    className={`${mineCss.outlined} ${mineCss.tonal}`}
+                    variant="tonal"
                     disabled={busy || !input.trim()}
                 >
                     {busy ? 'Restoring…' : 'Restore'}
-                </button>
+                </Button>
+                {good && <Done>{message}</Done>}
             </div>
-            {message && (
+            {message && !good && (
                 <p
                     id="recovery-result"
-                    role={good ? 'status' : 'alert'}
-                    className={good ? mineCss.success : mineCss.problem}
+                    role="alert"
+                    className={mineCss.problem}
                 >
                     {message}
                 </p>

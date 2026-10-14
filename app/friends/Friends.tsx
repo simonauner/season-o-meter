@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { Button, ButtonLink } from '@/components/Button';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { PageIntro } from '@/components/PageIntro';
 import {
@@ -227,10 +228,8 @@ function Comparison({
                     {friends.map((friend) => {
                         const list = lists[friend.listId];
                         return (
-                            <button
+                            <Button
                                 key={friend.listId}
-                                type="button"
-                                className={mineCss.outlined}
                                 aria-pressed={
                                     list ? !hidden.has(friend.listId) : false
                                 }
@@ -243,7 +242,7 @@ function Comparison({
                                     : list === null
                                       ? ' (couldn’t load)'
                                       : ''}
-                            </button>
+                            </Button>
                         );
                     })}
                 </div>
@@ -267,9 +266,7 @@ function Comparison({
                             ))}
                         </select>
                     </label>
-                    <button
-                        type="button"
-                        className={mineCss.outlined}
+                    <Button
                         onClick={() =>
                             setSort({
                                 key: sortKey,
@@ -278,7 +275,7 @@ function Comparison({
                         }
                     >
                         {sort.descending ? 'Highest first' : 'Lowest first'}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -494,20 +491,16 @@ function FriendRow({ friend }: { friend: Friend }) {
             />
             {/* An imaginary friend's list is only in your head. */}
             {!isImaginary(friend.listId) && (
-                <Link
-                    href={`/shared/#list=${friend.listId}`}
-                    className={mineCss.outlined}
-                >
+                <ButtonLink href={`/shared/#list=${friend.listId}`}>
                     List
-                </Link>
+                </ButtonLink>
             )}
-            <button
-                type="button"
-                className={mineCss.outlined}
+            <Button
+                variant="danger"
                 onClick={() => removeFriend(friend.listId)}
             >
                 Remove
-            </button>
+            </Button>
         </li>
     );
 }

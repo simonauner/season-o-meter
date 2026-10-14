@@ -1,7 +1,8 @@
 'use client';
 
-import { Check } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { Button } from '@/components/Button';
+import { DoneIcon } from '@/components/Done';
 import {
     connect,
     disconnect,
@@ -73,13 +74,15 @@ export function SyncPanel() {
     const status = useSyncStatus();
     /** The other way to connect a device that is showing, if any. */
     const [shown, setShown] = useState<'qr' | 'code' | null>(null);
+    /** Sync was just turned on here, so the check gleams once it's done. */
+    const [turnedOn, setTurnedOn] = useState(false);
     const { ref, pointedTo } = usePointedTo<HTMLElement>(
         SYNC_HASH,
         status !== null
     );
     const syncing = !!status?.secret;
 
-    // With sync on there's no button to point out, so the fragment can go
+    // With sync on there's no switch to point out, so the fragment can go
     // once the panel is scrolled to.
     useEffect(() => {
         if (pointedTo && syncing) clearHash();
@@ -87,102 +90,128 @@ export function SyncPanel() {
 
     if (!syncAvailable || !status) return null;
 
-    if (!status.secret) {
-        return (
-            <section ref={ref} className={css.panel}>
-                <h2>Sync your devices</h2>
-                {status.phase === 'deleted' && (
-                    <p className={css.problem} role="status">
-                        Your synced list has been deleted, so this device
-                        stopped syncing. What’s on it stays.
-                    </p>
-                )}
-                <p>
-                    Keep your list in step on your phone, computer and tablet,
-                    with no account. Turn on sync here, then connect your other
-                    devices with a private link, a QR code or a short code.
-                </p>
-                <button
-                    type="button"
-                    className={
-                        pointedTo
-                            ? `${css.outlined} ${css.flash}`
-                            : css.outlined
-                    }
-                    onClick={() => connect()}
-                    onAnimationEnd={clearHash}
-                >
-                    Turn on sync
-                </button>
-                <CodeOffer />
-            </section>
-        );
-    }
+    const toggle = () => {
+        if (syncing) {
+            setShown(null);
+            setTurnedOn(false);
+            disconnect();
+        } else {
+            setTurnedOn(true);
+            connect();
+        }
+    };
 
     return (
         <section ref={ref} className={css.panel}>
             <h2>Sync your devices</h2>
-            <p role="status" data-phase={status.phase} className={css.phase}>
-                {status.phase === 'idle' && (
-                    <Check
-                        className={css.upToDate}
-                        size={16}
-                        strokeWidth={3}
-                        aria-hidden
-                    />
-                )}
-                {PHASES[status.phase]}
-            </p>
-            {status.syncedAt !== null && <SyncedAt time={status.syncedAt} />}
+            <div className={css.toggle}>
+                <button
+                    type="button"
+                    role="switch"
+                    aria-checked={syncing}
+                    aria-label="Sync this device"
+                    className={
+                        pointedTo && !syncing
+                            ? `${css.switch} ${css.flash}`
+                            : css.switch
+                    }
+                    onClick={toggle}
+                    onAnimationEnd={clearHash}
+                />
+                <div className={css.toggleText}>
+                    <p
+                        role="status"
+                        data-phase={syncing ? status.phase : 'off'}
+                        className={css.phase}
+                    >
+                        {syncing && status.phase === 'idle' && (
+                            <DoneIcon
+                                className={css.upToDate}
+                                gleam={turnedOn}
+                                onGleamEnd={() => setTurnedOn(false)}
+                            />
+                        )}
+                        {syncing ? PHASES[status.phase] : 'Sync is off.'}
+                    </p>
+                    {syncing && status.syncedAt !== null && (
+                        <SyncedAt time={status.syncedAt} />
+                    )}
+                </div>
+            </div>
+            {status.secret ? (
+                <Connected
+                    secret={status.secret}
+                    shown={shown}
+                    setShown={setShown}
+                />
+            ) : (
+                <>
+                    {status.phase === 'deleted' && (
+                        <p className={css.problem} role="status">
+                            Your synced list has been deleted, so this device
+                            stopped syncing. What’s on it stays.
+                        </p>
+                    )}
+                    <p>
+                        Keep your list in step on your phone, computer and
+                        tablet, with no account. Turn on sync here, then connect
+                        your other devices with a private link, a QR code or a
+                        short code.
+                    </p>
+                    <CodeOffer />
+                </>
+            )}
+        </section>
+    );
+}
+
+/** How to connect another device to the list this one syncs with. */
+function Connected({
+    secret,
+    shown,
+    setShown,
+}: {
+    secret: string;
+    shown: 'qr' | 'code' | null;
+    setShown: (shown: 'qr' | 'code' | null) => void;
+}) {
+    return (
+        <>
             <p>
                 To connect another device, open this private link on it, scan
                 the QR code, or get a code on it and enter the code here. Anyone
                 with the link can change your list, so keep it to yourself.
             </p>
             <LinkField
-                link={syncLink(status.secret)}
+                link={syncLink(secret)}
                 label="Private sync link"
                 shareTitle="Season-o-meter sync link"
             />
             <div className={`${css.buttons} ${css.ways}`}>
-                <button
-                    type="button"
-                    className={css.outlined}
+                <Button
                     aria-pressed={shown === 'qr'}
                     onClick={() => setShown(shown === 'qr' ? null : 'qr')}
                 >
                     QR code
-                </button>
-                <button
-                    type="button"
-                    className={css.outlined}
+                </Button>
+                <Button
                     aria-pressed={shown === 'code'}
                     onClick={() => setShown(shown === 'code' ? null : 'code')}
                 >
                     Enter a code
-                </button>
+                </Button>
             </div>
             {shown === 'qr' && (
                 <div className={css.reveal}>
                     <p>Scan it with your other device’s camera.</p>
                     <QrCode
-                        value={syncLink(status.secret)}
+                        value={syncLink(secret)}
                         label="QR code for the private sync link"
                     />
                 </div>
             )}
-            {shown === 'code' && <CodeForm secret={status.secret} />}
-            <button
-                type="button"
-                className={`${css.outlined} ${css.stop}`}
-                onClick={() => {
-                    setShown(null);
-                    disconnect();
-                }}
-            >
-                Stop syncing on this device
-            </button>
-        </section>
+            {shown === 'code' && <CodeForm secret={secret} />}
+        </>
     );
 }
 
@@ -211,13 +240,7 @@ export function ConnectPrompt() {
             <section className={`${css.panel} ${css.prompt}`}>
                 <h2>This sync link doesn&apos;t work</h2>
                 <p>Check that the whole link was copied.</p>
-                <button
-                    type="button"
-                    className={css.outlined}
-                    onClick={clearHash}
-                >
-                    OK
-                </button>
+                <Button onClick={clearHash}>OK</Button>
             </section>
         );
     }
@@ -233,20 +256,10 @@ export function ConnectPrompt() {
                     ' This device stops syncing with the list it syncs with now.'}
             </p>
             <div className={css.buttons}>
-                <button
-                    type="button"
-                    className={`${css.outlined} ${css.tonal}`}
-                    onClick={() => connect(secret)}
-                >
+                <Button variant="tonal" onClick={() => connect(secret)}>
                     Connect
-                </button>
-                <button
-                    type="button"
-                    className={css.outlined}
-                    onClick={clearHash}
-                >
-                    Not now
-                </button>
+                </Button>
+                <Button onClick={clearHash}>Not now</Button>
             </div>
         </section>
     );

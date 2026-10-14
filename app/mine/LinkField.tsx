@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { Button } from '@/components/Button';
+import { Done } from '@/components/Done';
 import css from './mine.module.css';
 
 /** A link to copy, or to share with the system share sheet where there is one. */
@@ -19,12 +21,15 @@ export function LinkField({
     onFlashed?: () => void;
 }) {
     const [copiedLink, setCopiedLink] = useState<string | null>(null);
+    /** Each copy gleams again. */
+    const [copies, setCopies] = useState(0);
 
     const copy = async () => {
         if (!link) return;
         try {
             await navigator.clipboard.writeText(link);
             setCopiedLink(link);
+            setCopies((n) => n + 1);
         } catch {
             // The link is still there to copy by hand.
         }
@@ -47,36 +52,32 @@ export function LinkField({
     };
 
     return (
-        <div className={css.linkRow}>
+        <>
             <input
-                className={css.link}
+                className={`${css.link} ${css.overButtons}`}
                 readOnly
                 value={link ?? ''}
                 aria-label={label}
                 onFocus={(event) => event.target.select()}
             />
-            <button
-                type="button"
-                className={
-                    flash
-                        ? `${css.outlined} ${css.tonal} ${css.flash}`
-                        : `${css.outlined} ${css.tonal}`
-                }
-                onClick={copy}
-                disabled={!link}
-                onAnimationEnd={onFlashed}
-            >
-                {link !== null && copiedLink === link ? 'Copied' : 'Copy link'}
-            </button>
-            {link && 'share' in navigator && (
-                <button
-                    type="button"
-                    className={`${css.outlined} ${css.tonal}`}
-                    onClick={share}
+            {/* Copy link last, so "Copied" comes right after it. */}
+            <div className={css.buttons}>
+                {link && 'share' in navigator && (
+                    <Button onClick={share}>Share…</Button>
+                )}
+                <Button
+                    variant="tonal"
+                    className={flash ? css.flash : undefined}
+                    onClick={copy}
+                    disabled={!link}
+                    onAnimationEnd={onFlashed}
                 >
-                    Share…
-                </button>
-            )}
-        </div>
+                    Copy link
+                </Button>
+                {link !== null && copiedLink === link && (
+                    <Done key={copies}>Copied</Done>
+                )}
+            </div>
+        </>
     );
 }

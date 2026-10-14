@@ -10,6 +10,7 @@ import {
 } from '@/lib/userData';
 import { popcorn } from '@/lib/popcorn';
 import { setValue, useUserData } from '@/lib/userStore';
+import { Button } from './Button';
 import { useRatingHint } from './RatingHint';
 import css from './yourRating.module.css';
 
@@ -126,15 +127,15 @@ export function WatchlistButton({ id }: { id: string }) {
     const on = value === 1;
 
     return (
-        <button
-            type="button"
+        <Button
+            size="small"
             className={css.watchlist}
             aria-pressed={on}
             disabled={!ready}
             onClick={() => setValue(key, on ? null : 1)}
         >
             <span aria-hidden>{on ? '✓' : '+'}</span> Watchlist
-        </button>
+        </Button>
     );
 }
 
