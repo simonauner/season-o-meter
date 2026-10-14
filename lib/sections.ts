@@ -14,6 +14,11 @@ export type Section<T> = {
      * says, so the cards don't repeat it.
      */
     sharedVerdict?: boolean;
+    /**
+     * The visitor's chosen minimum number of ratings doesn't apply, like
+     * for series with a single season, so there's no picker for it.
+     */
+    ownMinimum?: boolean;
     items: T[];
 };
 
@@ -24,7 +29,7 @@ export type SectionDefinition<T> = Omit<Section<T>, 'items' | 'description'> & {
     minVotes: number;
     /**
      * Only consider items with at least this many ratings. Raised to the
-     * visitor's chosen minimum when that is higher.
+     * visitor's chosen minimum when that is higher, unless `ownMinimum`.
      */
     minRatings: number;
     maxRatings?: number;
@@ -56,7 +61,9 @@ export function findSections<T extends { votes: number }>(
             score,
             ...section
         }) => {
-            const minRatings = Math.max(ownMinRatings, chosenMinRatings);
+            const minRatings = section.ownMinimum
+                ? ownMinRatings
+                : Math.max(ownMinRatings, chosenMinRatings);
             const scored = items.flatMap((item) => {
                 if (item.votes < minVotes) return [];
                 if (filter && !filter(item)) return [];

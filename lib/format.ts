@@ -57,3 +57,7 @@ export const distinctTitle = (item: Titled, all: Titled[]) =>
 
 export const changeTone = (change: number) =>
     change >= 0.05 ? 'up' : change <= -0.05 ? 'down' : undefined;
+
+/** A count with its noun, like "1 season" or "4 seasons". */
+export const countOf = (count: number, noun: string) =>
+    `${count} ${noun}${count === 1 ? '' : 's'}`;

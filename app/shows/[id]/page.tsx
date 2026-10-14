@@ -11,6 +11,7 @@ import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
 import { getShow, getShows } from '@/lib/data';
 import {
     changeTone,
+    countOf,
     distinctTitle,
     formatChange,
     formatRating,
@@ -22,7 +23,7 @@ import {
 import { openGraph } from '@/lib/openGraph';
 import { relatedShows } from '@/lib/related';
 import { summarizeSeasons } from '@/lib/summaries';
-import type { RatedSeason } from '@/lib/types';
+import type { RatedSeason, Show } from '@/lib/types';
 import css from '../../detail.module.css';
 
 export const dynamicParams = false;
@@ -39,6 +40,18 @@ export async function generateMetadata({
     const trend = analyzeSeasons(show);
     const name = distinctTitle(show, getShows());
     const years = yearsInText(show);
+    const ogImage = `/shows/${show.id}/og.png`;
+    if (show.seasons.length === 1) {
+        return {
+            title: `${name} Rating`,
+            description: `${show.title} is rated ${formatRating(show.rating)} on IMDb, from ${formatVotes(show.votes)} votes. ${onlySeason(show)}`,
+            alternates: { canonical: `/shows/${show.id}/` },
+            openGraph: openGraph(
+                ogImage,
+                `${show.title}'s rating on IMDb: ${formatRating(show.rating)}`
+            ),
+        };
+    }
     // Worded for what people search for: "<series> best season",
     // "<series> seasons ranked".
     return {
@@ -50,7 +63,7 @@ export async function generateMetadata({
             : `${show.title} rated season by season.`,
         alternates: { canonical: `/shows/${show.id}/` },
         openGraph: openGraph(
-            `/shows/${show.id}/og.png`,
+            ogImage,
             `Bar chart of ${show.title}'s ratings season by season`
         ),
     };
@@ -62,12 +75,20 @@ const POSTER_SIZES = '(max-width: 639px) 104px, 200px';
 const seasonDetail = (season: RatedSeason) =>
     `Season ${season.seasonNumber}${season.year ? ` (${season.year})` : ''}`;
 
+/**
+ * What there is to say about a series with one season. Says that IMDb lists
+ * it that way, since it does for some long anime too, like One Piece.
+ */
+const onlySeason = (show: Show) =>
+    `IMDb lists ${show.title} as a single season of ${countOf(show.seasons[0].episodeCount, 'episode')}${show.endYear === null ? ' so far' : ''}, so there are no seasons to compare.`;
+
 export default async function Page({ params }: PageProps<'/shows/[id]'>) {
     const show = getShow((await params).id);
     if (!show) notFound();
 
     const seasons = ratedSeasons(show.seasons);
     const trend = analyzeSeasons(show);
+    const single = show.seasons.length === 1 ? show.seasons[0] : null;
     const poster: PosterEntry = {
         type: 'series',
         id: show.id,
@@ -120,7 +141,27 @@ export default async function Page({ params }: PageProps<'/shows/[id]'>) {
                 </div>
             </header>
 
-            {trend ? (
+            {single ? (
+                <>
+                    <div className={css.stats}>
+                        <StatTile
+                            label="Series rating on IMDb"
+                            value={formatRating(show.rating)}
+                            detail={`${formatVotes(show.votes)} votes`}
+                        />
+                        {single.rating !== null && (
+                            <StatTile
+                                label="Average episode rating"
+                                value={formatRating(single.rating)}
+                                detail={`${single.ratedEpisodeCount} of ${countOf(single.episodeCount, 'episode')} rated`}
+                            />
+                        )}
+                    </div>
+                    <p className={css.empty}>
+                        {onlySeason(show)} No curve to draw, just the rating.
+                    </p>
+                </>
+            ) : trend ? (
                 <>
                     <div className={css.stats}>
                         <StatTile
@@ -162,7 +203,7 @@ export default async function Page({ params }: PageProps<'/shows/[id]'>) {
             )}
 
             <section className={css.section}>
-                <h2>Season by season</h2>
+                <h2>{single ? 'The season' : 'Season by season'}</h2>
                 <SeasonTable
                     showId={show.id}
                     seasons={show.seasons}

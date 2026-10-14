@@ -9,7 +9,8 @@ from the latest data.
 Ratings come from [IMDb's non-commercial datasets](https://developer.imdb.com/non-commercial-datasets/).
 A season's rating is the average of its episode ratings. Episodes with fewer
 than five votes are left out, and only series with at least 5,000 votes and two
-rated seasons are included.
+rated seasons, or a single rated one, are included. A series with one season
+has no chart: its page shows its rating and says there's nothing to compare.
 
 IMDb doesn't say which movies belong together, so film series come from
 [Wikidata](https://www.wikidata.org/): everything that is a film series, film
@@ -67,8 +68,9 @@ The front-page sections ("Slow starters", "Collapsed like a house of cards",
 few wordings, listed there and in [lib/verdicts.ts](lib/verdicts.ts), and
 each title always gets the same one, picked by its id. A picker at the top of
 the series front page and list pages lets visitors require at least two, three
-or four rated seasons in every section (four by default). Every choice is
-rendered at build time, and the visitor's choice is remembered in the browser.
+or four rated seasons in every section (four by default), except "One season
+wonders", which is for series that ended after one. Every choice is rendered
+at build time, and the visitor's choice is remembered in the browser.
 
 New visitors get a welcome at the top of the series front page, in place of
 the featured series and the page's heading: a series that peaked and went

@@ -18,6 +18,8 @@ export type TrendCardProps = Omit<PosterEntry, 'ratings'> & {
     ratings: number[];
     /** The first and last rating, when there's a trend to show. */
     trend: { first: Endpoint; last: Endpoint; change: number } | null;
+    /** The rating to show instead, when there's only one. */
+    single?: Endpoint;
 };
 
 export function TrendCard({
@@ -25,6 +27,7 @@ export function TrendCard({
     meta,
     verdict,
     trend,
+    single,
     ...entry
 }: TrendCardProps) {
     return (
@@ -45,6 +48,14 @@ export function TrendCard({
                 </div>
                 <div className={css.chart}>
                     <Sparkline ratings={entry.ratings} />
+                    {!trend && single && (
+                        <p className={css.change}>
+                            <span>
+                                {single.label}{' '}
+                                <strong>{formatRating(single.rating)}</strong>
+                            </span>
+                        </p>
+                    )}
                     {trend && (
                         <p className={css.change}>
                             <span>
