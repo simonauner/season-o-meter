@@ -228,7 +228,7 @@ export function CodeForm({ secret }: { secret: string }) {
                     enterKeyHint="go"
                     aria-describedby={result ? 'pairing-result' : undefined}
                 />
-                <button type="submit" className={css.button} disabled={busy}>
+                <button type="submit" className={css.secondary} disabled={busy}>
                     {busy ? 'Connecting…' : 'Connect'}
                 </button>
             </div>

@@ -105,7 +105,9 @@ export function SyncPanel() {
                 <button
                     type="button"
                     className={
-                        pointedTo ? `${css.button} ${css.flash}` : css.button
+                        pointedTo
+                            ? `${css.secondary} ${css.flash}`
+                            : css.secondary
                     }
                     onClick={() => connect()}
                     onAnimationEnd={clearHash}
@@ -233,7 +235,7 @@ export function ConnectPrompt() {
             <div className={css.buttons}>
                 <button
                     type="button"
-                    className={css.button}
+                    className={`${css.secondary} ${css.primary}`}
                     onClick={() => connect(secret)}
                 >
                     Connect

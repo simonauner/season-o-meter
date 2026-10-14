@@ -106,7 +106,7 @@ function SkippedPanel({
                     </p>
                     <button
                         type="button"
-                        className={mineCss.button}
+                        className={mineCss.secondary}
                         onClick={bringAllBack}
                     >
                         Bring them all back
@@ -233,7 +233,7 @@ function HeroPanel({ kind }: { kind: Kind }) {
                     </p>
                     <button
                         type="button"
-                        className={mineCss.button}
+                        className={mineCss.secondary}
                         onClick={showAgain}
                     >
                         Show it again
@@ -280,7 +280,7 @@ function TipsPanel() {
             </p>
             <button
                 type="button"
-                className={mineCss.button}
+                className={mineCss.secondary}
                 disabled={!seen}
                 onClick={showAgain}
             >
