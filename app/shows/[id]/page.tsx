@@ -124,12 +124,12 @@ export default async function Page({ params }: PageProps<'/shows/[id]'>) {
                 <>
                     <div className={css.stats}>
                         <StatTile
-                            label="Best season"
+                            label="Best season rating"
                             value={formatRating(trend.best.rating)}
                             detail={seasonDetail(trend.best)}
                         />
                         <StatTile
-                            label="Worst season"
+                            label="Worst season rating"
                             value={formatRating(trend.worst.rating)}
                             detail={seasonDetail(trend.worst)}
                         />
