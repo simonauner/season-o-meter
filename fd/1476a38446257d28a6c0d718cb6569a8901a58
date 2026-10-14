@@ -1,0 +1,26 @@
+components/Welcome.tsx
+  s_9c22f4210d93f9::t_be68ceb4c70a0c 17-19,40,46-47,107,137,139,157,163,201-256,258-272,277-282
+app/page.tsx
+  s_9c22f4210d93f9::t_e1f89da1ecbc88 54-59
+  s_9c22f4210d93f9::t_be68ceb4c70a0c 60-70,101
+components/welcome.module.css
+  s_9c22f4210d93f9::t_be68ceb4c70a0c 334-335,351-352
+  s_9c22f4210d93f9::t_a05fed6c5bb8fe 391-469
+  s_9c22f4210d93f9::t_42278aa1300519 322,472
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fd1476a38446257d28a6c0d718cb6569a8901a58",
+  "prompts": {},
+  "sessions": {
+    "s_9c22f4210d93f9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ac04b49a-92c1-4141-aa01-541868503f3e",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
