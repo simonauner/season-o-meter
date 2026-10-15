@@ -12,7 +12,6 @@ import {
     formatChange,
     formatRating,
     formatVotes,
-    formatYears,
     sentence,
 } from '@/lib/format';
 import { openGraph } from '@/lib/openGraph';
@@ -44,12 +43,11 @@ export async function generateMetadata({
     const person = getPerson((await params).id);
     if (!person) return {};
     const trend = analyzeCareer(person);
-    const years = formatYears(person);
     // Worded for what people search for: "<name> movies ranked".
     return {
         title: `${person.name} Movies Ranked, Best to Worst`,
         description: trend
-            ? `The best ${person.name} movie is ${movieDetail(trend.best)} at ${formatRating(trend.best.rating)}, and the worst is ${movieDetail(trend.worst)} at ${formatRating(trend.worst.rating)}. ${sentence(trend.verdict)} IMDb ratings of all ${countedMovies(person).length} movies ${person.name} ${roleVerbs(person.roles)}${years ? `, ${years}` : ''}.`
+            ? `The best ${person.name} movie is ${movieDetail(trend.best)} at ${formatRating(trend.best.rating)}, and the worst is ${movieDetail(trend.worst)} at ${formatRating(trend.worst.rating)}. ${sentence(trend.verdict)} IMDb ratings of all ${countedMovies(person).length} movies ${person.name} ${roleVerbs(person.roles)}.`
             : `The movies ${person.name} ${roleVerbs(person.roles)}, rated.`,
         alternates: { canonical: `/people/${person.id}/` },
         openGraph: openGraph(
@@ -108,8 +106,7 @@ export default async function Page({ params }: PageProps<'/people/[id]'>) {
                 <div className={css.heading}>
                     <h1>{person.name}</h1>
                     <p className={css.meta}>
-                        {roleLabels(person.roles)} · {formatYears(person)} ·{' '}
-                        {counted.length} movies
+                        {roleLabels(person.roles)} · {counted.length} movies
                         {cameos > 0 &&
                             ` + ${cameos} ${cameos === 1 ? 'cameo' : 'cameos'}`}{' '}
                         ·{' '}

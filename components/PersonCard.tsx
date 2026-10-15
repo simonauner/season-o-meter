@@ -1,4 +1,4 @@
-import { formatVotes, formatYears } from '@/lib/format';
+import { formatVotes } from '@/lib/format';
 import { analyzeCareer, countedMovies } from '@/lib/people';
 import type { Person } from '@/lib/types';
 import type { TrendCardProps } from './TrendCard';
@@ -17,7 +17,7 @@ export function personCardProps(person: Person, meta?: string): TrendCardProps {
         href: `/people/${person.id}/`,
         meta:
             meta ??
-            `${formatYears(person)} · ${movies.length} movies · ${formatVotes(person.votes)} votes`,
+            `${movies.length} movies · ${formatVotes(person.votes)} votes`,
         verdict: trend?.verdict,
         ratings: movies.map((movie) => movie.rating),
         // The averages, as on their page, since one movie says little

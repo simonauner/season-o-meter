@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation';
 import { getPeople, getPerson } from '@/lib/data';
-import { formatYears } from '@/lib/format';
 import { titleImage } from '@/lib/ogImage';
 import { analyzeCareer, countedMovies, roleLabels } from '@/lib/people';
 
@@ -21,11 +20,7 @@ export async function GET(
 
     return titleImage({
         title: person.name,
-        meta: [
-            roleLabels(person.roles),
-            formatYears(person),
-            `${movies.length} movies`,
-        ],
+        meta: [roleLabels(person.roles), `${movies.length} movies`],
         verdict: analyzeCareer(person)?.verdict,
         bars: movies.map((movie, i) => ({
             rating: movie.rating,
