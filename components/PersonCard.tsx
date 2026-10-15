@@ -1,7 +1,7 @@
 import { formatVotes, formatYears } from '@/lib/format';
 import { analyzeCareer, countedMovies } from '@/lib/people';
 import type { Person } from '@/lib/types';
-import { TrendCard, type TrendCardProps } from './TrendCard';
+import type { TrendCardProps } from './TrendCard';
 
 export function personCardProps(person: Person, meta?: string): TrendCardProps {
     const trend = analyzeCareer(person);
@@ -28,14 +28,4 @@ export function personCardProps(person: Person, meta?: string): TrendCardProps {
             change: trend.change,
         },
     };
-}
-
-type PersonCardProps = {
-    person: Person;
-    /** Instead of their years, movies and votes. */
-    meta?: string;
-};
-
-export function PersonCard({ person, meta }: PersonCardProps) {
-    return <TrendCard {...personCardProps(person, meta)} />;
 }

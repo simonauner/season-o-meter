@@ -1,7 +1,7 @@
 import { analyzeMovies } from '@/lib/franchiseAnalysis';
 import { formatVotes, formatYears } from '@/lib/format';
 import type { Franchise, Movie } from '@/lib/types';
-import { TrendCard, type TrendCardProps } from './TrendCard';
+import type { TrendCardProps } from './TrendCard';
 
 const endpoint = (movie: Movie) => ({
     label: movie.year ? String(movie.year) : '',
@@ -28,19 +28,4 @@ export function franchiseCardProps(franchise: Franchise): TrendCardProps {
             change: trend.change,
         },
     };
-}
-
-type FranchiseCardProps = {
-    franchise: Franchise;
-    hideVerdict?: boolean;
-};
-
-export function FranchiseCard({ franchise, hideVerdict }: FranchiseCardProps) {
-    const props = franchiseCardProps(franchise);
-    return (
-        <TrendCard
-            {...props}
-            verdict={hideVerdict ? undefined : props.verdict}
-        />
-    );
 }

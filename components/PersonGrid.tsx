@@ -1,6 +1,6 @@
 import type { Person } from '@/lib/types';
-import { PersonCard } from './PersonCard';
-import css from './cardGrid.module.css';
+import { personCardProps } from './PersonCard';
+import { TrendGrid } from './TrendGrid';
 
 type PersonGridProps = {
     people: { person: Person; meta?: string }[];
@@ -8,12 +8,10 @@ type PersonGridProps = {
 
 export function PersonGrid({ people }: PersonGridProps) {
     return (
-        <ul className={css.grid}>
-            {people.map(({ person, meta }) => (
-                <li key={person.id}>
-                    <PersonCard person={person} meta={meta} />
-                </li>
-            ))}
-        </ul>
+        <TrendGrid
+            cards={people.map(({ person, meta }) =>
+                personCardProps(person, meta)
+            )}
+        />
     );
 }

@@ -1,6 +1,6 @@
 import type { Franchise } from '@/lib/types';
-import { FranchiseCard } from './FranchiseCard';
-import css from './cardGrid.module.css';
+import { franchiseCardProps } from './FranchiseCard';
+import { TrendGrid } from './TrendGrid';
 
 type FranchiseGridProps = {
     franchises: Franchise[];
@@ -12,15 +12,9 @@ export function FranchiseGrid({
     hideVerdicts,
 }: FranchiseGridProps) {
     return (
-        <ul className={css.grid}>
-            {franchises.map((franchise) => (
-                <li key={franchise.id}>
-                    <FranchiseCard
-                        franchise={franchise}
-                        hideVerdict={hideVerdicts}
-                    />
-                </li>
-            ))}
-        </ul>
+        <TrendGrid
+            cards={franchises.map(franchiseCardProps)}
+            hideVerdicts={hideVerdicts}
+        />
     );
 }

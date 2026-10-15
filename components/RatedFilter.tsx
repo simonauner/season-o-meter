@@ -13,9 +13,8 @@ import { Button } from './Button';
 import { ChoicePicker } from './ChoicePicker';
 import { HomeSection } from './HomeSection';
 import { useMinCount } from './MinCountFilter';
-import { TrendCard } from './TrendCard';
+import { TrendGrid } from './TrendGrid';
 import css from './homeSection.module.css';
-import gridCss from './cardGrid.module.css';
 
 const RATED_FILTERS = ['any', 'yes', 'no'] as const;
 
@@ -293,17 +292,9 @@ function CardGrid({
     hideVerdicts?: boolean;
 }) {
     return (
-        <ul className={gridCss.grid}>
-            {ids.map((id) => (
-                <li key={id}>
-                    <TrendCard
-                        {...home.cards[id]}
-                        verdict={
-                            hideVerdicts ? undefined : home.cards[id].verdict
-                        }
-                    />
-                </li>
-            ))}
-        </ul>
+        <TrendGrid
+            cards={ids.map((id) => home.cards[id])}
+            hideVerdicts={hideVerdicts}
+        />
     );
 }
