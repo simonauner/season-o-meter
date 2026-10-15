@@ -7,7 +7,7 @@ import {
     FLAWLESS,
     hasStandout,
     isZigzag,
-    pickVerdict,
+    rankVerdicts,
     RAN_OUT_OF_STEAM,
     SAVED_THE_BEST,
     type Shape,
@@ -122,6 +122,8 @@ export type CareerTrend = {
     average: number;
     shape: Shape;
     verdict: string;
+    /** Every way of saying it, starting with `verdict`. */
+    verdicts: string[];
 };
 
 /** The early and recent averages are of at most this many movies each. */
@@ -170,6 +172,7 @@ export function analyzeCareer(person: Person): CareerTrend | null {
     const spread = best.rating - worst.rating;
 
     const [shape, options] = verdictOptions();
+    const verdicts = rankVerdicts(person.id, options);
 
     function verdictOptions(): [Shape, string[]] {
         if (worst.rating >= 8) return ['flawless', FLAWLESS];
@@ -225,7 +228,8 @@ export function analyzeCareer(person: Person): CareerTrend | null {
         change,
         average,
         shape,
-        verdict: pickVerdict(person.id, options),
+        verdict: verdicts[0],
+        verdicts,
     };
 }
 

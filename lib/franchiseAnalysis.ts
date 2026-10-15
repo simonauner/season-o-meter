@@ -13,8 +13,8 @@ import {
     hasTwinPeaks,
     isComeback,
     isZigzag,
-    pickVerdict,
     RAN_OUT_OF_STEAM,
+    rankVerdicts,
     type Shape,
     SAVED_THE_BEST,
     STANDOUT,
@@ -35,6 +35,8 @@ export type MovieTrend = {
     change: number;
     shape: Shape;
     verdict: string;
+    /** Every way of saying it, starting with `verdict`. */
+    verdicts: string[];
 };
 
 export function analyzeMovies({ id, movies }: Franchise): MovieTrend | null {
@@ -51,7 +53,7 @@ export function analyzeMovies({ id, movies }: Franchise): MovieTrend | null {
     const fittedChange = slope(ratings) * (movies.length - 1);
 
     const [shape, options] = verdictOptions();
-    const verdict = pickVerdict(id, options);
+    const verdicts = rankVerdicts(id, options);
 
     function verdictOptions(): [Shape, string[]] {
         if (worst.rating >= 8) return ['flawless', FLAWLESS];
@@ -123,7 +125,8 @@ export function analyzeMovies({ id, movies }: Franchise): MovieTrend | null {
         average,
         change: last.rating - first.rating,
         shape,
-        verdict,
+        verdict: verdicts[0],
+        verdicts,
     };
 }
 

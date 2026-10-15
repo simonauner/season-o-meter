@@ -1,12 +1,35 @@
 import { hashUnit } from './hash';
 
 /**
- * One of the options, picked by the id so a series or film series always
- * gets the same one. Pages are built ahead of time and hydrated in the
- * browser, so a real random pick would differ between the two.
+ * The options, starting with one picked by the id so a series or film
+ * series always gets the same one. Pages are built ahead of time and
+ * hydrated in the browser, so a real random pick would differ between the
+ * two. The rest follow in turn, for when the first is already taken.
  */
-export const pickVerdict = (id: string, options: string[]) =>
-    options[Math.floor(hashUnit(id) * options.length)];
+export function rankVerdicts(id: string, options: string[]) {
+    const start = Math.floor(hashUnit(id) * options.length);
+    return [...options.slice(start), ...options.slice(0, start)];
+}
+
+/**
+ * Gives each card in a list a verdict that no card before it has, where it
+ * has one left, so a section doesn't say the same thing twice. A card that
+ * has run out gets the one used the fewest times. The other options are
+ * left out, so they aren't sent to the browser with every card.
+ */
+export function varyVerdicts<
+    T extends { verdict?: string; verdicts?: string[] },
+>(cards: T[]): Omit<T, 'verdicts'>[] {
+    const used = new Map<string, number>();
+    return cards.map(({ verdicts = [], ...card }) => {
+        if (!card.verdict || verdicts.length === 0) return card;
+        const verdict = verdicts.reduce((a, b) =>
+            (used.get(b) ?? 0) < (used.get(a) ?? 0) ? b : a
+        );
+        used.set(verdict, (used.get(verdict) ?? 0) + 1);
+        return { ...card, verdict };
+    });
+}
 
 /**
  * The shape of a title's ratings, which its verdict is one way of saying.
@@ -61,6 +84,8 @@ export const SAVED_THE_BEST = [
     'Mischief managed',
     'Last but not least',
     'Ending on a high note',
+    'Mic drop',
+    'Went out with a bang',
 ];
 export const RAN_OUT_OF_STEAM = [
     'Ran out of steam',

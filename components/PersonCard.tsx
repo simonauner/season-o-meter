@@ -19,6 +19,7 @@ export function personCardProps(person: Person, meta?: string): TrendCardProps {
             meta ??
             `${movies.length} movies · ${formatVotes(person.votes)} votes`,
         verdict: trend?.verdict,
+        verdicts: trend?.verdicts,
         ratings: movies.map((movie) => movie.rating),
         // The averages, as on their page, since one movie says little
         // about a career.

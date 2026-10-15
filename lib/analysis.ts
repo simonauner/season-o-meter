@@ -13,8 +13,8 @@ import {
     hasTwinPeaks,
     isComeback,
     isZigzag,
-    pickVerdict,
     RAN_OUT_OF_STEAM,
+    rankVerdicts,
     type Shape,
     SAVED_THE_BEST,
     STANDOUT,
@@ -52,6 +52,8 @@ const FELL_AT_THE_FINISH = [
     'Houston, we have a problem',
     'Fumbled the ending',
     "The ending we don't talk about",
+    "I've got a bad feeling about this",
+    'Fade to meh',
 ];
 /** Still running, and the latest season is the worst so far. */
 const LATEST_IS_WORST = [
@@ -72,6 +74,8 @@ export type SeasonTrend = {
     change: number;
     shape: Shape;
     verdict: string;
+    /** Every way of saying it, starting with `verdict`. */
+    verdicts: string[];
 };
 
 export function analyzeSeasons(show: Show): SeasonTrend | null {
@@ -90,7 +94,7 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
     const ended = hasEnded(show);
 
     const [shape, options] = verdictOptions();
-    const verdict = pickVerdict(show.id, options);
+    const verdicts = rankVerdicts(show.id, options);
 
     function verdictOptions(): [Shape, string[]] {
         if (worst.rating >= 8.5) return ['flawless', FLAWLESS];
@@ -155,7 +159,8 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
         average,
         change: last.rating - first.rating,
         shape,
-        verdict,
+        verdict: verdicts[0],
+        verdicts,
     };
 }
 

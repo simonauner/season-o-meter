@@ -21,6 +21,7 @@ export function franchiseCardProps(franchise: Franchise): TrendCardProps {
         href: `/movies/${franchise.id}/`,
         meta: `${formatYears(franchise)} · ${franchise.movies.length} movies · ${formatVotes(franchise.votes)} votes`,
         verdict: trend?.verdict,
+        verdicts: trend?.verdicts,
         ratings: franchise.movies.map((movie) => movie.rating),
         trend: trend && {
             first: endpoint(trend.first),

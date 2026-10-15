@@ -15,6 +15,11 @@ export type TrendCardProps = Omit<PosterEntry, 'ratings'> & {
     href: string;
     meta: string;
     verdict?: string;
+    /**
+     * Every way of saying the verdict, for a list to pick one that no card
+     * before has.
+     */
+    verdicts?: string[];
     ratings: number[];
     /** The first and last rating, when there's a trend to show. */
     trend: { first: Endpoint; last: Endpoint; change: number } | null;
