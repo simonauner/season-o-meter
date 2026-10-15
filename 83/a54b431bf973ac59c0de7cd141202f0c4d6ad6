@@ -1,0 +1,53 @@
+components/FranchiseGrid.tsx
+  s_b44a83f822318c::t_be978176924cf4 3-4,18-22
+  s_b44a83f822318c::t_49c094eee279f7 2
+lib/analysis.ts
+  s_b44a83f822318c::t_1208d0a44b08ac 17,68-69,88,152-153
+  s_b44a83f822318c::t_263e966e26891c 51-52
+components/ShowCard.tsx
+  s_b44a83f822318c::t_9dd8e134539d42 20
+  s_b44a83f822318c::t_be978176924cf4 4
+components/PersonGrid.tsx
+  s_b44a83f822318c::t_49c094eee279f7 2
+  s_b44a83f822318c::t_be978176924cf4 3-4,12-14,17-19
+components/RatedFilter.tsx
+  s_b44a83f822318c::t_be978176924cf4 298-299,301-302
+  s_b44a83f822318c::t_49c094eee279f7 12
+components/ShowGrid.tsx
+  s_b44a83f822318c::t_be978176924cf4 3-4,15-20
+  s_b44a83f822318c::t_49c094eee279f7 2
+components/FranchiseCard.tsx
+  s_b44a83f822318c::t_be978176924cf4 4
+  s_b44a83f822318c::t_9dd8e134539d42 24
+lib/people.ts
+  s_b44a83f822318c::t_1208d0a44b08ac 125-126,175,226-227
+  s_b44a83f822318c::t_9dd8e134539d42 10
+components/TrendCard.tsx
+  s_b44a83f822318c::t_9dd8e134539d42 18-22
+lib/verdicts.ts
+  s_b44a83f822318c::t_1208d0a44b08ac 4-7,9-16,19,23,27-32
+  s_b44a83f822318c::t_03851642e6010e 20-21
+  s_b44a83f822318c::t_8bdf9f24d28340 17-18,22,24-26
+  s_b44a83f822318c::t_263e966e26891c 68-69
+components/PersonCard.tsx
+  s_b44a83f822318c::t_be978176924cf4 4
+  s_b44a83f822318c::t_9dd8e134539d42 22
+lib/franchiseAnalysis.ts
+  s_b44a83f822318c::t_1208d0a44b08ac 17,38-39,56,125-126
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "83a54b431bf973ac59c0de7cd141202f0c4d6ad6",
+  "prompts": {},
+  "sessions": {
+    "s_b44a83f822318c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e822744c-f969-4b7d-a7d2-989bf17d4cda",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
