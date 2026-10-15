@@ -1,5 +1,7 @@
 import type { Person } from '@/lib/types';
-import { PersonCard } from './PersonCard';
+import { varyVerdicts } from '@/lib/verdicts';
+import { personCardProps } from './PersonCard';
+import { TrendCard } from './TrendCard';
 import css from './cardGrid.module.css';
 
 type PersonGridProps = {
@@ -7,11 +9,14 @@ type PersonGridProps = {
 };
 
 export function PersonGrid({ people }: PersonGridProps) {
+    const cards = varyVerdicts(
+        people.map(({ person, meta }) => personCardProps(person, meta))
+    );
     return (
         <ul className={css.grid}>
-            {people.map(({ person, meta }) => (
-                <li key={person.id}>
-                    <PersonCard person={person} meta={meta} />
+            {cards.map((card) => (
+                <li key={card.id}>
+                    <TrendCard {...card} />
                 </li>
             ))}
         </ul>

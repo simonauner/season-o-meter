@@ -9,6 +9,7 @@ import { storedChoice } from '@/lib/storedChoice';
 import { ratedIds } from '@/lib/userData';
 import { useUserData } from '@/lib/userStore';
 import { useStaticJson } from '@/lib/useStaticJson';
+import { varyVerdicts } from '@/lib/verdicts';
 import { Button } from './Button';
 import { ChoicePicker } from './ChoicePicker';
 import { HomeSection } from './HomeSection';
@@ -294,13 +295,11 @@ function CardGrid({
 }) {
     return (
         <ul className={gridCss.grid}>
-            {ids.map((id) => (
-                <li key={id}>
+            {varyVerdicts(ids.map((id) => home.cards[id])).map((card) => (
+                <li key={card.id}>
                     <TrendCard
-                        {...home.cards[id]}
-                        verdict={
-                            hideVerdicts ? undefined : home.cards[id].verdict
-                        }
+                        {...card}
+                        verdict={hideVerdicts ? undefined : card.verdict}
                     />
                 </li>
             ))}

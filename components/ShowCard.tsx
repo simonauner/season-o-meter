@@ -1,7 +1,7 @@
 import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
 import { countOf, formatVotes, formatYears } from '@/lib/format';
 import type { Show } from '@/lib/types';
-import { TrendCard, type TrendCardProps } from './TrendCard';
+import type { TrendCardProps } from './TrendCard';
 
 export function showCardProps(show: Show): TrendCardProps {
     const seasons = ratedSeasons(show.seasons);
@@ -17,6 +17,7 @@ export function showCardProps(show: Show): TrendCardProps {
         href: `/shows/${show.id}/`,
         meta: `${formatYears(show)} · ${countOf(seasons.length, 'season')} · ${formatVotes(show.votes)} votes`,
         verdict: trend?.verdict,
+        verdicts: trend?.verdicts,
         ratings: seasons.map((season) => season.rating),
         trend: trend && {
             first: {
@@ -34,19 +35,4 @@ export function showCardProps(show: Show): TrendCardProps {
                 ? { label: 'On IMDb', rating: show.rating }
                 : undefined,
     };
-}
-
-type ShowCardProps = {
-    show: Show;
-    hideVerdict?: boolean;
-};
-
-export function ShowCard({ show, hideVerdict }: ShowCardProps) {
-    const props = showCardProps(show);
-    return (
-        <TrendCard
-            {...props}
-            verdict={hideVerdict ? undefined : props.verdict}
-        />
-    );
 }
