@@ -183,6 +183,7 @@ export function analyzeCareer(person: Person): CareerTrend | null {
                     'Lost the touch',
                     'The early years were better',
                     'Not what it used to be',
+                    'Glory days',
                 ],
             ];
         }
@@ -192,7 +193,11 @@ export function analyzeCareer(person: Person): CareerTrend | null {
         if (best === movies[0]) {
             return [
                 'original-best',
-                [`Never topped ${best.title}`, 'Started at the top'],
+                [
+                    `Never topped ${best.title}`,
+                    'Started at the top',
+                    'A hard act to follow',
+                ],
             ];
         }
         if (hasStandout(ratings)) return ['standout', STANDOUT];
@@ -205,7 +210,7 @@ export function analyzeCareer(person: Person): CareerTrend | null {
             ];
         }
         if (spread >= BIG_SPREAD_MIN) {
-            return ['big-spread', [...BIG_SPREAD, 'Hit and miss']];
+            return ['big-spread', BIG_SPREAD];
         }
         if (isZigzag(ratings)) return ['zigzag', ZIGZAG];
         return ['peaked', [`Peaked with ${best.title}`]];

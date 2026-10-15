@@ -29,39 +29,86 @@ export type Shape =
     | 'peaked';
 
 // Verdicts that read the same for series and film series.
-export const FLAWLESS = ['Flawless victory', 'No notes', "Chef's kiss"];
+export const FLAWLESS = [
+    'Flawless victory',
+    'No notes',
+    "Chef's kiss",
+    'All killer, no filler',
+    'Practically perfect in every way',
+    'Nailed it',
+    'The gold standard',
+    'Hit after hit',
+];
 export const STEADY = [
     'Rock steady',
     'Live long and plateau',
     'Just keep swimming',
     'Steady as she goes',
+    'Slow and steady',
+    'Steady Eddie',
+    'No surprises',
 ];
-export const STEADY_AND_LOW = ['Rock bottom steady', 'Reliably meh'];
+export const STEADY_AND_LOW = [
+    'Rock bottom steady',
+    'Reliably meh',
+    'Consistently meh',
+    'It is what it is',
+];
 export const SAVED_THE_BEST = [
     'Saved the best for last',
     'The Return of the King',
     'Stuck the landing',
     'Mischief managed',
+    'Last but not least',
+    'Ending on a high note',
 ];
 export const RAN_OUT_OF_STEAM = [
     'Ran out of steam',
     'Jumped the shark',
     'Getting too old for this',
     'Running on fumes',
+    'Fizzled out',
+    'Lost the plot',
+    'Not with a bang but a whimper',
 ];
 export const ZIGZAG = [
     'Life is like a box of chocolates',
     'Shaken, not stirred',
+    'What a rollercoaster',
+    'Hot and cold',
+    'Expect the unexpected',
 ];
-export const TWIN_PEAKS = ['Twin Peaks'];
+export const TWIN_PEAKS = [
+    'Twin Peaks',
+    'Lightning struck twice',
+    'Two of a kind',
+];
 export const COMEBACK = [
     'Life finds a way',
     "I'm not dead yet!",
     "It's alive!",
+    'The comeback kid',
+    'Back from the brink',
+    'Rose from the ashes',
 ];
-export const BIG_SPREAD = ['The Good, the Bad and the Ugly'];
-export const STANDOUT = ['There can be only one', 'Lightning in a bottle'];
-export const BETTER_WITH_AGE = ['Getting better with age', 'Like a fine wine'];
+export const BIG_SPREAD = [
+    'The Good, the Bad and the Ugly',
+    'Hit and miss',
+    'All over the map',
+    'From the sublime to the ridiculous',
+];
+export const STANDOUT = [
+    'There can be only one',
+    'Lightning in a bottle',
+    'One for the ages',
+    'One-hit wonder',
+];
+export const BETTER_WITH_AGE = [
+    'Getting better with age',
+    'Like a fine wine',
+    'Only getting better',
+    'Up, up and away',
+];
 
 /** At least this far between the best and the worst. */
 export const BIG_SPREAD_MIN = 2.5;
