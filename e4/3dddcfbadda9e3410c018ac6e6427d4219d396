@@ -1,0 +1,23 @@
+app/people/[id]/page.tsx
+  s_ca11e0cfd22357::t_8e9534110e32c4 50,109
+app/people/[id]/og.png/route.tsx
+  s_ca11e0cfd22357::t_21921bb5a69d38 23
+components/PersonCard.tsx
+  s_ca11e0cfd22357::t_8e9534110e32c4 1,20,35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e43dddcfbadda9e3410c018ac6e6427d4219d396",
+  "prompts": {},
+  "sessions": {
+    "s_ca11e0cfd22357": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "45a8e952-6865-4ed0-ba1f-dedd86e40e99",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
