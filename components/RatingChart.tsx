@@ -182,7 +182,11 @@ export function RatingChart({ points, label, ownKeys }: RatingChartProps) {
                     ))}
 
                     {points.map((point, i) =>
-                        i % labelEvery === 0 || i === points.length - 1 ? (
+                        // The last label always, and the regular ones that
+                        // aren't so close to it that they'd overlap.
+                        i === points.length - 1 ||
+                        (i % labelEvery === 0 &&
+                            points.length - 1 - i >= labelEvery) ? (
                             <text
                                 key={point.key}
                                 x={x(i)}
