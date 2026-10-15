@@ -1,0 +1,19 @@
+components/RatingChart.tsx
+  s_e43a61403cee7b::t_870823c3cc4a35 185-189
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "839729b348e5623132519b477d101106f91e0dc9",
+  "prompts": {},
+  "sessions": {
+    "s_e43a61403cee7b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "43729c87-2c0f-4ec4-b15e-e85a3414c270",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
