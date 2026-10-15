@@ -13,11 +13,17 @@ const MAX_BARS = 12;
 /** Ratings from FLOOR up map onto the bar height, like the footer skyline. */
 const FLOOR = 5;
 
-/** What a poster is drawn from. */
+/** What a poster is drawn from: a title, or a person and their movies. */
 export type PosterEntry = Pick<
     SearchEntry,
-    'type' | 'id' | 'title' | 'startYear' | 'endYear' | 'ratings' | 'poster'
->;
+    'id' | 'title' | 'startYear' | 'endYear' | 'ratings' | 'poster'
+> & { type: SearchEntry['type'] | 'person' };
+
+const KINDS: Record<PosterEntry['type'], string> = {
+    series: 'TV series',
+    movies: 'Film series',
+    person: 'Filmography',
+};
 
 /**
  * The image last shown for each poster, which the browser has at hand. A
@@ -32,8 +38,8 @@ const hueOf = (id: string) =>
     [...id].reduce((hue, char) => (hue * 31 + char.charCodeAt(0)) % 360, 7);
 
 /**
- * A title's poster from TMDB, or one drawn from its title and ratings when
- * TMDB has none or the image doesn't load.
+ * A title's poster or a person's photo from TMDB, or one drawn from its
+ * title and ratings when TMDB has none or the image doesn't load.
  */
 export function Poster({
     entry,
@@ -100,9 +106,7 @@ function DrawnPoster({
             data-untitled={untitled ? '' : undefined}
             aria-hidden
         >
-            <span className={css.kind}>
-                {entry.type === 'movies' ? 'Film series' : 'TV series'}
-            </span>
+            <span className={css.kind}>{KINDS[entry.type]}</span>
             {!untitled && (
                 <>
                     <span className={css.title}>{entry.title}</span>

@@ -78,6 +78,36 @@
     white-space: normal;
 }
 
+/* Listed, but not counted, like a cameo. */
+.uncounted > * {
+    opacity: 0.55;
+}
+
+/* The people who made a movie, under its title. */
+.people {
+    display: block;
+    margin-top: 2px;
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 400;
+}
+
+/* Breaks between names, not inside them. */
+.people a {
+    white-space: nowrap;
+}
+
+.people a:hover {
+    text-decoration: underline;
+}
+
+/* Characters too, though they're shorter. */
+.table .credit {
+    min-width: 8em;
+    white-space: normal;
+    color: var(--text-secondary);
+}
+
 .title a:hover {
     text-decoration: underline;
 }
@@ -180,6 +210,22 @@
 
     .cards .you {
         grid-area: you;
+    }
+
+    /* Someone's part in the movie goes under the title, instead of your
+     * rating. */
+    .credited tbody tr {
+        grid-template-areas:
+            'title title rating'
+            'credit credit change'
+            'year votes votes'
+            'bar bar bar';
+    }
+
+    .cards .credit {
+        grid-area: credit;
+        min-width: 0;
+        font-size: 0.8125rem;
     }
 
     .cards .you::before {

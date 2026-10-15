@@ -1,7 +1,7 @@
 import 'server-only';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import type { DataFile, Franchise, Show } from './types';
+import type { DataFile, Franchise, Person, Show } from './types';
 
 const DATA_FILE = path.join(process.cwd(), 'data', 'shows.json');
 
@@ -31,3 +31,9 @@ export const getFranchises = () => getData().franchises;
 
 export const getFranchise = (id: string): Franchise | undefined =>
     getFranchises().find((franchise) => franchise.id === id);
+
+/** None in data built before people were added. */
+export const getPeople = (): Person[] => getData().people ?? [];
+
+export const getPerson = (id: string): Person | undefined =>
+    getPeople().find((person) => person.id === id);

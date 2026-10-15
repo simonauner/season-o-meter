@@ -36,13 +36,16 @@ jobs:
             # The data only changes once a day, so pushes and pull requests
             # reuse the latest fetched; nightly and manual runs fetch it
             # afresh. The key never matches; the prefix picks the newest.
+            # The version in the prefix goes up when the data gets something
+            # new that every build needs, like people, so none reuse data
+            # from before it.
             - id: cached-data
               if: github.event_name == 'push' || github.event_name == 'pull_request'
               uses: actions/cache/restore@v6
               with:
                   path: data/shows.json
-                  key: data-${{ github.run_id }}
-                  restore-keys: data-
+                  key: data-v2-${{ github.run_id }}
+                  restore-keys: data-v2-
 
             - id: data
               if: steps.cached-data.outputs.cache-matched-key == ''
@@ -67,7 +70,7 @@ jobs:
               uses: actions/cache/save@v6
               with:
                   path: data/shows.json
-                  key: data-${{ github.run_id }}
+                  key: data-v2-${{ github.run_id }}
 
             - if: github.event_name != 'pull_request'
               uses: actions/upload-pages-artifact@v5

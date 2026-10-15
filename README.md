@@ -37,22 +37,50 @@ and a bar per season or movie, and for every other page, the site's own.
 They're drawn at build time, one `og.png` next to each title's page
 ([lib/ogImage.tsx](lib/ogImage.tsx)).
 
+## People
+
+The 50 most popular directors, writers and actors each have a page with how
+their movies are rated, from their first to their latest. There's no link to
+them in the header. Instead, each movie on a film series' page links to the
+people who made it, up to six, and each person's page to the people they
+worked with most. `/people/` lists them all. People can't be rated, and
+neither can the movies on their pages.
+
+They're the ones whose movies have the most votes on IMDb, with at least
+five movies, counting movies with at least 10,000 votes. Writers count for
+the screenplay or story, not for a book or characters a movie is based on,
+or Stan Lee would be credited with every Marvel movie.
+
+An actor's page lists every movie they're in, but cameos, billed after the
+first 20 on TMDB or uncredited, are faded and left out of the ratings, the
+trend and their verdict. A switch adds them to the chart. That way the
+movie someone knows them from is there, without a few seconds in Hot Fuzz
+counting as one of Cate Blanchett's movies. IMDb's datasets
+list only about ten people per movie, in no reliable order: Cate Blanchett
+isn't in two of the three Lord of the Rings movies there. So the 100 actors
+with the most votes on movies they're among the first four billed in on
+IMDb are looked up on TMDB, and the 50 with the most votes there, cameos
+left out, are included. Without a TMDB key, it's the 50 from IMDb
+([scripts/build-data.mts](scripts/build-data.mts)).
+
 ## How it works
 
 The site is fully static. There are no API calls when someone visits it,
 though posters are loaded from TMDB's image server.
 
 1. `npm run data` ([scripts/build-data.mts](scripts/build-data.mts)) downloads
-   the IMDb datasets (~290 MB, cached in `.imdb/` for 20 hours), queries
+   the IMDb datasets (~1.5 GB, cached in `.imdb/` for 20 hours), queries
    Wikidata for film series, looks up posters on TMDB, and writes per-season
-   ratings for every included series and per-movie ratings for every
-   included film series to `data/shows.json`. Posters need a TMDB API key or
+   ratings for every included series, per-movie ratings for every
+   included film series, and the movies of the most popular people to
+   `data/shows.json`. Posters need a TMDB API key or
    read access token in `TMDB_API_KEY`, in `.env` locally and as a
    repository secret for the deploy workflow. Without it the data has no
    posters, and the site draws its own from the title and its ratings.
 2. `npm run build` reads that file and exports every page to `out/`:
-   a front page with sections for series and one for movies (`/movies/`),
-   a page per series and film series, a list page per section, a search
+   a front page with sections for series, one for movies (`/movies/`) and
+   one for people (`/people/`), a page per series, film series and person,
+   a list page per section, a search
    index for client-side search, and a sitemap so search engines find every
    title's page, most of which no list links to.
 3. [GitHub Actions](.github/workflows/deploy.yml) does both every night and
