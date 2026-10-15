@@ -42,17 +42,26 @@ const STILL_CLIMBING = [
     'To infinity and beyond!',
     "We're gonna need a bigger boat",
     'The best is yet to come',
+    'Just getting started',
+    'Hitting its stride',
 ];
 const FELL_AT_THE_FINISH = [
     'Fell at the finish line',
     'You were the chosen one!',
     'Hasta la vista, quality',
     'Houston, we have a problem',
+    'Fumbled the ending',
+    "The ending we don't talk about",
     "I've got a bad feeling about this",
     'Fade to meh',
 ];
 /** Still running, and the latest season is the worst so far. */
-const LATEST_IS_WORST = ['Brace yourselves', 'Winter is coming'];
+const LATEST_IS_WORST = [
+    'Brace yourselves',
+    'Winter is coming',
+    'Danger, Will Robinson!',
+    'Storm clouds gathering',
+];
 
 export type SeasonTrend = {
     best: RatedSeason;
@@ -117,6 +126,7 @@ export function analyzeSeasons(show: Show): SeasonTrend | null {
                     `All downhill since season ${best.seasonNumber}`,
                     'I see dead seasons',
                     "Should've quit while ahead",
+                    'The thrill is gone',
                 ],
             ];
         }

@@ -79,6 +79,8 @@ export function analyzeMovies({ id, movies }: Franchise): MovieTrend | null {
                     "You can't handle the sequel",
                     'Nothing beats the original',
                     'Sequelitis',
+                    'A hard act to follow',
+                    "Lightning didn't strike twice",
                 ],
             ];
         }
@@ -106,6 +108,7 @@ export function analyzeMovies({ id, movies }: Franchise): MovieTrend | null {
                     `All downhill after ${best.title}`,
                     'I see dead sequels',
                     "Should've quit while ahead",
+                    'The thrill is gone',
                 ],
             ];
         }
