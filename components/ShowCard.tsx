@@ -17,6 +17,7 @@ export function showCardProps(show: Show): TrendCardProps {
         href: `/shows/${show.id}/`,
         meta: `${formatYears(show)} · ${countOf(seasons.length, 'season')} · ${formatVotes(show.votes)} votes`,
         verdict: trend?.verdict,
+        verdicts: trend?.verdicts,
         ratings: seasons.map((season) => season.rating),
         trend: trend && {
             first: {
