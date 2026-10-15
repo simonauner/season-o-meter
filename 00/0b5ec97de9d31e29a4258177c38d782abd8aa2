@@ -1,0 +1,102 @@
+AGENTS.md
+  s_e43a61403cee7b::t_b6a3413dbc6b75 39-41
+  s_e43a61403cee7b::t_2bdf2a9ff912a3 37
+lib/types.ts
+  s_e43a61403cee7b::t_210fbfa7e359dd 56-62,70-78,80,82,84,86-90,97-98
+  s_e43a61403cee7b::t_f29e011e95d69a 63-64
+  s_e43a61403cee7b::t_4322e2d1b30a14 65-69,79,81,83,85
+app/people/lists/[slug]/page.tsx
+  s_e43a61403cee7b::t_ec7c21a85a2b36 1-49
+app/people/page.tsx
+  s_e43a61403cee7b::t_ec7c21a85a2b36 1-22,25-42
+  s_e43a61403cee7b::t_6d08795d2adae7 23-24
+.github/workflows/deploy.yml
+  s_e43a61403cee7b::t_b6a3413dbc6b75 39-41,47-48,73
+components/ratingTable.module.css
+  s_e43a61403cee7b::t_dc6ed8671f1646 81-85
+  s_e43a61403cee7b::t_d82919bbb9c073 95,97-99
+  s_e43a61403cee7b::t_e25823f570fe58 104-110,215-229
+  s_e43a61403cee7b::t_7a669c9d0c1b63 86-94,100-103
+  s_e43a61403cee7b::t_5aa8a878d02cc4 96
+  s_e43a61403cee7b::t_ea4a7dee20eb30 230
+app/sitemap.ts
+  s_e43a61403cee7b::t_dec22c4a312718 3,5,19,24-25
+components/Poster.tsx
+  s_e43a61403cee7b::t_6d08795d2adae7 109
+  s_e43a61403cee7b::t_bf1ee008dbee3a 16,19-26,41-42
+components/MovieChart.tsx
+  s_e43a61403cee7b::t_11264dc121e525 6-15,28
+lib/people.ts
+  s_e43a61403cee7b::t_9840864fa3da82 252,254-255,257,272-274,281-284
+  s_e43a61403cee7b::t_b941b05c7bda4f 1-49,51-85,97-99,101-129,158-164,168-198,210-222,224-234,236-239,243-249
+  s_e43a61403cee7b::t_97a68badef2c06 86-96,100,155-157,223,235,240-242,262-264,271
+  s_e43a61403cee7b::t_e3eb06edc2a30e 250-251,253,256,258-261,265-270,275-280,285-290
+  s_e43a61403cee7b::t_09a2906103f2ff 50
+  s_e43a61403cee7b::t_8692fea8cb5b67 130-154,165-167,199-209
+components/MovieTable.tsx
+  s_e43a61403cee7b::t_5aa8a878d02cc4 2,160,168
+  s_e43a61403cee7b::t_7a669c9d0c1b63 154-159,161-167,169-170
+  s_e43a61403cee7b::t_dc6ed8671f1646 25-29,38,71-78,80-81,85,88-91
+  s_e43a61403cee7b::t_e3eb06edc2a30e 1,10,23-24,37
+  s_e43a61403cee7b::t_e25823f570fe58 16-22,32-36,39,42-44,48,59-63,104-108,130-137
+  s_e43a61403cee7b::t_144c603c5d1813 102
+  s_e43a61403cee7b::t_636b211aaa5736 171-172
+app/people/[id]/page.tsx
+  s_e43a61403cee7b::t_c72f6dfd79c706 3,21,23,52,70-71,78,112-115,155,170-172,174-178
+  s_e43a61403cee7b::t_b3443490550e99 1-2,4-20,22,24-51,53-69,72-77,79-111,116-154,156-169,173,179-194
+lib/summaries.ts
+  s_e43a61403cee7b::t_558fdef57d6805 3,142-144,164-172
+  s_e43a61403cee7b::t_576fa7a121bce2 6,139-141,145-151,153-163
+  s_e43a61403cee7b::t_8692fea8cb5b67 152
+  s_e43a61403cee7b::t_572bc5a9fb89dc 173-175
+lib/data.ts
+  s_e43a61403cee7b::t_576fa7a121bce2 4,34-39
+components/PersonGrid.tsx
+  s_e43a61403cee7b::t_17a28e679bca15 1-19
+scripts/build-data.mts
+  s_e43a61403cee7b::t_464a9f6e389264 3-5,13,26,30-31,85-96,114-120,272-277,284-285,287-291,334-341,345,451-469,471-479,481-485,490-497,499-508,512-513,519-524,542-571,578-586,593-600,602-608,610-624,682-687,796-803,809,815
+  s_e43a61403cee7b::t_2462ca49007690 97-101,106-113,358-396,398-427,430-437,439,446-450,510-511,525-541
+  s_e43a61403cee7b::t_4322e2d1b30a14 102-105,355-356,429,440-445,509,514-518,576,587-592,601
+  s_e43a61403cee7b::t_0db5d8d1d3f4e2 397
+  s_e43a61403cee7b::t_8db78b6210b492 486-487
+  s_e43a61403cee7b::t_f29e011e95d69a 350-354,357,428,438,480,488-489,498,572-575,577
+  s_e43a61403cee7b::t_02d6037c6a8ff2 470
+app/movies/[id]/page.tsx
+  s_e43a61403cee7b::t_7a669c9d0c1b63 10,23,159-163
+components/CareerChart.tsx
+  s_e43a61403cee7b::t_11264dc121e525 1-39
+README.md
+  s_e43a61403cee7b::t_2bdf2a9ff912a3 71
+  s_e43a61403cee7b::t_fff1ef574eea9e 73-75,80-82
+  s_e43a61403cee7b::t_fe939a26532a5e 39-41,48-50
+  s_e43a61403cee7b::t_31fb8678317066 42-43
+  s_e43a61403cee7b::t_63e3de946c92f9 53-57,61-62
+  s_e43a61403cee7b::t_09a2906103f2ff 51-52,58-60
+  s_e43a61403cee7b::t_7e53cce03d359c 44-47,63
+  s_e43a61403cee7b::t_0733a2207807f0 64
+components/careerChart.module.css
+  s_e43a61403cee7b::t_11264dc121e525 1-3
+app/people/[id]/og.png/route.tsx
+  s_e43a61403cee7b::t_baf576547e0965 5,20,27,30
+  s_e43a61403cee7b::t_ec7c21a85a2b36 1-4,6-19,21-26,28-29,31-35
+components/PersonCard.tsx
+  s_e43a61403cee7b::t_17a28e679bca15 1,4-7,9-19,21,25,29-41
+  s_e43a61403cee7b::t_6d08795d2adae7 3,23-24,26-28
+  s_e43a61403cee7b::t_baf576547e0965 2,8,20,22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "000b5ec97de9d31e29a4258177c38d782abd8aa2",
+  "prompts": {},
+  "sessions": {
+    "s_e43a61403cee7b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "43729c87-2c0f-4ec4-b15e-e85a3414c270",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
