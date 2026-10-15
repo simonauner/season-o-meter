@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { Button } from '@/components/Button';
+import { Done } from '@/components/Done';
 import { parsePairingCode } from '@/lib/pairingCode';
 import {
     approvePairing,
@@ -11,7 +13,7 @@ import {
     type ApproveResult,
     type Pairing,
 } from '@/lib/sync';
-import css from './mine.module.css';
+import css from '../mine/mine.module.css';
 
 const EXAMPLE = 'brave-otter';
 
@@ -23,8 +25,8 @@ const minutesAndSeconds = (ms: number) => {
     return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 };
 
-const minePage = () =>
-    `${location.host}${process.env.NEXT_PUBLIC_BASE_PATH}/mine/`;
+const profilePage = () =>
+    `${location.host}${process.env.NEXT_PUBLIC_BASE_PATH}/profile/`;
 
 const START_PROBLEMS = {
     'too-many': 'Too many tries. Wait a minute and try again.',
@@ -126,16 +128,11 @@ export function CodeOffer() {
                     Already syncing on another device? Get a code here and enter
                     it there.
                 </p>
-                <button
-                    type="button"
-                    className={css.secondary}
-                    onClick={start}
-                    disabled={offer.phase === 'loading'}
-                >
+                <Button onClick={start} disabled={offer.phase === 'loading'}>
                     {offer.phase === 'loading'
                         ? 'Getting a code…'
                         : 'Get a code'}
-                </button>
+                </Button>
             </div>
         );
     }
@@ -144,9 +141,7 @@ export function CodeOffer() {
         return (
             <div className={css.codeForm}>
                 <p role="alert">{START_PROBLEMS[offer.phase]}</p>
-                <button type="button" className={css.secondary} onClick={start}>
-                    Get a new code
-                </button>
+                <Button onClick={start}>Get a new code</Button>
             </div>
         );
     }
@@ -154,8 +149,8 @@ export function CodeOffer() {
     return (
         <div className={css.codeForm}>
             <p>
-                On the device that syncs, go to <strong>{minePage()}</strong>,
-                choose <em>Enter a code</em> and type:
+                On the device that syncs, go to <strong>{profilePage()}</strong>
+                , choose <em>Enter a code</em> and type:
             </p>
             <output className={css.code} aria-label="Pairing code">
                 {offer.pairing.code}
@@ -167,19 +162,13 @@ export function CodeOffer() {
                 Expires in {minutesAndSeconds(offer.pairing.expiresAt - now)}.
                 What you have rated on this device is then added to the list.
             </p>
-            <button
-                type="button"
-                className={css.secondary}
-                onClick={() => setOffer({ phase: 'idle' })}
-            >
-                Cancel
-            </button>
+            <Button onClick={() => setOffer({ phase: 'idle' })}>Cancel</Button>
         </div>
     );
 }
 
 const MESSAGES: Record<ApproveResult | 'invalid', string> = {
-    approved: 'Done. The other device connects in a moment.',
+    approved: 'The other device connects in a moment.',
     invalid: `A code is two words, like ${EXAMPLE}.`,
     unknown:
         'No device is waiting with that code. Check it, or get a new one on the other device.',
@@ -211,35 +200,34 @@ export function CodeForm({ secret }: { secret: string }) {
     return (
         <form className={css.reveal} onSubmit={submit}>
             <label htmlFor="pairing-code" className={css.label}>
-                On the other device, go to <strong>{minePage()}</strong> and
+                On the other device, go to <strong>{profilePage()}</strong> and
                 choose <em>Get a code</em>. Then enter the code here.
             </label>
-            <div className={css.linkRow}>
-                <input
-                    id="pairing-code"
-                    className={css.link}
-                    value={input}
-                    onChange={(event) => setInput(event.target.value)}
-                    placeholder={EXAMPLE}
-                    autoComplete="off"
-                    autoCapitalize="none"
-                    autoCorrect="off"
-                    spellCheck={false}
-                    enterKeyHint="go"
-                    aria-describedby={result ? 'pairing-result' : undefined}
-                />
-                <button type="submit" className={css.button} disabled={busy}>
+            <input
+                id="pairing-code"
+                className={`${css.link} ${css.overButtons}`}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                placeholder={EXAMPLE}
+                autoComplete="off"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                enterKeyHint="go"
+                aria-describedby={
+                    result && result !== 'approved'
+                        ? 'pairing-result'
+                        : undefined
+                }
+            />
+            <div className={css.buttons}>
+                <Button type="submit" disabled={busy}>
                     {busy ? 'Connecting…' : 'Connect'}
-                </button>
+                </Button>
+                {result === 'approved' && <Done>{MESSAGES[result]}</Done>}
             </div>
-            {result && (
-                <p
-                    id="pairing-result"
-                    role={result === 'approved' ? 'status' : 'alert'}
-                    className={
-                        result === 'approved' ? css.success : css.problem
-                    }
-                >
+            {result && result !== 'approved' && (
+                <p id="pairing-result" role="alert" className={css.problem}>
                     {MESSAGES[result]}
                 </p>
             )}

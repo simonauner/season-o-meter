@@ -1,6 +1,6 @@
 'use client';
 
-import { useId } from 'react';
+import { useId, type CSSProperties } from 'react';
 import {
     MAX_RATING,
     MIN_RATING,
@@ -10,6 +10,8 @@ import {
 } from '@/lib/userData';
 import { popcorn } from '@/lib/popcorn';
 import { setValue, useUserData } from '@/lib/userStore';
+import { Button } from './Button';
+import { useRatingHint } from './RatingHint';
 import css from './yourRating.module.css';
 
 const RATINGS = Array.from(
@@ -29,28 +31,39 @@ function rate(key: string, rating: number | null, from: Element) {
     if (rating === MAX_RATING) popcorn(from);
 }
 
-/** A 1–10 scale. Choosing the current rating again clears it. */
+/**
+ * A 1–10 scale. Choosing the current rating again clears it. With `hint`, a
+ * visitor who hasn't rated anything yet is shown where the scale is.
+ */
 export function RatingPicker({
     storeKey,
     label,
+    hint = false,
 }: {
     storeKey: string;
     label: string;
+    hint?: boolean;
 }) {
     const { ready, value } = useValue(storeKey);
     const labelId = useId();
+    const { ref: scale, className: hintClass } =
+        useRatingHint<HTMLSpanElement>();
 
     return (
         <div className={css.picker} role="group" aria-labelledby={labelId}>
             <span id={labelId} className={css.label}>
                 {label}
             </span>
-            <span className={css.scale}>
-                {RATINGS.map((rating) => (
+            <span
+                ref={scale}
+                className={`${css.scale} ${hint ? hintClass : ''}`}
+            >
+                {RATINGS.map((rating, index) => (
                     <button
                         key={rating}
                         type="button"
                         className={css.step}
+                        style={{ '--index': index } as CSSProperties}
                         data-filled={
                             value !== null && rating <= value ? '' : undefined
                         }
@@ -114,15 +127,15 @@ export function WatchlistButton({ id }: { id: string }) {
     const on = value === 1;
 
     return (
-        <button
-            type="button"
+        <Button
+            size="small"
             className={css.watchlist}
             aria-pressed={on}
             disabled={!ready}
             onClick={() => setValue(key, on ? null : 1)}
         >
             <span aria-hidden>{on ? '✓' : '+'}</span> Watchlist
-        </button>
+        </Button>
     );
 }
 
@@ -130,8 +143,28 @@ export function WatchlistButton({ id }: { id: string }) {
 export function TitleActions({ id }: { id: string }) {
     return (
         <div className={css.actions}>
-            <RatingPicker storeKey={ratingKey(id)} label="Your rating" />
+            <RatingPicker storeKey={ratingKey(id)} label="Your rating" hint />
             <WatchlistButton id={id} />
         </div>
+    );
+}
+
+/** The visitor's rating of a title, for a card. Nothing if it isn't rated. */
+export function CardRating({
+    id,
+    className,
+}: {
+    id: string;
+    className?: string;
+}) {
+    const { value } = useValue(ratingKey(id));
+    if (value === null) return null;
+
+    return (
+        <p className={className}>
+            <span className="visually-hidden">Your rating: </span>
+            <strong>{value}</strong>
+            <span aria-hidden>You</span>
+        </p>
     );
 }

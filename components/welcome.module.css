@@ -1,0 +1,506 @@
+/* Around the welcome, to shrink away as it's swiped away. Keeps the
+ * welcome's margins inside, so they shrink too. */
+.stage {
+    display: flow-root;
+    transition: height 500ms cubic-bezier(0.3, 0.7, 0.2, 1) 100ms;
+}
+
+.intro:focus,
+.introArriving:focus {
+    outline: none;
+}
+
+.introArriving {
+    animation: fade-in 400ms ease 250ms both;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+/* Dark whatever the color scheme, in the footer's colors: the header's navy
+ * with a faint glow of series blue and your-rating purple. */
+.welcome {
+    --welcome-bg: var(--header);
+    --welcome-accent: color-mix(in srgb, var(--accent) 70%, #fff);
+    /* The best and worst season, as in the charts in dark mode. */
+    --peak: #6cc3a0;
+    --fall-color: #d9858b;
+
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    margin: 32px 0 24px;
+    padding: 32px 24px 24px;
+    border-radius: var(--radius);
+    background:
+        radial-gradient(
+            ellipse 520px 220px at 88% 100%,
+            color-mix(in srgb, var(--own) 24%, transparent),
+            transparent 70%
+        ),
+        radial-gradient(
+            ellipse 480px 180px at 10% 0%,
+            color-mix(in srgb, var(--accent) 18%, transparent),
+            transparent 70%
+        ),
+        var(--welcome-bg);
+    box-shadow: var(--shadow);
+    color: rgb(255 255 255 / 75%);
+    animation: welcome-in 500ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+    .welcome {
+        /* The header is pure black in dark mode, as the footer avoids too. */
+        --welcome-bg: #0b1424;
+    }
+}
+
+@media (min-width: 761px) {
+    .welcome {
+        padding: 40px;
+    }
+}
+
+/* Hairline that echoes the header's: series blue into your-rating purple. */
+.welcome::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--accent) 25%,
+        var(--own) 75%,
+        transparent
+    );
+    opacity: 0.7;
+}
+
+@keyframes welcome-in {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+}
+
+/* Swiped away to the left, like skipping a card in Swipe. */
+.welcome[data-leaving] {
+    animation: fly-left 550ms cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+
+@keyframes fly-left {
+    0% {
+        transform: none;
+    }
+    15% {
+        transform: rotate(1deg) scale(1.01);
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-115%) translateY(24px) rotate(-14deg);
+        opacity: 0;
+    }
+}
+
+.close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: rgb(255 255 255 / 75%);
+    cursor: pointer;
+}
+
+.close:hover {
+    background: rgb(255 255 255 / 12%);
+    color: #ffffff;
+}
+
+.close:focus-visible,
+.feature:focus-visible,
+.caption a:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+/* The pitch and the chart side by side on wide screens. */
+.top {
+    display: grid;
+    gap: 28px;
+}
+
+@media (min-width: 900px) {
+    .top {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+        align-items: center;
+        gap: 48px;
+    }
+}
+
+.text {
+    min-width: 0;
+}
+
+.eyebrow {
+    margin: 0;
+    /* Clears the close button. */
+    padding-right: 40px;
+    color: var(--welcome-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.heading {
+    margin-top: 10px;
+    color: #ffffff;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+}
+
+.peakWord {
+    background: linear-gradient(
+        90deg,
+        var(--welcome-accent),
+        color-mix(in srgb, var(--own) 70%, #fff)
+    );
+    background-clip: text;
+    color: transparent;
+}
+
+.lede {
+    margin: 14px 0 0;
+    max-width: 46ch;
+    font-size: 1.0625rem;
+}
+
+/* The chart of a series that peaked and went downhill. */
+.chart {
+    width: 100%;
+    max-width: 420px;
+    margin: 0;
+    min-width: 0;
+}
+
+.chartSvg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+/* The line draws itself from left to right, with each dot popping in as
+ * the line reaches it. */
+.line {
+    fill: none;
+    stroke: var(--welcome-accent);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    stroke-dasharray: 1;
+    animation: draw calc(var(--n) * 110ms) ease-in-out 300ms both;
+}
+
+@keyframes draw {
+    from {
+        stroke-dashoffset: 1;
+    }
+}
+
+.area {
+    fill: var(--welcome-accent);
+    fill-opacity: 0.1;
+    animation: fade-in 600ms ease both;
+    animation-delay: calc(300ms + var(--n) * 60ms);
+}
+
+.point,
+.peakPoint,
+.lowPoint {
+    fill: var(--welcome-accent);
+    stroke: var(--welcome-bg);
+    stroke-width: 2;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pop 300ms cubic-bezier(0.3, 1.6, 0.6, 1) both;
+    animation-delay: calc(300ms + var(--i) * 110ms);
+}
+
+.peakPoint {
+    fill: var(--peak);
+}
+
+.lowPoint {
+    fill: var(--fall-color);
+}
+
+@keyframes pop {
+    from {
+        transform: scale(0);
+    }
+}
+
+/* Labels come in once the line is drawn. */
+.peakLabel,
+.lowLabel {
+    /* A halo in the background's color, for where a label overlaps the line. */
+    paint-order: stroke;
+    stroke: var(--welcome-bg);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    fill: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    animation: fade-in 300ms ease both;
+    animation-delay: calc(300ms + var(--n) * 110ms);
+}
+
+.peakTag {
+    fill: var(--peak);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+}
+
+.lowLabel {
+    fill: var(--fall-color);
+}
+
+.caption {
+    margin-top: 12px;
+    font-size: 0.875rem;
+}
+
+.caption a {
+    color: #ffffff;
+    font-weight: 650;
+    text-decoration: underline;
+    text-decoration-color: rgb(255 255 255 / 35%);
+    text-underline-offset: 3px;
+}
+
+/* What visitors can do here. */
+.features {
+    display: grid;
+    gap: 10px;
+    margin: 32px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 560px) {
+    .features {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .features {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.features > li {
+    display: flex;
+    animation: welcome-in 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: calc(200ms + var(--i) * 80ms);
+}
+
+/* An icon beside the text on phones, above it where there's room. */
+.feature {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+        'icon title'
+        'icon text'
+        'icon picks'
+        'icon open';
+    gap: 2px 14px;
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: rgb(255 255 255 / 6%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+    transition: background-color 150ms ease;
+}
+
+@media (min-width: 1024px) {
+    .feature {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas:
+            'icon'
+            'title'
+            'text'
+            'picks'
+            'open';
+        /* Titles line up across the row however tall the cards are, and
+           Open sits at the bottom. */
+        grid-template-rows: repeat(4, auto) 1fr;
+        gap: 4px;
+        padding: 18px;
+    }
+}
+
+a.feature:hover {
+    background: rgb(255 255 255 / 12%);
+}
+
+.icon {
+    grid-area: icon;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 8%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+    color: var(--welcome-accent);
+}
+
+@media (min-width: 1024px) {
+    .icon {
+        margin-bottom: 8px;
+    }
+}
+
+.featureTitle {
+    grid-area: title;
+    color: #ffffff;
+    font-weight: 650;
+}
+
+.featureText {
+    grid-area: text;
+    font-size: 0.875rem;
+}
+
+/* Where a card links to, at its bottom. */
+.open {
+    grid-area: open;
+    align-self: end;
+    margin-top: 10px;
+    color: var(--welcome-accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+a.feature:hover .open {
+    text-decoration: underline;
+}
+
+/* Posters to tap onto the watchlist, under the card's text. */
+.picks {
+    grid-area: picks;
+    margin-top: 10px;
+}
+
+.pickList {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.pick {
+    position: relative;
+    display: block;
+    width: 52px;
+    aspect-ratio: 2 / 3;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 6px;
+    background: rgb(255 255 255 / 8%);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+    cursor: pointer;
+    transition: transform 150ms ease;
+}
+
+.pick:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.pick[aria-pressed='true'] {
+    box-shadow:
+        0 0 0 2px var(--own),
+        0 2px 8px rgb(0 0 0 / 30%);
+}
+
+.pick:focus-visible,
+.pickLink:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+}
+
+.pickBadge {
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 65%);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 30%);
+    color: #ffffff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.pick[aria-pressed='true'] .pickBadge {
+    background: var(--own);
+    box-shadow: none;
+    animation: pop 250ms cubic-bezier(0.3, 1.6, 0.6, 1);
+}
+
+.pickLink {
+    display: inline-block;
+    margin-top: 8px;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgb(255 255 255 / 35%);
+    text-underline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .welcome,
+    .features > li,
+    .line,
+    .area,
+    .point,
+    .peakPoint,
+    .lowPoint,
+    .peakLabel,
+    .lowLabel,
+    .introArriving {
+        animation: none;
+    }
+
+    .stage {
+        transition: none;
+    }
+}

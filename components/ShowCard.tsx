@@ -1,5 +1,5 @@
 import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
-import { formatVotes, formatYears } from '@/lib/format';
+import { countOf, formatVotes, formatYears } from '@/lib/format';
 import type { Show } from '@/lib/types';
 import { TrendCard, type TrendCardProps } from './TrendCard';
 
@@ -15,7 +15,7 @@ export function showCardProps(show: Show): TrendCardProps {
         endYear: show.endYear,
         poster: show.poster,
         href: `/shows/${show.id}/`,
-        meta: `${formatYears(show)} · ${seasons.length} seasons · ${formatVotes(show.votes)} votes`,
+        meta: `${formatYears(show)} · ${countOf(seasons.length, 'season')} · ${formatVotes(show.votes)} votes`,
         verdict: trend?.verdict,
         ratings: seasons.map((season) => season.rating),
         trend: trend && {
@@ -29,6 +29,10 @@ export function showCardProps(show: Show): TrendCardProps {
             },
             change: trend.change,
         },
+        single:
+            seasons.length === 1
+                ? { label: 'On IMDb', rating: show.rating }
+                : undefined,
     };
 }
 

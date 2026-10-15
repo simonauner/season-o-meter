@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { ButtonLink } from '@/components/Button';
 import { PageIntro } from '@/components/PageIntro';
 import { UserLists } from '@/components/UserList';
 import { liveShareLink, useSyncStatus } from '@/lib/sync';
@@ -11,7 +12,7 @@ import { clearHash, usePointedTo } from '@/lib/useHash';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import { LinkField } from './LinkField';
 import css from './mine.module.css';
-import { ConnectPrompt, SyncPanel } from './SyncPanel';
+import { ConnectPrompt } from '../profile/SyncPanel';
 
 /** The fragment that links to the share panel, as from the Friends page. */
 const SHARE_HASH = 'share';
@@ -24,15 +25,21 @@ export function MyList() {
         () => (data && index ? listItems(data, index) : null),
         [data, index]
     );
+    const [panels, setPanels] = useState<HTMLDivElement | null>(null);
+    const shareInView = useInView(panels);
 
     return (
         <>
-            <PageIntro title="My list">
+            <PageIntro
+                title="My list"
+                action={panels && shareInView === false && <ShareJump />}
+            >
                 {secret
                     ? 'Your ratings and watchlist are kept in this browser and synced with your other devices.'
                     : 'Your ratings and watchlist are kept in this browser. Nothing leaves it unless you share a link or turn on sync.'}
             </PageIntro>
 
+            {/* Sync links used to open My list, so ones from before still work. */}
             <ConnectPrompt />
 
             {failed ? (
@@ -48,13 +55,53 @@ export function MyList() {
                 <UserLists items={items} owner="Your" />
             )}
 
-            <div className={css.panels}>
-                <SyncPanel listShown={failed || items !== null} />
-                {data && items && items.length > 0 && (
+            {data && items && items.length > 0 && (
+                <div ref={setPanels} className={css.panels}>
                     <SharePanel data={data} secret={secret} />
-                )}
-            </div>
+                </div>
+            )}
         </>
+    );
+}
+
+/** Whether an element is at least partly on screen, or null until known. */
+function useInView(element: Element | null) {
+    const [inView, setInView] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        if (!element) return;
+        const observer = new IntersectionObserver(([entry]) =>
+            setInView(entry.isIntersecting)
+        );
+        observer.observe(element);
+        return () => {
+            observer.disconnect();
+            setInView(null);
+        };
+    }, [element]);
+
+    return inView;
+}
+
+/** Takes a long list down to the share panel, which then points out its button. */
+function ShareJump() {
+    return (
+        <ButtonLink
+            href={`#${SHARE_HASH}`}
+            size="small"
+            className={css.jump}
+            onClick={(event) => {
+                event.preventDefault();
+                // The panel clears the fragment again, so leave no history entry.
+                location.replace(`#${SHARE_HASH}`);
+            }}
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M12 15V4M7.5 8.5 12 4l4.5 4.5" />
+                <path d="M8 11H6.5A1.5 1.5 0 0 0 5 12.5v6A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5v-6a1.5 1.5 0 0 0-1.5-1.5H16" />
+            </svg>
+            Share
+        </ButtonLink>
     );
 }
 

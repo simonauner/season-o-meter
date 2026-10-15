@@ -57,6 +57,14 @@
     transition: r 0.1s;
 }
 
+.best {
+    fill: var(--series-high);
+}
+
+.worst {
+    fill: var(--series-low);
+}
+
 .tooltip {
     position: absolute;
     transform: translate(-50%, -100%);

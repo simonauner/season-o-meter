@@ -11,7 +11,7 @@
     --text-muted: #77766f;
     --accent: #2a78d6;
     --series: #2a78d6;
-    /* A sparkline's best and worst season, muted to sit with the line. */
+    /* The best and worst season or movie in a chart, muted to sit with the line. */
     --series-high: #3b9477;
     --series-low: #c96a72;
     /* The visitor's own ratings. */

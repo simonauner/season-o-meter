@@ -6,7 +6,11 @@ import { FilteredList, RatedFilterPicker } from '@/components/RatedFilter';
 import { ShowGrid } from '@/components/ShowGrid';
 import { findShowSections, SHOW_SECTION_SLUGS } from '@/lib/analysis';
 import { getShows } from '@/lib/data';
-import { forEachMinCount, type MinCount } from '@/lib/minCount';
+import {
+    DEFAULT_MIN_COUNT,
+    forEachMinCount,
+    type MinCount,
+} from '@/lib/minCount';
 import { listDescription } from '@/lib/sections';
 import homeCss from '../../home.module.css';
 import css from './list.module.css';
@@ -57,7 +61,9 @@ export default async function Page({ params }: PageProps<'/lists/[slug]'>) {
                 ))}
             />
             <div className={homeCss.filters}>
-                <MinCountPicker kind="series" />
+                {!sections[DEFAULT_MIN_COUNT.series].ownMinimum && (
+                    <MinCountPicker kind="series" />
+                )}
                 <RatedFilterPicker />
             </div>
             <div className={css.list}>

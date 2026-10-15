@@ -9,7 +9,8 @@ from the latest data.
 Ratings come from [IMDb's non-commercial datasets](https://developer.imdb.com/non-commercial-datasets/).
 A season's rating is the average of its episode ratings. Episodes with fewer
 than five votes are left out, and only series with at least 5,000 votes and two
-rated seasons are included.
+rated seasons, or a single rated one, are included. A series with one season
+has no chart: its page shows its rating and says there's nothing to compare.
 
 IMDb doesn't say which movies belong together, so film series come from
 [Wikidata](https://www.wikidata.org/): everything that is a film series, film
@@ -95,8 +96,16 @@ The front-page sections ("Slow starters", "Collapsed like a house of cards",
 few wordings, listed there and in [lib/verdicts.ts](lib/verdicts.ts), and
 each title always gets the same one, picked by its id. A picker at the top of
 the series front page and list pages lets visitors require at least two, three
-or four rated seasons in every section (four by default). Every choice is
-rendered at build time, and the visitor's choice is remembered in the browser.
+or four rated seasons in every section (four by default), except "One season
+wonders", which is for series that ended after one. Every choice is rendered
+at build time, and the visitor's choice is remembered in the browser.
+
+New visitors get a welcome at the top of the series front page, in place of
+the featured series and the page's heading: a series that peaked and went
+downhill, and what they can do on the site. Closing it swipes it away like a
+card in Swipe, and the featured series is there from the next visit on. It's
+kept with the tips, so it comes back with them from `/profile/`
+([components/Welcome.tsx](components/Welcome.tsx)).
 
 On the series front page, visitors can also show only series they have rated
 (as a whole or any season), or only ones they haven't. That depends on their
@@ -124,7 +133,13 @@ are drawn next to IMDb's in the chart, and everything is listed on
   them have rated or not ([lib/compare.ts](lib/compare.ts)). Friends are
   kept with the ratings, so they sync too, but they are left out of share
   links and live links: a friend's link lets anyone read their list, and
-  they only gave it to you ([lib/friends.ts](lib/friends.ts)).
+  they only gave it to you ([lib/friends.ts](lib/friends.ts)). Visitors with
+  no friends yet can bring an imaginary one: Mollgan for those whose browser
+  reads Swedish, and Harvey, Hobbes, Bing Bong, Drop Dead Fred or Mollgan for
+  everyone else. They have no list on the sync server. Their ratings are made
+  up from the visitor's own instead: about half of what the visitor has rated,
+  a little higher or lower, and the same every time
+  ([lib/imaginaryFriend.ts](lib/imaginaryFriend.ts)).
 - **Swipe.** `/swipe/` shows one series or film series at a time, with its
   poster and how many seasons or movies it has, to rate, skip or add to
   the watchlist. Like a dating app, left is no and right is yes: dragging
@@ -141,13 +156,27 @@ are drawn next to IMDb's in the chart, and everything is listed on
 - **Merging.** Every value is stored with when it was set, and the latest
   change wins per title, season or movie ([lib/userData.ts](lib/userData.ts)).
   That makes imports and syncs safe in any order.
-- **Sync between devices.** Turning on sync on `/mine/` creates a random
+- **Sync between devices.** Turning on sync on `/profile/` creates a random
   secret. Another device connects in one of three ways: opening the private
-  link `/mine/#sync=<secret>`, scanning a QR code of that link, or getting a
-  pairing code like `brave-otter` on its `/mine/` and entering it on a device
+  link `/profile/#sync=<secret>`, scanning a QR code of that link, or getting a
+  pairing code like `brave-otter` on its `/profile/` and entering it on a device
   that syncs. Devices sync when a page opens, when it comes back into view, a
   second after a change and every minute while it's visible
   ([lib/sync.ts](lib/sync.ts)).
+- **Recovery key.** A synced list's secret, written for copying by hand on
+  `/profile/`: 28 characters like `4B4X-EQST-…` that hold the secret and 10
+  bits to check it, so a mistyped key is turned down instead of connecting
+  to a new, empty list ([lib/recoveryKey.ts](lib/recoveryKey.ts)). It can be
+  emailed with a `mailto:` link, which leaves the address to the visitor's
+  own mail app. Entering the key, or the private sync link, in another
+  browser connects it to the list. Creating a key turns on sync.
+- **Danger zone.** `/profile/` can forget the visitor in this browser, which
+  removes everything kept there but leaves a synced list on the server for
+  the recovery key to bring back, or delete their data for good, which
+  deletes the synced list as well. The server then keeps only a note that
+  the list was deleted, so the visitor's other devices stop syncing instead
+  of uploading it again. What's on them stays until it's deleted there too
+  ([lib/deleteEverything.ts](lib/deleteEverything.ts)).
 - **Pairing codes.** A code is two words from lists of 256 short words
   ([lib/pairingWords.ts](lib/pairingWords.ts)), too few combinations to
   protect a secret. So the code doesn't: the secret only goes to the device
@@ -172,6 +201,8 @@ three per network, with at most 60 wrong codes entered a minute in all
 
 - `POST /v1/sync` with `Authorization: Bearer <secret>` sends a device's
   changes and returns what changed since the device's last sync.
+- `DELETE /v1/sync` with `Authorization: Bearer <secret>` deletes the list.
+  Syncing with it after that returns 410.
 - `GET /v1/lists/<id>` returns a list for a read-only link, without its
   friends.
 - `POST /v1/pair` with `{ "publicKey": "…" }`, from a device that wants to

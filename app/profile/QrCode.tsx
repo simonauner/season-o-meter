@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { encode } from 'uqr';
-import css from './mine.module.css';
+import css from '../mine/mine.module.css';
 
 /** A QR code for a link, black on white in either theme so cameras read it. */
 export function QrCode({ value, label }: { value: string; label: string }) {

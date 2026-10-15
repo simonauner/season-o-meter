@@ -2,6 +2,7 @@ import { changeTone, formatChange, formatRating } from '@/lib/format';
 import { Poster, type PosterEntry } from './Poster';
 import { PosterLink, PosterScope, SharedPoster } from './PosterTransition';
 import { Sparkline } from './Sparkline';
+import { CardRating } from './YourRating';
 import css from './trendCard.module.css';
 
 type Endpoint = {
@@ -17,6 +18,8 @@ export type TrendCardProps = Omit<PosterEntry, 'ratings'> & {
     ratings: number[];
     /** The first and last rating, when there's a trend to show. */
     trend: { first: Endpoint; last: Endpoint; change: number } | null;
+    /** The rating to show instead, when there's only one. */
+    single?: Endpoint;
 };
 
 export function TrendCard({
@@ -24,6 +27,7 @@ export function TrendCard({
     meta,
     verdict,
     trend,
+    single,
     ...entry
 }: TrendCardProps) {
     return (
@@ -40,9 +44,18 @@ export function TrendCard({
                         <p className={css.meta}>{meta}</p>
                         {verdict && <p className={css.verdict}>{verdict}</p>}
                     </div>
+                    <CardRating id={entry.id} className={css.yours} />
                 </div>
                 <div className={css.chart}>
                     <Sparkline ratings={entry.ratings} />
+                    {!trend && single && (
+                        <p className={css.change}>
+                            <span>
+                                {single.label}{' '}
+                                <strong>{formatRating(single.rating)}</strong>
+                            </span>
+                        </p>
+                    )}
                     {trend && (
                         <p className={css.change}>
                             <span>

@@ -1,13 +1,15 @@
 'use client';
 
 import Link from 'next/link';
-import { type ReactNode, useMemo, useState } from 'react';
+import { type ReactNode, useMemo } from 'react';
+import { setHistoryState, useHistoryState } from '@/lib/historyState';
 import type { HomeSections } from '@/lib/homeSections';
 import type { Kind, MinCount } from '@/lib/minCount';
 import { storedChoice } from '@/lib/storedChoice';
 import { ratedIds } from '@/lib/userData';
 import { useUserData } from '@/lib/userStore';
 import { useStaticJson } from '@/lib/useStaticJson';
+import { Button } from './Button';
 import { ChoicePicker } from './ChoicePicker';
 import { HomeSection } from './HomeSection';
 import { useMinCount } from './MinCountFilter';
@@ -25,11 +27,11 @@ const ratedFilter = storedChoice<RatedFilter>(
     'any'
 );
 
-// Seen is judged by what the visitor has rated.
+// Judged by what the visitor has rated.
 const OPTIONS = [
     { value: 'any', label: 'Any' },
-    { value: 'yes', label: 'Seen' },
-    { value: 'no', label: 'Not seen' },
+    { value: 'yes', label: 'Rated' },
+    { value: 'no', label: 'Not rated' },
 ] as const;
 
 const KINDS = {
@@ -49,10 +51,15 @@ const KINDS = {
     },
 } satisfies Record<Kind, Record<string, string>>;
 
+/** How many of a list's items are shown, and with which filters. */
+type Shown = { filters: string; shown: number };
+
+const SHOWN_KEY = 'season-o-meter:shown';
+
 export function RatedFilterPicker() {
     return (
         <ChoicePicker
-            label="Seen by you"
+            label="Rated by you"
             options={OPTIONS}
             current={ratedFilter.useStoredChoice()}
             onChange={ratedFilter.set}
@@ -106,9 +113,15 @@ export function FilteredList({
     const minCount = useMinCount(kind);
     // Changing a filter starts over from the first page.
     const filters = `${filter}:${minCount}`;
-    const [more, setMore] = useState({ filters, shown: limit });
-    const shown = more.filters === filters ? more.shown : limit;
-    const showMore = () => setMore({ filters, shown: shown + limit });
+    // Kept with the page in the history, so that coming back from a title
+    // still shows it.
+    const more = useHistoryState(SHOWN_KEY) as Shown | null;
+    const shown = more?.filters === filters ? more.shown : limit;
+    const showMore = () =>
+        setHistoryState(SHOWN_KEY, {
+            filters,
+            shown: shown + limit,
+        } satisfies Shown);
 
     if (filter === 'any' && shown === limit) {
         return (
@@ -133,9 +146,9 @@ export function FilteredList({
 
 function ShowMore({ onClick }: { onClick: () => void }) {
     return (
-        <button type="button" className={css.showMore} onClick={onClick}>
+        <Button size="large" className={css.showMore} onClick={onClick}>
             Show more
-        </button>
+        </Button>
     );
 }
 

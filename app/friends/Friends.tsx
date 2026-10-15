@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import { Button, ButtonLink } from '@/components/Button';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { PageIntro } from '@/components/PageIntro';
 import {
@@ -11,6 +12,11 @@ import {
     type Score,
 } from '@/lib/compare';
 import { formatRating, formatYears } from '@/lib/format';
+import {
+    imaginaryName,
+    isImaginary,
+    newImaginaryId,
+} from '@/lib/imaginaryFriend';
 import {
     friendsOf,
     removeFriend,
@@ -81,12 +87,28 @@ export function Friends() {
             ) : !data || !friends || !index ? (
                 <p className={mineCss.status}>Loading…</p>
             ) : friends.length === 0 ? (
-                <p className={mineCss.status}>
-                    No friends yet. Ask a friend for the link to their list.
-                    They find it under <em>Share with friends</em> on their{' '}
-                    <Link href="/mine/#share">My list</Link>, with sync on. Open
-                    it, or paste it below.
-                </p>
+                <>
+                    <p className={mineCss.status}>
+                        No friends yet. Ask a friend for the link to their list.
+                        They find it under <em>Share with friends</em> on their{' '}
+                        <Link href="/mine/#share">My list</Link>, with sync on.
+                        Open it, or paste it below.
+                    </p>
+                    <p className={css.imaginary}>
+                        Nobody to ask?{' '}
+                        <button
+                            type="button"
+                            onClick={() =>
+                                saveFriend(
+                                    newImaginaryId(),
+                                    imaginaryName(navigator.languages)
+                                )
+                            }
+                        >
+                            Bring an imaginary friend
+                        </button>
+                    </p>
+                </>
             ) : (
                 <Comparison data={data} friends={friends} index={index} />
             )}
@@ -118,7 +140,10 @@ function Comparison({
     friends: Friend[];
     index: SearchEntry[];
 }) {
-    const lists = useFriendLists(friends.map((friend) => friend.listId));
+    const lists = useFriendLists(
+        friends.map((friend) => friend.listId),
+        data
+    );
     const [hidden, setHidden] = useState<ReadonlySet<string>>(new Set());
     const [sort, setSort] = useState<{ key: SortKey; descending: boolean }>({
         key: 'average',
@@ -203,10 +228,8 @@ function Comparison({
                     {friends.map((friend) => {
                         const list = lists[friend.listId];
                         return (
-                            <button
+                            <Button
                                 key={friend.listId}
-                                type="button"
-                                className={mineCss.secondary}
                                 aria-pressed={
                                     list ? !hidden.has(friend.listId) : false
                                 }
@@ -219,7 +242,7 @@ function Comparison({
                                     : list === null
                                       ? ' (couldn’t load)'
                                       : ''}
-                            </button>
+                            </Button>
                         );
                     })}
                 </div>
@@ -243,9 +266,7 @@ function Comparison({
                             ))}
                         </select>
                     </label>
-                    <button
-                        type="button"
-                        className={mineCss.secondary}
+                    <Button
                         onClick={() =>
                             setSort({
                                 key: sortKey,
@@ -254,7 +275,7 @@ function Comparison({
                         }
                     >
                         {sort.descending ? 'Highest first' : 'Lowest first'}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -429,8 +450,9 @@ function FriendsPanel({ friends }: { friends: Friend[] }) {
                     'Your friends are synced with your other devices.'
                 ) : (
                     <>
-                        Turn on sync on <Link href="/mine/#sync">My list</Link>{' '}
-                        to have your friends on your other devices too.
+                        Turn on sync on{' '}
+                        <Link href="/profile/#sync">Profile</Link> to have your
+                        friends on your other devices too.
                     </>
                 )}
             </p>
@@ -467,19 +489,18 @@ function FriendRow({ friend }: { friend: Friend }) {
                 aria-label={`Name of ${friend.name}`}
                 autoComplete="off"
             />
-            <Link
-                href={`/shared/#list=${friend.listId}`}
-                className={mineCss.secondary}
-            >
-                List
-            </Link>
-            <button
-                type="button"
-                className={mineCss.secondary}
+            {/* An imaginary friend's list is only in your head. */}
+            {!isImaginary(friend.listId) && (
+                <ButtonLink href={`/shared/#list=${friend.listId}`}>
+                    List
+                </ButtonLink>
+            )}
+            <Button
+                variant="danger"
                 onClick={() => removeFriend(friend.listId)}
             >
                 Remove
-            </button>
+            </Button>
         </li>
     );
 }

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { analyzeSeasons, ratedSeasons } from '@/lib/analysis';
 import { getShow, getShows } from '@/lib/data';
-import { formatYears } from '@/lib/format';
+import { countOf, formatYears } from '@/lib/format';
 import { titleImage } from '@/lib/ogImage';
 
 export const dynamic = 'force-static';
@@ -25,7 +25,7 @@ export async function GET(
             'TV series',
             formatYears(show),
             seasons.length === show.seasons.length
-                ? `${seasons.length} seasons`
+                ? countOf(seasons.length, 'season')
                 : `${seasons.length} of ${show.seasons.length} seasons rated`,
         ],
         verdict: analyzeSeasons(show)?.verdict,
@@ -33,5 +33,9 @@ export async function GET(
             rating: season.rating,
             label: `S${season.seasonNumber}`,
         })),
+        single:
+            show.seasons.length === 1
+                ? { rating: show.rating, label: 'on IMDb' }
+                : undefined,
     });
 }

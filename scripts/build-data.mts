@@ -727,10 +727,20 @@ async function main() {
                 };
             });
 
-        // A single season has no curve to look at.
-        if (seasons.filter((season) => season.rating !== null).length < 2) {
-            continue;
+        // A series with one season has no curve, but its page still says
+        // how that season is rated. One with more needs two to draw it.
+        const ratedCount = seasons.filter(
+            (season) => season.rating !== null
+        ).length;
+        // IMDb lists the next season as soon as an episode of it is
+        // announced. Until it airs, a series with one rated season is a
+        // series with one season.
+        if (ratedCount === 1) {
+            seasons.splice(
+                seasons.findLastIndex((season) => season.rating !== null) + 1
+            );
         }
+        if (ratedCount < Math.min(2, seasons.length)) continue;
 
         const { rating, votes } = ratings.get(id)!;
         shows.push({ ...info, rating, votes, seasons });

@@ -38,6 +38,8 @@ type SyncState = {
     changedAt: number;
     /** The `changedAt` that the latest successful sync sent. */
     pushedAt: number;
+    /** When the latest successful sync finished, by this device's clock. */
+    syncedAt?: number;
 };
 
 function readState(): SyncState | null {
@@ -64,12 +66,15 @@ function writeState(state: SyncState | null) {
 export type SyncStatus = {
     /** Null when this device doesn't sync. */
     secret: string | null;
-    phase: 'idle' | 'syncing' | 'failed';
+    /** `deleted` when sync stopped because the list had been deleted. */
+    phase: 'idle' | 'syncing' | 'failed' | 'deleted';
+    /** When this device last synced, if it has. */
+    syncedAt: number | null;
 };
 
 const listeners = new Set<() => void>();
 let phase: SyncStatus['phase'] = 'idle';
-let status: SyncStatus = { secret: null, phase };
+let status: SyncStatus = { secret: null, phase, syncedAt: null };
 
 function notify() {
     listeners.forEach((listener) => listener());
@@ -91,9 +96,15 @@ function subscribe(listener: () => void) {
 }
 
 function getStatus(): SyncStatus {
-    const secret = readState()?.secret ?? null;
-    if (status.secret !== secret || status.phase !== phase) {
-        status = { secret, phase };
+    const state = readState();
+    const secret = state?.secret ?? null;
+    const syncedAt = state?.syncedAt ?? null;
+    if (
+        status.secret !== secret ||
+        status.phase !== phase ||
+        status.syncedAt !== syncedAt
+    ) {
+        status = { secret, phase, syncedAt };
     }
     return status;
 }
@@ -142,6 +153,13 @@ async function run() {
             },
             body: JSON.stringify(request),
         });
+        if (res.status === 410) {
+            // Deleted from another device. What's on this one stays.
+            if (readState()?.secret !== state.secret) return;
+            writeState(null);
+            setPhase('deleted');
+            return;
+        }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const response = (await res.json()) as SyncResponse;
 
@@ -153,6 +171,7 @@ async function run() {
             ...latest,
             cursor: response.cursor,
             pushedAt: state.changedAt,
+            syncedAt: Date.now(),
         });
         setPhase('idle');
     } catch {
@@ -290,6 +309,18 @@ export async function approvePairing(
     }
 }
 
+/**
+ * Deletes a synced list from the server for good. Devices that still sync
+ * with it stop. Throws if the server can't be reached.
+ */
+export async function deleteSyncedList(secret: string) {
+    const res = await fetch(`${SYNC_URL}/v1/sync`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${secret}` },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+}
+
 /** Stops syncing. What's on the device stays. */
 export function disconnect() {
     writeState(null);
@@ -300,7 +331,7 @@ const siteUrl = (path: string) =>
     `${location.origin}${process.env.NEXT_PUBLIC_BASE_PATH}${path}`;
 
 /** Opening this on another device connects it to the list. */
-export const syncLink = (secret: string) => siteUrl(`/mine/#sync=${secret}`);
+export const syncLink = (secret: string) => siteUrl(`/profile/#sync=${secret}`);
 
 /** A read-only link that always shows the list as it is now. */
 export const liveShareLink = async (secret: string) =>

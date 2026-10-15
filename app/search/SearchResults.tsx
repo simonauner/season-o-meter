@@ -7,6 +7,7 @@ import { PageIntro } from '@/components/PageIntro';
 import { Sparkline } from '@/components/Sparkline';
 import {
     changeTone,
+    countOf,
     formatChange,
     formatVotes,
     formatYears,
@@ -18,8 +19,8 @@ import css from './search.module.css';
 const MAX_RESULTS = 30;
 
 const ROUTES = {
-    series: { path: '/shows', parts: 'seasons' },
-    movies: { path: '/movies', parts: 'movies' },
+    series: { path: '/shows', parts: 'season' },
+    movies: { path: '/movies', parts: 'movie' },
 } satisfies Record<SearchEntry['type'], { path: string; parts: string }>;
 
 export function SearchResults() {
@@ -49,17 +50,19 @@ export function SearchResults() {
                 <p className={css.status}>Searching…</p>
             ) : results.length === 0 ? (
                 <p className={css.status}>
-                    Nothing matched. Only series with at least two rated seasons
-                    and 5,000 votes on IMDb, and film series with at least two
-                    movies, are included.
+                    Nothing matched. Only series with 5,000 votes on IMDb, and
+                    film series with at least two movies, are included.
                 </p>
             ) : (
                 <ul className={css.results}>
                     {results.map((entry) => {
                         const route = ROUTES[entry.type];
+                        // Nothing to compare with only one season.
                         const change =
-                            entry.ratings[entry.ratings.length - 1] -
-                            entry.ratings[0];
+                            entry.ratings.length >= 2
+                                ? entry.ratings[entry.ratings.length - 1] -
+                                  entry.ratings[0]
+                                : null;
                         return (
                             <li key={entry.id}>
                                 <Link
@@ -70,7 +73,10 @@ export function SearchResults() {
                                         <strong>{entry.title}</strong>
                                         <span>
                                             {formatYears(entry)} ·{' '}
-                                            {entry.ratings.length} {route.parts}{' '}
+                                            {countOf(
+                                                entry.ratings.length,
+                                                route.parts
+                                            )}{' '}
                                             · {formatVotes(entry.votes)} votes
                                         </span>
                                     </span>
@@ -78,9 +84,10 @@ export function SearchResults() {
                                         <Sparkline ratings={entry.ratings} />
                                     </span>
                                     <span
-                                        className={`${css.change} ${css[changeTone(change) ?? ''] ?? ''}`}
+                                        className={`${css.change} ${change === null ? '' : (css[changeTone(change) ?? ''] ?? '')}`}
                                     >
-                                        {formatChange(change)}
+                                        {change !== null &&
+                                            formatChange(change)}
                                     </span>
                                 </Link>
                             </li>
