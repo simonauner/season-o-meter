@@ -7,7 +7,7 @@ import { Poster, type PosterEntry } from '@/components/Poster';
 import { SharedPoster } from '@/components/PosterTransition';
 import { StatTile } from '@/components/StatTile';
 import { TitleActions } from '@/components/YourRating';
-import { getFranchise, getFranchises } from '@/lib/data';
+import { getFranchise, getFranchises, getPeople } from '@/lib/data';
 import { analyzeMovies } from '@/lib/franchiseAnalysis';
 import {
     changeTone,
@@ -20,6 +20,7 @@ import {
     yearsInText,
 } from '@/lib/format';
 import { openGraph } from '@/lib/openGraph';
+import { moviePeople } from '@/lib/people';
 import { relatedFranchises } from '@/lib/related';
 import { summarizeMovies } from '@/lib/summaries';
 import type { Movie } from '@/lib/types';
@@ -155,7 +156,11 @@ export default async function Page({ params }: PageProps<'/movies/[id]'>) {
 
             <section className={css.section}>
                 <h2>Movie by movie</h2>
-                <MovieTable movies={franchise.movies} trend={trend} />
+                <MovieTable
+                    movies={franchise.movies}
+                    trend={trend}
+                    people={(movie) => moviePeople(movie.id, getPeople())}
+                />
             </section>
 
             <section className={css.related}>

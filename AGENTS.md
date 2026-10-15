@@ -34,6 +34,8 @@ The sync server in [sync/](sync/) has its own dependencies:
 Pages are built from `data/shows.json`, which isn't committed. A new
 checkout or worktree doesn't have it, and `npm run dev` then fails with
 "Could not read …/data/shows.json". Either run `npm run data` (downloads
-~290 MB of IMDb data, cached in `.imdb/`) or, to try out a page quickly,
+~1.5 GB of IMDb data, cached in `.imdb/`) or, to try out a page quickly,
 write a small `data/shows.json` by hand that matches `DataFile` in
-[lib/types.ts](lib/types.ts). `data/` is ignored by git.
+[lib/types.ts](lib/types.ts), with at least one series, film series and
+person, since a static export can't have a dynamic route without any pages.
+`data/` is ignored by git.

@@ -1,8 +1,9 @@
 import { ratedSeasons, type SeasonTrend } from './analysis';
 import type { MovieTrend } from './franchiseAnalysis';
+import { type CareerTrend, countedMovies, roleVerbs } from './people';
 import { formatRating, formatVotes } from './format';
 import { mean } from './stats';
-import type { Franchise, Movie, RatedSeason, Show } from './types';
+import type { Franchise, Movie, Person, RatedSeason, Show } from './types';
 
 /*
  * A few plain sentences about how a title is rated, for its page. The
@@ -132,6 +133,43 @@ export function summarizeMovies(
     sentences.push(
         `Together they average ${formatRating(trend.average)}, from ${formatVotes(franchise.votes)} votes in total.`
     );
+
+    return sentences.join(' ');
+}
+
+export function summarizeCareer(person: Person, trend: CareerTrend): string {
+    const { best, worst, span, early, recent } = trend;
+    const { name, roles } = person;
+    const movies = countedMovies(person);
+    const cameos = person.movies.filter((m) => !movies.includes(m));
+    const movie = (m: Movie) => `${m.title}${m.year ? ` (${m.year})` : ''}`;
+    const sentences: string[] = [];
+
+    sentences.push(
+        `The best rated of the ${movies.length} movies ${name} ${roleVerbs(roles)} is ${movie(best)}, at ${formatRating(best.rating)} on IMDb, and the worst is ${movie(worst)}, at ${formatRating(worst.rating)}.`
+    );
+
+    const change = recent - early;
+    sentences.push(
+        `The first ${span} average ${formatRating(early)} and the latest ${span} ${formatRating(recent)}, ${
+            Math.abs(change) < SAME
+                ? 'the same'
+                : `${change > 0 ? 'up' : 'down'} by ${Math.abs(change).toFixed(1)}`
+        }.`
+    );
+
+    sentences.push(
+        `Together they average ${formatRating(trend.average)}, from ${formatVotes(person.votes)} votes in total.`
+    );
+
+    if (cameos.length > 0) {
+        const known = cameos.reduce((a, b) => (b.votes > a.votes ? b : a));
+        sentences.push(
+            cameos.length === 1
+                ? `One cameo, ${movie(known)}, isn't counted.`
+                : `${cameos.length} cameos, like ${movie(known)}, aren't counted.`
+        );
+    }
 
     return sentences.join(' ');
 }

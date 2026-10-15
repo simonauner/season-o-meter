@@ -1,7 +1,8 @@
 /**
  * Downloads IMDb's non-commercial datasets and writes per-season ratings for
- * every sufficiently popular TV series, and per-movie ratings for every
- * sufficiently popular film series, to data/shows.json.
+ * every sufficiently popular TV series, per-movie ratings for every
+ * sufficiently popular film series, and the movies of the most popular
+ * directors, writers and actors, to data/shows.json.
  *
  * Run with `npm run data`. Downloads are cached in .imdb/ for 20 hours, since
  * IMDb only refreshes the files once a day.
@@ -9,7 +10,7 @@
  * IMDb doesn't say which movies belong together, so film series and their
  * movies come from Wikidata.
  *
- * With TMDB_API_KEY set, posters come from TMDB. Without it the data has no
+ * With TMDB_API_KEY set, posters and photos of people come from TMDB. Without it the data has no
  * posters, and the site draws its own where it shows one.
  *
  * Datasets: https://developer.imdb.com/non-commercial-datasets/
@@ -22,9 +23,12 @@ import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import { createGunzip } from 'node:zlib';
 import type {
+    Credit,
     DataFile,
     Franchise,
     Movie,
+    Person,
+    Role,
     SeasonRating,
     Show,
 } from '../lib/types';
@@ -77,6 +81,42 @@ SELECT ?series ?label ?mulLabel ?imdb ?ordinal WHERE {
   OPTIONAL { ?series rdfs:label ?label FILTER(LANG(?label) = "en") }
   OPTIONAL { ?series rdfs:label ?mulLabel FILTER(LANG(?mulLabel) = "mul") }
 }`;
+
+/** Movies with fewer votes than this are left out of people's movies. */
+const MIN_PERSON_MOVIE_VOTES = 10_000;
+/** People with fewer movies than this in a role have no trend to look at. */
+const MIN_PERSON_MOVIES = 5;
+/** How many directors, writers and actors are included, by votes. */
+const PEOPLE_PER_ROLE = 50;
+/**
+ * Actors count for the movies they're among the first few billed in, so a
+ * cameo doesn't count as one of their movies.
+ */
+const MAX_ACTOR_BILLING = 4;
+/**
+ * With TMDB, actors are picked from this many with the most votes in
+ * IMDb's datasets, and count for their movies on TMDB.
+ */
+const ACTOR_CANDIDATES = 100;
+/**
+ * On TMDB, a part billed after this many, or uncredited, is a cameo: listed
+ * among someone's movies, but not counted. Its casts are complete, so
+ * ensembles have long ones: Cate Blanchett is billed 12th in The Fellowship
+ * of the Ring.
+ */
+const MAX_TMDB_BILLING = 20;
+/**
+ * Movies with fewer votes on TMDB than this aren't looked up on IMDb. Movies
+ * with 10,000 votes on IMDb have a few hundred there.
+ */
+const MIN_TMDB_MOVIE_VOTES = 50;
+/**
+ * Writing credits for the movie itself. Others, like "characters" or
+ * "novel", credit what it's based on: Stan Lee is credited on every Marvel
+ * movie, and Stephen King on every adaptation.
+ */
+const WRITING_CREDIT =
+    /^(\\N|writer|screenwriter|script|scenario|written( for the screen)? by|(original |adapted )?screen ?play( by)?|(original |screen )?story( by)?|story and screenplay)$/;
 
 const TMDB_URL = 'https://api.themoviedb.org/3';
 /** TMDB's API read access token, or its older API key. */
@@ -229,16 +269,26 @@ async function tmdb<T>(apiKey: string, pathname: string): Promise<T | null> {
 }
 
 type TmdbTitle = { id: number; poster_path: string | null };
-type TmdbFind = { tv_results: TmdbTitle[]; movie_results: TmdbTitle[] };
+type TmdbFind = {
+    tv_results: TmdbTitle[];
+    movie_results: TmdbTitle[];
+    person_results: TmdbPerson[];
+};
+type TmdbPerson = { id: number; profile_path: string | null };
 type TmdbMovie = TmdbTitle & {
     belongs_to_collection: { poster_path: string | null } | null;
 };
 
 /**
  * Adds TMDB posters: a series' own, and a film series' collection poster,
- * or else its first movie's. A failed lookup only leaves that poster out.
+ * or else its first movie's, and photos of people. A failed lookup only
+ * leaves that poster out.
  */
-async function addPosters(shows: Show[], franchises: Franchise[]) {
+async function addPosters(
+    shows: Show[],
+    franchises: Franchise[],
+    people: Person[]
+) {
     if (!TMDB_API_KEY) {
         log('TMDB_API_KEY is not set, leaving posters out');
         return;
@@ -281,22 +331,297 @@ async function addPosters(shows: Show[], franchises: Franchise[]) {
         })
     );
 
+    await mapLimit(people, TMDB_CONCURRENCY, (person) =>
+        lookup(async () => {
+            const photo = (await find(person.id))?.person_results[0]
+                ?.profile_path;
+            if (photo) person.poster = photo;
+        })
+    );
+
     const count = (titles: { poster?: string }[]) =>
         titles.filter((title) => title.poster).length;
     log(
-        `Found posters for ${count(shows)} of ${shows.length} series and ${count(franchises)} of ${franchises.length} film series` +
+        `Found posters for ${count(shows)} of ${shows.length} series and ${count(franchises)} of ${franchises.length} film series, and photos of ${count(people)} of ${people.length} people` +
             (failed > 0 ? ` (${failed} lookups failed)` : '')
     );
 }
 
+type PersonCredit = {
+    roles: Set<Role>;
+    character?: string;
+    /** Where an actor is billed in the cast, from 0. */
+    billing?: number;
+    /** Whether an actor's part is a cameo, which doesn't count. */
+    cameo?: boolean;
+};
+type TmdbCast = {
+    id: number;
+    order: number;
+    character: string;
+    vote_count: number;
+};
+
+/**
+ * Replaces the movies IMDb's datasets have actors in with their movies on
+ * TMDB. IMDb's list only about ten people per movie, in no reliable order,
+ * and leave out Cate Blanchett as Galadriel in two of the three Lord of the
+ * Rings movies. TMDB has whole casts in billing order. An actor whose
+ * lookups fail keeps IMDb's movies.
+ */
+async function addTmdbActing(
+    apiKey: string,
+    personIds: string[],
+    credits: Map<string, Map<string, PersonCredit>>,
+    isIncluded: (movieId: string) => boolean
+) {
+    log('Looking up actors on TMDB…');
+    const casts = new Map<string, TmdbCast[]>();
+    await mapLimit(personIds, TMDB_CONCURRENCY, async (personId) => {
+        try {
+            const tmdbId = (
+                await tmdb<TmdbFind>(
+                    apiKey,
+                    `/find/${personId}?external_source=imdb_id`
+                )
+            )?.person_results[0]?.id;
+            if (tmdbId === undefined) return;
+            const found = await tmdb<{ cast: TmdbCast[] }>(
+                apiKey,
+                `/person/${tmdbId}/movie_credits`
+            );
+            if (!found) return;
+            casts.set(
+                personId,
+                found.cast
+                    .filter((entry) => entry.vote_count >= MIN_TMDB_MOVIE_VOTES)
+                    // Their first billed character, if they played two.
+                    .sort((a, b) => a.order - b.order)
+            );
+        } catch {
+            // Keeps IMDb's movies.
+        }
+    });
+
+    // TMDB doesn't say a movie's IMDb id in someone's credits.
+    const imdbIds = new Map<number, string | null>();
+    const tmdbIds = new Set([...casts.values()].flat().map(({ id }) => id));
+    await mapLimit([...tmdbIds], TMDB_CONCURRENCY, async (tmdbId) => {
+        try {
+            const ids = await tmdb<{ imdb_id: string | null }>(
+                apiKey,
+                `/movie/${tmdbId}/external_ids`
+            );
+            imdbIds.set(tmdbId, ids?.imdb_id ?? null);
+        } catch {
+            // Leaves the actors of this movie with IMDb's movies.
+        }
+    });
+
+    let replaced = 0;
+    for (const [personId, cast] of casts) {
+        if (cast.some(({ id }) => !imdbIds.has(id))) continue;
+        const movies = credits.get(personId)!;
+        for (const credit of movies.values()) {
+            credit.roles.delete('actor');
+            delete credit.character;
+            delete credit.billing;
+            delete credit.cameo;
+        }
+        for (const entry of cast) {
+            const movieId = imdbIds.get(entry.id);
+            if (!movieId || !isIncluded(movieId)) continue;
+            let credit = movies.get(movieId);
+            if (!credit) movies.set(movieId, (credit = { roles: new Set() }));
+            if (credit.roles.has('actor')) continue;
+            credit.roles.add('actor');
+            credit.billing = entry.order;
+            if (entry.character) credit.character = entry.character;
+            if (
+                entry.order >= MAX_TMDB_BILLING ||
+                /uncredited/i.test(entry.character)
+            ) {
+                credit.cameo = true;
+            }
+        }
+        replaced++;
+    }
+    log(
+        `Found the movies of ${replaced} of ${personIds.length} actors on TMDB, looking up ${tmdbIds.size} movies`
+    );
+}
+
+/**
+ * The most popular directors, writers and actors, by the votes on their
+ * movies, each with the movies of every role they're among the most
+ * popular in.
+ */
+async function findPeople(
+    principalsFile: string,
+    namesFile: string,
+    ratings: Map<string, Rating>,
+    movieInfo: Map<string, { title: string; year: number | null }>
+): Promise<Person[]> {
+    log('Reading credits…');
+    // Credits by person and movie.
+    const credits = new Map<string, Map<string, PersonCredit>>();
+    // Actors billed so far per movie. Rows come in billing order, and an
+    // actor with two characters has two rows.
+    const billed = new Map<string, string[]>();
+    for await (const [movieId, , personId, category, job, characters] of rows(
+        principalsFile
+    )) {
+        if ((ratings.get(movieId)?.votes ?? 0) < MIN_PERSON_MOVIE_VOTES) {
+            continue;
+        }
+        if (!movieInfo.has(movieId)) continue;
+
+        let role: Role;
+        let billing: number | undefined;
+        if (category === 'director') role = 'director';
+        else if (category === 'writer' && WRITING_CREDIT.test(job)) {
+            role = 'writer';
+        } else if (category === 'actor' || category === 'actress') {
+            let cast = billed.get(movieId);
+            if (!cast) billed.set(movieId, (cast = []));
+            if (!cast.includes(personId)) cast.push(personId);
+            billing = cast.indexOf(personId);
+            if (billing >= MAX_ACTOR_BILLING) continue;
+            role = 'actor';
+        } else continue;
+
+        let movies = credits.get(personId);
+        if (!movies) credits.set(personId, (movies = new Map()));
+        let credit = movies.get(movieId);
+        if (!credit) movies.set(movieId, (credit = { roles: new Set() }));
+        credit.roles.add(role);
+        if (billing !== undefined) credit.billing ??= billing;
+        if (role === 'actor' && !credit.character) {
+            const parsed = nullable(characters);
+            credit.character = parsed
+                ? (JSON.parse(parsed) as string[])[0]
+                : undefined;
+        }
+    }
+
+    const votesOf = (movieIds: string[]) =>
+        movieIds.reduce((sum, id) => sum + ratings.get(id)!.votes, 0);
+    /** The people with the most votes on their movies in a role, but cameos. */
+    const topInRole = (role: Role, limit: number) =>
+        [...credits]
+            .map(([personId, movies]) => {
+                const ids = [...movies]
+                    .filter(
+                        ([, credit]) =>
+                            credit.roles.has(role) &&
+                            !(role === 'actor' && credit.cameo)
+                    )
+                    .map(([id]) => id);
+                return { personId, ids };
+            })
+            .filter(({ ids }) => ids.length >= MIN_PERSON_MOVIES)
+            .map(({ personId, ids }) => ({ personId, votes: votesOf(ids) }))
+            .sort((a, b) => b.votes - a.votes)
+            .slice(0, limit)
+            .map(({ personId }) => personId);
+
+    if (TMDB_API_KEY) {
+        await addTmdbActing(
+            TMDB_API_KEY,
+            topInRole('actor', ACTOR_CANDIDATES),
+            credits,
+            (movieId) =>
+                movieInfo.has(movieId) &&
+                (ratings.get(movieId)?.votes ?? 0) >= MIN_PERSON_MOVIE_VOTES
+        );
+    }
+
+    const roles = new Map<string, Set<Role>>();
+    for (const role of ['director', 'writer', 'actor'] as const) {
+        for (const personId of topInRole(role, PEOPLE_PER_ROLE)) {
+            const own = roles.get(personId) ?? new Set();
+            own.add(role);
+            roles.set(personId, own);
+        }
+    }
+
+    log('Reading names…');
+    const names = new Map<string, string>();
+    for await (const [id, name] of rows(namesFile)) {
+        if (roles.has(id)) names.set(id, name);
+    }
+
+    const people: Person[] = [];
+    for (const [id, own] of roles) {
+        const name = names.get(id);
+        if (!name) continue;
+        const movies = [...credits.get(id)!]
+            .flatMap(([movieId, credit]): Credit[] => {
+                const creditRoles = [...own].filter((role) =>
+                    credit.roles.has(role)
+                );
+                if (creditRoles.length === 0) return [];
+                const { rating, votes } = ratings.get(movieId)!;
+                return [
+                    {
+                        id: movieId,
+                        ...movieInfo.get(movieId)!,
+                        rating,
+                        votes,
+                        roles: creditRoles,
+                        ...(creditRoles.includes('actor')
+                            ? {
+                                  character: credit.character,
+                                  billing: credit.billing,
+                                  ...(credit.cameo ? { cameo: true } : {}),
+                              }
+                            : {}),
+                    },
+                ];
+            })
+            .sort(
+                (a, b) =>
+                    (a.year ?? Infinity) - (b.year ?? Infinity) ||
+                    a.id.localeCompare(b.id)
+            );
+        // Their years and votes are of the movies that count.
+        const counted = movies.filter(
+            (movie) =>
+                !movie.cameo || movie.roles.some((role) => role !== 'actor')
+        );
+        const years = counted.flatMap((movie) =>
+            movie.year === null ? [] : [movie.year]
+        );
+        people.push({
+            id,
+            name,
+            roles: [...own],
+            startYear: years.length ? Math.min(...years) : null,
+            endYear: years.length ? Math.max(...years) : null,
+            votes: votesOf(counted.map((movie) => movie.id)),
+            movies,
+        });
+    }
+    people.sort((a, b) => b.votes - a.votes);
+    return people;
+}
+
 async function main() {
-    const [ratingsFile, episodesFile, basicsFile, filmSeries] =
-        await Promise.all([
-            download('title.ratings'),
-            download('title.episode'),
-            download('title.basics'),
-            fetchFilmSeries(),
-        ]);
+    const [
+        ratingsFile,
+        episodesFile,
+        basicsFile,
+        principalsFile,
+        namesFile,
+        filmSeries,
+    ] = await Promise.all([
+        download('title.ratings'),
+        download('title.episode'),
+        download('title.basics'),
+        download('title.principals'),
+        download('name.basics'),
+        fetchFilmSeries(),
+    ]);
 
     log('Reading ratings…');
     const ratings = new Map<string, Rating>();
@@ -354,7 +679,12 @@ async function main() {
                 endYear: toInt(endYear),
                 genres: nullable(genres)?.split(',') ?? [],
             });
-        } else if (type === 'movie' && isAdult === '0' && movieIds.has(id)) {
+        } else if (
+            type === 'movie' &&
+            isAdult === '0' &&
+            (movieIds.has(id) ||
+                (ratings.get(id)?.votes ?? 0) >= MIN_PERSON_MOVIE_VOTES)
+        ) {
             movieInfo.set(id, { title, year: toInt(startYear) });
         }
     }
@@ -463,18 +793,26 @@ async function main() {
 
     franchises.sort((a, b) => b.votes - a.votes);
 
-    await addPosters(shows, franchises);
+    const people = await findPeople(
+        principalsFile,
+        namesFile,
+        ratings,
+        movieInfo
+    );
+
+    await addPosters(shows, franchises, people);
 
     const data: DataFile = {
         generatedAt: new Date().toISOString(),
         shows,
         franchises,
+        people,
     };
     await mkdir(path.dirname(OUT_FILE), { recursive: true });
     await writeFile(OUT_FILE, JSON.stringify(data));
     const { size } = await stat(OUT_FILE);
     log(
-        `Wrote ${shows.length} series and ${franchises.length} film series to ${OUT_FILE} (${(size / 1e6).toFixed(1)} MB)`
+        `Wrote ${shows.length} series, ${franchises.length} film series and ${people.length} people to ${OUT_FILE} (${(size / 1e6).toFixed(1)} MB)`
     );
 }
 

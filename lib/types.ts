@@ -53,10 +53,47 @@ export type Franchise = {
     poster?: string;
 };
 
+export type Role = 'director' | 'writer' | 'actor';
+
+/** A movie someone made, in the roles they made it in. */
+export type Credit = Movie & {
+    roles: Role[];
+    /** The character an actor played, the first one if more than one. */
+    character?: string;
+    /** Where an actor is billed in the cast, from 0. */
+    billing?: number;
+    /**
+     * Whether an actor's part is a cameo: billed after the first 20 on TMDB,
+     * or uncredited. Listed among their movies, but not counted.
+     */
+    cameo?: boolean;
+};
+
+/** One of the most popular directors, writers or actors. */
+export type Person = {
+    /** IMDb id, e.g. nm0634240. */
+    id: string;
+    name: string;
+    /** The roles they're among the most popular in. */
+    roles: Role[];
+    /** Release year of the first movie that counts. */
+    startYear: number | null;
+    /** Release year of the latest movie that counts. */
+    endYear: number | null;
+    /** Sum of votes on their movies that count. */
+    votes: number;
+    /** Their movies in those roles, in release order, cameos too. */
+    movies: Credit[];
+    /** TMDB profile photo path, if found. */
+    poster?: string;
+};
+
 export type DataFile = {
     generatedAt: string;
     /** Sorted by votes, most first. */
     shows: Show[];
     /** Sorted by votes, most first. */
     franchises: Franchise[];
+    /** Sorted by votes, most first. Missing from data built before people were added. */
+    people?: Person[];
 };
