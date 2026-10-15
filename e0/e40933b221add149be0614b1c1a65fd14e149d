@@ -1,0 +1,19 @@
+components/PersonCard.tsx
+  s_abd685a1fb5216::t_4a2b8a35fe977a 1,20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e0e40933b221add149be0614b1c1a65fd14e149d",
+  "prompts": {},
+  "sessions": {
+    "s_abd685a1fb5216": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bf1e898f-4f78-49e0-8ba9-5c56f990e902",
+        "model": "claude-opus-5-5"
+      },
+      "human_author": "Simon Aunér <simonauner@gmail.com>"
+    }
+  }
+}
