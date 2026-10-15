@@ -1,8 +1,6 @@
 import type { Show } from '@/lib/types';
-import { varyVerdicts } from '@/lib/verdicts';
 import { showCardProps } from './ShowCard';
-import { TrendCard } from './TrendCard';
-import css from './cardGrid.module.css';
+import { TrendGrid } from './TrendGrid';
 
 type ShowGridProps = {
     shows: Show[];
@@ -11,15 +9,9 @@ type ShowGridProps = {
 
 export function ShowGrid({ shows, hideVerdicts }: ShowGridProps) {
     return (
-        <ul className={css.grid}>
-            {varyVerdicts(shows.map(showCardProps)).map((card) => (
-                <li key={card.id}>
-                    <TrendCard
-                        {...card}
-                        verdict={hideVerdicts ? undefined : card.verdict}
-                    />
-                </li>
-            ))}
-        </ul>
+        <TrendGrid
+            cards={shows.map(showCardProps)}
+            hideVerdicts={hideVerdicts}
+        />
     );
 }

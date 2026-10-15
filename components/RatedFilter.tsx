@@ -9,14 +9,12 @@ import { storedChoice } from '@/lib/storedChoice';
 import { ratedIds } from '@/lib/userData';
 import { useUserData } from '@/lib/userStore';
 import { useStaticJson } from '@/lib/useStaticJson';
-import { varyVerdicts } from '@/lib/verdicts';
 import { Button } from './Button';
 import { ChoicePicker } from './ChoicePicker';
 import { HomeSection } from './HomeSection';
 import { useMinCount } from './MinCountFilter';
-import { TrendCard } from './TrendCard';
+import { TrendGrid } from './TrendGrid';
 import css from './homeSection.module.css';
-import gridCss from './cardGrid.module.css';
 
 const RATED_FILTERS = ['any', 'yes', 'no'] as const;
 
@@ -294,15 +292,9 @@ function CardGrid({
     hideVerdicts?: boolean;
 }) {
     return (
-        <ul className={gridCss.grid}>
-            {varyVerdicts(ids.map((id) => home.cards[id])).map((card) => (
-                <li key={card.id}>
-                    <TrendCard
-                        {...card}
-                        verdict={hideVerdicts ? undefined : card.verdict}
-                    />
-                </li>
-            ))}
-        </ul>
+        <TrendGrid
+            cards={ids.map((id) => home.cards[id])}
+            hideVerdicts={hideVerdicts}
+        />
     );
 }
