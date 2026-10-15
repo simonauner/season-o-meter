@@ -1,7 +1,7 @@
 import { changeTone, formatChange, formatRating } from '@/lib/format';
 import { Poster, type PosterEntry } from './Poster';
 import { PosterLink, PosterScope, SharedPoster } from './PosterTransition';
-import { Sparkline } from './Sparkline';
+import { Sparkline, type SparklineScale } from './Sparkline';
 import { CardRating } from './YourRating';
 import css from './trendCard.module.css';
 
@@ -20,6 +20,8 @@ export type TrendCardProps = Omit<PosterEntry, 'ratings'> & {
     trend: { first: Endpoint; last: Endpoint; change: number } | null;
     /** The rating to show instead, when there's only one. */
     single?: Endpoint;
+    /** Shared with the other cards in its grid. */
+    scale?: SparklineScale;
 };
 
 export function TrendCard({
@@ -28,6 +30,7 @@ export function TrendCard({
     verdict,
     trend,
     single,
+    scale,
     ...entry
 }: TrendCardProps) {
     return (
@@ -47,7 +50,7 @@ export function TrendCard({
                     <CardRating id={entry.id} className={css.yours} />
                 </div>
                 <div className={css.chart}>
-                    <Sparkline ratings={entry.ratings} />
+                    <Sparkline ratings={entry.ratings} scale={scale} />
                     {!trend && single && (
                         <p className={css.change}>
                             <span>
