@@ -3,6 +3,21 @@
     max-width: 60ch;
 }
 
+/* Room for the list while it loads, which only says so if it takes a while. */
+.loading {
+    min-height: 100svh;
+}
+
+.loading .status {
+    animation: appear 0s 600ms both;
+}
+
+@keyframes appear {
+    from {
+        visibility: hidden;
+    }
+}
+
 .panels {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
