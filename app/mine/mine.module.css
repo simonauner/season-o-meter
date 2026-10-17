@@ -278,3 +278,8 @@
     width: 100%;
     margin-bottom: 16px;
 }
+
+/* The choice between a live link and a snapshot, under the panel's heading. */
+.kinds {
+    margin-top: 12px;
+}

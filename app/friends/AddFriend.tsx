@@ -7,6 +7,7 @@ import { Done } from '@/components/Done';
 import {
     cleanName,
     friendsOf,
+    isSnapshotLink,
     listIdFromLink,
     saveFriend,
     useOwnListId,
@@ -15,10 +16,12 @@ import { MAX_NAME_LENGTH } from '@/lib/userData';
 import { useUserData } from '@/lib/userStore';
 import css from '../mine/mine.module.css';
 
-type Problem = 'link' | 'name' | 'own';
+type Problem = 'link' | 'snapshot' | 'name' | 'own';
 
 const PROBLEMS: Record<Problem, string> = {
-    link: 'That isn’t a link to a synced list. Ask them for the link under Share with friends on their My list, with sync on.',
+    link: 'That isn’t a link to a list. Ask them for the live link under Share your list on their My list.',
+    snapshot:
+        'That’s a snapshot of their list, which can’t be followed. Ask them for the live link under Share your list on their My list.',
     name: 'Give them a name.',
     own: 'That’s your own list.',
 };
@@ -63,7 +66,9 @@ export function AddFriendForm({ listId }: { listId?: string }) {
         const friendId = listId ?? listIdFromLink(link);
         const cleaned = cleanName(name);
         const found: Problem | null = !friendId
-            ? 'link'
+            ? isSnapshotLink(link)
+                ? 'snapshot'
+                : 'link'
             : friendId === ownListId
               ? 'own'
               : !cleaned
