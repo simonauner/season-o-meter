@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import { Button, ButtonLink } from '@/components/Button';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { PageIntro } from '@/components/PageIntro';
+import { Reveal } from '@/components/Reveal';
 import {
     compareRows,
     sortRows,
@@ -75,8 +76,10 @@ export function Friends() {
         );
     }
 
+    // Hidden until hydrated, since what's shown depends on this browser, and
+    // the comparison then slides in instead of replacing the loading state.
     return (
-        <>
+        <Reveal>
             <PageIntro title="Friends">
                 Compare your ratings with your friends’, series by series and
                 film series by film series.
@@ -85,7 +88,7 @@ export function Friends() {
             {failed ? (
                 <p className={mineCss.status}>Could not load the ratings.</p>
             ) : !data || !friends || !index ? (
-                <p className={mineCss.status}>Loading…</p>
+                <Loading />
             ) : friends.length === 0 ? (
                 <>
                     <p className={mineCss.status}>
@@ -127,7 +130,16 @@ export function Friends() {
                     <FriendsPanel friends={friends} />
                 )}
             </div>
-        </>
+        </Reveal>
+    );
+}
+
+/** Keeps the footer out of view until what's loading is there. */
+function Loading() {
+    return (
+        <div className={mineCss.loading}>
+            <p className={mineCss.status}>Loading…</p>
+        </div>
     );
 }
 
@@ -151,6 +163,8 @@ function Comparison({
     });
     const type = typeChoice.useChoice();
     const ratedBy = ratedByChoice.useChoice();
+    const storedType = typeChoice.useStoredChoice();
+    const storedRatedBy = ratedByChoice.useStoredChoice();
 
     const people = useMemo<Person[]>(
         () => [
@@ -197,6 +211,17 @@ function Comparison({
         setHidden(next);
     };
 
+    // Until a friend's list is in, the table would only have your column.
+    if (
+        friends.some((friend) => !isImaginary(friend.listId)) &&
+        friends.every(
+            (friend) =>
+                isImaginary(friend.listId) || lists[friend.listId] === undefined
+        )
+    ) {
+        return <Loading />;
+    }
+
     const columns: { key: SortKey; name: string; short?: string }[] = [
         ...people,
         ...(withAverage
@@ -210,13 +235,13 @@ function Comparison({
                 <ChoicePicker
                     label="Show"
                     options={TYPE_OPTIONS}
-                    current={typeChoice.useStoredChoice()}
+                    current={storedType}
                     onChange={typeChoice.set}
                 />
                 <ChoicePicker
                     label="Rated by"
                     options={RATED_BY_OPTIONS}
-                    current={ratedByChoice.useStoredChoice()}
+                    current={storedRatedBy}
                     onChange={ratedByChoice.set}
                 />
                 <div
