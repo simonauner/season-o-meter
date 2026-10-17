@@ -1,10 +1,18 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { ButtonLink } from '@/components/Button';
+import { Button, ButtonLink } from '@/components/Button';
+import { ChoicePicker } from '@/components/ChoicePicker';
 import { PageIntro } from '@/components/PageIntro';
 import { UserLists } from '@/components/UserList';
-import { liveShareLink, useSyncStatus } from '@/lib/sync';
+import {
+    connect,
+    liveShareLink,
+    syncAvailable,
+    useSyncStatus,
+    type SyncStatus,
+} from '@/lib/sync';
 import { encodeShare, type UserData } from '@/lib/userData';
 import { listItems } from '@/lib/userList';
 import { useUserData } from '@/lib/userStore';
@@ -20,7 +28,8 @@ const SHARE_HASH = 'share';
 export function MyList() {
     const data = useUserData();
     const { index, failed } = useSearchIndex();
-    const secret = useSyncStatus()?.secret ?? null;
+    const sync = useSyncStatus();
+    const secret = sync?.secret ?? null;
     const items = useMemo(
         () => (data && index ? listItems(data, index) : null),
         [data, index]
@@ -35,7 +44,7 @@ export function MyList() {
                 action={panels && shareInView === false && <ShareJump />}
             >
                 {secret
-                    ? 'Your ratings and watchlist are kept in this browser and synced with your other devices.'
+                    ? 'Your ratings and watchlist are kept in this browser and on the sync server, for your live link and your other devices.'
                     : 'Your ratings and watchlist are kept in this browser. Nothing leaves it unless you share a link or turn on sync.'}
             </PageIntro>
 
@@ -57,7 +66,11 @@ export function MyList() {
 
             {data && items && items.length > 0 && (
                 <div ref={setPanels} className={css.panels}>
-                    <SharePanel data={data} secret={secret} />
+                    <SharePanel
+                        data={data}
+                        secret={secret}
+                        phase={sync?.phase ?? null}
+                    />
                 </div>
             )}
         </>
@@ -105,53 +118,133 @@ function ShareJump() {
     );
 }
 
+type ShareKind = 'live' | 'snapshot';
+
+const SHARE_KINDS = [
+    { value: 'live', label: 'Live link' },
+    { value: 'snapshot', label: 'Snapshot' },
+] as const;
+
 function SharePanel({
     data,
     secret,
+    phase,
 }: {
     data: UserData;
-    /** With sync on, the link shows the list live instead of a snapshot. */
+    /** Null while the list isn't on the sync server, so there's no live link. */
     secret: string | null;
+    phase: SyncStatus['phase'] | null;
 }) {
-    const [link, setLink] = useState<string | null>(null);
-    // Waits for the link, so there is something to copy when the button flashes.
+    // Without the sync server there are only snapshots.
+    const [chosen, setChosen] = useState<ShareKind>('live');
+    const kind = syncAvailable ? chosen : 'snapshot';
+    const [snapshot, setSnapshot] = useState<string | null>(null);
+    const [made, setMade] = useState<{ secret: string; link: string } | null>(
+        null
+    );
+    const live = secret && made?.secret === secret ? made.link : null;
+    // Waits for something to point out: the link, or the button that makes one.
     const { ref, pointedTo } = usePointedTo<HTMLElement>(
         SHARE_HASH,
-        link !== null
+        kind === 'snapshot' ? snapshot !== null : !secret || live !== null
     );
 
     // Kept up to date, so a snapshot link always has the latest ratings.
     useEffect(() => {
-        let live = true;
-        const make = secret
-            ? liveShareLink(secret)
-            : encodeShare(data).then(
-                  (encoded) =>
-                      `${location.origin}${process.env.NEXT_PUBLIC_BASE_PATH}/shared/#${encoded}`
-              );
-        make.then((made) => {
-            if (live) setLink(made);
+        let current = true;
+        encodeShare(data).then((encoded) => {
+            if (current) {
+                setSnapshot(
+                    `${location.origin}${process.env.NEXT_PUBLIC_BASE_PATH}/shared/#${encoded}`
+                );
+            }
         });
         return () => {
-            live = false;
+            current = false;
         };
-    }, [data, secret]);
+    }, [data]);
+
+    useEffect(() => {
+        if (!secret) return;
+        let current = true;
+        liveShareLink(secret).then((link) => {
+            if (current) setMade({ secret, link });
+        });
+        return () => {
+            current = false;
+        };
+    }, [secret]);
 
     return (
         <section ref={ref} className={css.panel}>
-            <h2>Share with friends</h2>
-            <p>
-                {secret
-                    ? 'Anyone with this link can see your ratings and watchlist, always with your latest changes, and add you as a friend to compare ratings. They can’t change anything.'
-                    : 'Anyone with this link can see your ratings and watchlist as they are right now. To move your list to another device, open the link there and choose Import. Turn on sync to get a link friends can compare ratings with.'}
-            </p>
-            <LinkField
-                link={link}
-                label="Link to your list"
-                shareTitle="My Season-o-meter list"
-                flash={pointedTo}
-                onFlashed={clearHash}
-            />
+            <h2>Share your list</h2>
+            {syncAvailable && (
+                <div className={css.kinds}>
+                    <ChoicePicker
+                        label="Share"
+                        options={SHARE_KINDS}
+                        current={kind}
+                        onChange={setChosen}
+                    />
+                </div>
+            )}
+            {kind === 'snapshot' ? (
+                <>
+                    <p>
+                        Anyone with this link can see your ratings and watchlist
+                        as they are right now. Later changes don’t show up. To
+                        move your list to another device, open the link there
+                        and choose Import.
+                    </p>
+                    <LinkField
+                        link={snapshot}
+                        label="Snapshot of your list"
+                        shareTitle="My Season-o-meter list"
+                        flash={pointedTo}
+                        onFlashed={clearHash}
+                    />
+                </>
+            ) : secret ? (
+                <>
+                    <p>
+                        Anyone with this link can follow your ratings and
+                        watchlist, always with your latest changes, and add you
+                        as a friend to compare ratings. They can’t change
+                        anything.
+                    </p>
+                    <LinkField
+                        link={live}
+                        label="Live link to your list"
+                        shareTitle="My Season-o-meter list"
+                        flash={pointedTo}
+                        onFlashed={clearHash}
+                    />
+                    {phase === 'failed' && (
+                        <p className={css.problem} role="status">
+                            Could not reach the sync server. The link shows your
+                            latest changes once it’s back.
+                        </p>
+                    )}
+                </>
+            ) : (
+                <>
+                    <p>
+                        A live link lets friends follow your ratings and
+                        watchlist, always with your latest changes, and add you
+                        as a friend to compare ratings. They can’t change
+                        anything. For that, your list is kept on the sync server
+                        too, which also lets you sync it with your other devices
+                        on your <Link href="/profile/">Profile</Link>.
+                    </p>
+                    <Button
+                        className={pointedTo ? css.flash : undefined}
+                        onClick={() => connect()}
+                        onAnimationEnd={clearHash}
+                    >
+                        Create a live link
+                    </Button>
+                </>
+            )}
         </section>
     );
 }

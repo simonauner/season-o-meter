@@ -121,11 +121,13 @@ are drawn next to IMDb's in the chart, and everything is listed on
 `/mine/`. There are no accounts. Everything is kept in `localStorage`
 ([lib/userStore.ts](lib/userStore.ts)).
 
-- **Sharing.** `/mine/` creates a link to `/shared/` with the whole list
-  compressed into the URL fragment, which is never sent to a server. Whoever
-  opens it sees the list next to their own ratings, and can import it. With
-  sync on, the link instead points at the synced list, so it is always
-  current.
+- **Sharing.** `/mine/` offers two kinds of link to `/shared/`. A live link
+  points at the synced list, so it is always current, and lets whoever opens
+  it add the visitor as a friend. Creating one turns on sync, since the list
+  has to be on the sync server; with sync already on, it's just there. A
+  snapshot has the whole list compressed into the URL fragment, which is
+  never sent to a server. Whoever opens either sees the list next to their
+  own ratings, and can import it.
 - **Friends.** Opening someone's live link offers to add them as a friend,
   under a name of your choosing, or the link can be pasted on `/friends/`.
   That page puts everyone's rating of each series or film series side by

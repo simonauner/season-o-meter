@@ -38,6 +38,10 @@ export const removeFriend = (listId: string) =>
     setValue(friendKey(listId), null);
 
 const LIVE_LINK = /#list=([A-Za-z0-9_-]{22})\b/;
+const SNAPSHOT_LINK = /\/shared\/?#(?!list=)\S/;
+
+/** Whether a link is to a snapshot of a list, which can't be followed. */
+export const isSnapshotLink = (text: string) => SNAPSHOT_LINK.test(text);
 
 /** The list id in a link to a synced list, or the id on its own. */
 export function listIdFromLink(text: string) {
