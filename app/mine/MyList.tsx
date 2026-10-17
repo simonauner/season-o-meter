@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, ButtonLink } from '@/components/Button';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { PageIntro } from '@/components/PageIntro';
+import { Reveal } from '@/components/Reveal';
 import { UserLists } from '@/components/UserList';
 import {
     connect,
@@ -37,8 +38,10 @@ export function MyList() {
     const [panels, setPanels] = useState<HTMLDivElement | null>(null);
     const shareInView = useInView(panels);
 
+    // Hidden until hydrated, since what's shown depends on this browser, and
+    // the list then slides in instead of replacing the page's loading state.
     return (
-        <>
+        <Reveal>
             <PageIntro
                 title="My list"
                 action={panels && shareInView === false && <ShareJump />}
@@ -54,7 +57,10 @@ export function MyList() {
             {failed ? (
                 <p className={css.status}>Could not load your list.</p>
             ) : !items ? (
-                <p className={css.status}>Loading…</p>
+                // Keeps the footer out of view until the list is there.
+                <div className={css.loading}>
+                    <p className={css.status}>Loading…</p>
+                </div>
             ) : items.length === 0 ? (
                 <p className={css.status}>
                     Nothing here yet. Rate a series or film series, or its
@@ -73,7 +79,7 @@ export function MyList() {
                     />
                 </div>
             )}
-        </>
+        </Reveal>
     );
 }
 
