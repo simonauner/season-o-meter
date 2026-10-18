@@ -19,9 +19,9 @@ import css from '../mine/mine.module.css';
 type Problem = 'link' | 'snapshot' | 'name' | 'own';
 
 const PROBLEMS: Record<Problem, string> = {
-    link: 'That isn’t a link to a list. Ask them for the live link under Share your list on their My list.',
+    link: 'That isn’t a link to a list. Ask them for the live link under Share your list on their Friends page.',
     snapshot:
-        'That’s a snapshot of their list, which can’t be followed. Ask them for the live link under Share your list on their My list.',
+        'That’s a snapshot of their list, which can’t be followed. Ask them for the live link under Share your list on their Friends page.',
     name: 'Give them a name.',
     own: 'That’s your own list.',
 };

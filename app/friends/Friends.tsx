@@ -96,8 +96,8 @@ export function Friends() {
                     <p className={mineCss.status}>
                         No friends yet. Ask a friend for the live link to their
                         list. They find it under <em>Share your list</em> on
-                        their <Link href="/mine/#share">My list</Link>. Open it,
-                        or paste it below.
+                        their Friends page, just like yours below. Open it, or
+                        paste it under <em>Add a friend</em>.
                     </p>
                     <p className={css.imaginary}>
                         Nobody to ask?{' '}
