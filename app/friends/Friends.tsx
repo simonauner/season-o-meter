@@ -32,6 +32,7 @@ import { MAX_NAME_LENGTH, type UserData } from '@/lib/userData';
 import { useUserData } from '@/lib/userStore';
 import { useSearchIndex } from '@/lib/useSearchIndex';
 import mineCss from '../mine/mine.module.css';
+import { SharePanel } from '../mine/SharePanel';
 import { AddFriendForm } from './AddFriend';
 import css from './friends.module.css';
 
@@ -66,6 +67,7 @@ export function Friends() {
     const data = useUserData();
     const { index, failed } = useSearchIndex();
     const friends = useMemo(() => (data ? friendsOf(data) : null), [data]);
+    const sync = useSyncStatus();
 
     if (!syncAvailable) {
         return (
@@ -126,6 +128,14 @@ export function Friends() {
                     </p>
                     <AddFriendForm />
                 </section>
+                {data && (
+                    <SharePanel
+                        data={data}
+                        secret={sync?.secret ?? null}
+                        phase={sync?.phase ?? null}
+                        liveOnly
+                    />
+                )}
                 {friends && friends.length > 0 && (
                     <FriendsPanel friends={friends} />
                 )}
