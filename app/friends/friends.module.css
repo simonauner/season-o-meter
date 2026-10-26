@@ -73,6 +73,22 @@
     border-bottom: none;
 }
 
+/* Moved down by --stuck to stay under the site header (see useStickyHead).
+   A collapsed border would stay behind, so a shadow draws the line. */
+.table thead th {
+    position: relative;
+    z-index: 2;
+    border-bottom: none;
+    background: var(--surface);
+    box-shadow: inset 0 -1px var(--grid);
+    transform: translateY(var(--stuck, 0px));
+}
+
+.table thead .title {
+    position: sticky;
+    z-index: 3;
+}
+
 .title {
     position: sticky;
     left: 0;

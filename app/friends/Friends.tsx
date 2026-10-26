@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button, ButtonLink } from '@/components/Button';
 import { ChoicePicker } from '@/components/ChoicePicker';
 import { PageIntro } from '@/components/PageIntro';
@@ -175,6 +175,8 @@ function Comparison({
     const ratedBy = ratedByChoice.useChoice();
     const storedType = typeChoice.useStoredChoice();
     const storedRatedBy = ratedByChoice.useStoredChoice();
+    const [table, setTable] = useState<HTMLTableElement | null>(null);
+    useStickyHead(table);
 
     const people = useMemo<Person[]>(
         () => [
@@ -322,7 +324,7 @@ function Comparison({
                 </p>
             ) : (
                 <div className={css.scroll}>
-                    <table className={css.table}>
+                    <table ref={setTable} className={css.table}>
                         <thead>
                             <tr>
                                 <th scope="col" className={css.title}>
@@ -402,6 +404,44 @@ function Comparison({
             )}
         </section>
     );
+}
+
+// Keeps the column headers in view under the site header while the table
+// scrolls by, so you can see whose ratings you're looking at. position: sticky
+// can't, since the box that scrolls the table sideways would hold them in.
+function useStickyHead(table: HTMLTableElement | null) {
+    useEffect(() => {
+        const head = table?.tHead;
+        if (!table || !head) return;
+        let frame = 0;
+        const update = () => {
+            frame = 0;
+            const top =
+                parseFloat(
+                    getComputedStyle(document.documentElement).getPropertyValue(
+                        '--header-height'
+                    )
+                ) || 0;
+            const offset = Math.min(
+                Math.max(top - table.getBoundingClientRect().top, 0),
+                table.offsetHeight - head.offsetHeight
+            );
+            head.style.setProperty('--stuck', `${offset}px`);
+        };
+        const schedule = () => {
+            if (!frame) frame = requestAnimationFrame(update);
+        };
+        update();
+        window.addEventListener('scroll', schedule, { passive: true });
+        const observer = new ResizeObserver(schedule);
+        observer.observe(table);
+        observer.observe(document.documentElement);
+        return () => {
+            cancelAnimationFrame(frame);
+            window.removeEventListener('scroll', schedule);
+            observer.disconnect();
+        };
+    }, [table]);
 }
 
 function Row({
